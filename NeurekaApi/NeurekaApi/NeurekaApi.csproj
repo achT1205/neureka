@@ -1,0 +1,45 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Production|AnyCPU' ">
+    <IntermediateOutputPath>obj\Production</IntermediateOutputPath>
+    <DebugSymbols>false</DebugSymbols>
+    <DebugType></DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Production</OutputPath>
+    <DefineConstants></DefineConstants>
+    <NoWarn></NoWarn>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(RunConfiguration)' == 'Production' " />
+  <PropertyGroup Condition=" '$(RunConfiguration)' == 'Azure' " />
+  <ItemGroup>
+    <Folder Include="Controllers\" />
+    <Folder Include="Dtos\" />
+    <Folder Include="Helpers\" />
+    <Folder Include="Hubs\" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="MongoDB.Bson" Version="2.11.4" />
+    <PackageReference Include="MongoDB.Driver" Version="2.11.4" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="5.6.3" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.7.1" />
+    <PackageReference Include="Syncfusion.XlsIO.Net.Core" Version="18.3.0.50" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="5.6.3" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="5.6.3" />
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.10" />
+    <PackageReference Include="Microsoft.Azure.SignalR" Version="1.1.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\NeurekaDAL\NeurekaDAL.csproj">
+      <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
+    </ProjectReference>
+    <ProjectReference Include="..\NeurekaService\NeurekaService.csproj">
+      <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
+    </ProjectReference>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,62 @@
+version: '3.4'
+
+services:
+  neurekaui:
+    container_name: neureka-ui
+    restart: always
+    image: neureka-ui
+    build:
+      context: NeurekaUi
+      dockerfile: ./Dockerfile
+    environment:
+      - "VUE_APP_API_URL_ROOT=http://neurekaapi:5001/"
+    ports:
+      - 3000:3000
+    depends_on:
+      - neurekaapi
+
+  neurekadb:
+    container_name: neurakaDb
+    image: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: admin
+    volumes:
+      - ${HOME}/site:/data/db
+    ports:
+      - 27017:27017
+
+
+  mongo-express:
+    container_name: neureka-db-ui
+    image: mongo-express
+    restart: always
+    ports:
+      - 8081:8081
+    environment:
+      ME_CONFIG_MONGODB_SERVER: neurakaDb
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: admin
+    depends_on:
+      - neurekadb
+
+  neurekaapi:
+    container_name: neureka-api
+    image: neureka-api
+    build:
+      context: NeurekaApi
+      dockerfile: ./Dockerfile
+    restart: always
+    ports:
+      - 5001:80
+      - 443:443
+    environment: 
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+      - "NeurekaAppSettings:ConnectionString=mongodb://root:admin@neurakaDb:27017"
+    volumes:
+      - ${HOME}/.microsoft/usersecrets/:/root/.microsoft/usersecrets
+      - ${HOME}/.aspnet/https:/root/.aspnet/https
+    depends_on:
+      - neurekadb
