@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+      pp: neureka-ui
+  name: neureka-ui
+  namespace: neureka-ui
+spec:
+    replicas: 1
+    selector:
+      matchLabels:
+        app: neureka-ui
+    template:
+      metadata:
+        labels:
+          app: neureka-ui
+      spec:
+        containers:
+        - name: neureka-ui
+          image: neureka-ui
+          build:
+            context: NeurekaUi
+            dockerfile: ./Dockerfile
+          environment:
+            - "VUE_APP_API_URL_ROOT=http://neurekaapi:5001/"
+          ports:
+             - containerPort: 80
+             - name: neureka-ui

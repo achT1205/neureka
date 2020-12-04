@@ -1,0 +1,20 @@
+version: '3.4'
+
+services:
+  neurekaapi:
+    container_name: neureka-api
+    image: neureka-api
+    build:
+      context: NeurekaApi
+      dockerfile: ./Dockerfile
+    restart: always
+    ports:
+      - 5001:80
+      - 443:443
+    environment: 
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:80
+      - "NeurekaAppSettings:ConnectionString=mongodb://neurekabd:2O9RT5N8z4exxCjwPWW3wh4YpoQKrXetTi6wNuuWITvWhlTcTSbblO97ch1HPXb5kmWpiFOnsJBVMH5l3MQzkw==@neurekabd.mongo.cosmos.azure.com:10255/?ssl=true&replicaSet=globaldb&maxIdleTimeMS=120000&appName=@neurekabd@&retrywrites=false"
+    volumes:
+      - ${HOME}/.microsoft/usersecrets/:/root/.microsoft/usersecrets
+      - ${HOME}/.aspnet/https:/root/.aspnet/https
