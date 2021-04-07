@@ -102,6 +102,8 @@ export default {
   },
   created() {
     this.$store.dispatch("getTemplates");
+    this.$store.dispatch("getFieldTemplates");
+    
   }
 };
 </script>

@@ -64,6 +64,7 @@ export default {
   created() {
     this.$store.dispatch("getPatients");
     this.$store.dispatch("getTemplates");
+    this.$store.dispatch("getFieldTemplates");
     this.$store.dispatch("getUsers");
     this.hubConnection();
   },

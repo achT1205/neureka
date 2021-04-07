@@ -27,7 +27,15 @@
         small
         text
         to="/admin/forms"
-        >Templating</v-btn
+        >Forms Templating</v-btn
+      >
+      <v-btn
+        color="secondary"
+        active-class="actived"
+        small
+        text
+        to="/admin/fields"
+        >Fields Templating</v-btn
       >
     </v-toolbar-items>
     <v-spacer></v-spacer>

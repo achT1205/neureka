@@ -8,6 +8,7 @@ namespace NeurekaDAL.Models
         IMongoCollection<Patient> Patients { get; }
         IMongoCollection<Visit> Visits { get; }
         IMongoCollection<Template> Templates { get; }
+        IMongoCollection<Field> FieldTemplates { get; }
         IMongoDatabase Db { get; }
     }
 }

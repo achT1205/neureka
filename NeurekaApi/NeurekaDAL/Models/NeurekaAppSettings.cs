@@ -10,6 +10,7 @@ namespace NeurekaDAL.Models
         public string User { get; set; }
         public string Password { get; set; }
         public string TemplatesCollectionName { get; set; }
+        public string FieldTemplatesCollectionName { get; set; }
         public string EncryptingKey { get; set; }
         public string Secret { get; set; }
         public string Issuer { get; set; }

@@ -20,6 +20,7 @@ namespace NeurekaDAL.Models
         public IMongoCollection<Patient> Patients => _db.GetCollection<Patient>(_settings.PatientsCollectionName);
         public IMongoCollection<Visit> Visits => _db.GetCollection<Visit>(_settings.VisitsCollectionName);
         public IMongoCollection<Template> Templates => _db.GetCollection<Template>(_settings.TemplatesCollectionName);
+        public IMongoCollection<Field> FieldTemplates => _db.GetCollection<Field>(_settings.FieldTemplatesCollectionName);
         public IMongoDatabase Db => _db;
     }
 }

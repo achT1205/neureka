@@ -12,5 +12,11 @@ namespace NeurekaDAL.Repositories
         Task Remove(Template Template);
         Task Remove(string id);
         Task Update(string id, Template Template);
+        Task<Field> CreateFieldTemplate(Field field);
+        Task<IEnumerable<Field>> GetFieldTemplates();
+        Task UpdateFieldTemplate(string id, Field field);
+        Task RemoveFieldTemplate(Field field);
+        Task RemoveFieldTemplate(string id);
+        Task<Field> GetFieldTemplate(string id);
     }
 }

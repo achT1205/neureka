@@ -22,7 +22,8 @@
             ? $emit('remove', index, subfieldindex)
             : i === 2
             ? $emit('duplicateField', index, subfieldindex, subfield)
-            : $emit('editVisibility', index, subfieldindex)
+            : i === 3 ? $emit('editVisibility', index, subfieldindex)
+            : $emit('saveAsFieldTemplate', subfield)
         "
       >
         <v-list-item-action>
@@ -30,10 +31,14 @@
           <v-icon light v-if="i === 3">
             {{ !subfield.isVisible ? item.icons[0] : item.icons[1] }}
           </v-icon>
+           <v-icon light v-if="i ===4">{{ item.icon }}</v-icon>
         </v-list-item-action>
         <v-list-item-title v-if="i < 3">{{ item.title }}</v-list-item-title>
         <v-list-item-title v-if="i === 3">
           {{ !subfield.isVisible ? item.titles[0] : item.titles[1] }}
+        </v-list-item-title>
+         <v-list-item-title v-if="i === 4">
+          {{ item.title }}
         </v-list-item-title>
       </v-list-item>
     </v-list>
@@ -49,7 +54,8 @@ export default {
     "edit",
     "remove",
     "editVisibility",
-    "duplicateField"
+    "duplicateField",
+    "saveAsFieldTemplate"
   ]
 };
 </script>

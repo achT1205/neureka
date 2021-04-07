@@ -70,6 +70,16 @@ const routes = [
         name: "Forms"
       },
       {
+        path: "fields",
+        component: () => import("../views/admin/Fields.vue"),
+        name: "Fields"
+      },
+      /*{
+        path: "fields/:id",
+        component: () => import("../views/admin/Field.vue"),
+        name: "Fields"
+      },*/
+      {
         path: "forms/:id",
         component: () => import("../views/admin/FormFields.vue"),
         name: "Fields"

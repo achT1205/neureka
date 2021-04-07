@@ -75,6 +75,8 @@ namespace NeurekaDAL.Models
 
         public string Model { get; set; }
 
+        public string Description { get; set; }
+
         public IEnumerable<string> Models { get; set; }
 
         public bool RadioDirection { get; set; }
@@ -82,6 +84,10 @@ namespace NeurekaDAL.Models
         public bool IsVisible { get; set; }
 
         public bool Multiple { get; set; }
+
+        public bool Readonly { get; set; }
+
+        public Option Option { get; set; }
 
         public IEnumerable<Radio> Radios
         {
@@ -140,6 +146,28 @@ namespace NeurekaDAL.Models
 
     }
 
+    public class Option
+    {
+        [BsonId]
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string Id { get; set; }
 
+        public string Decimal { get; set; }
+
+        public string Thousands { get; set; }
+
+        public string Prefix { get; set; }
+
+        public string suffix { get; set; }
+
+        public int precision { get; set; }
+
+        public string type { get; set; }
+
+        public int min { get; set; }
+
+        public int max { get; set; }
+
+    }
 
 }

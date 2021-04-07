@@ -8,9 +8,15 @@ namespace NeurekaService.Services
     {
         Task<Template> Create(Template Template);
         Task<IEnumerable<Template>> Get();
+        Task<IEnumerable<Field>> GetFieldTemplates();
+        Task<Field> GetFieldTemplate(string id);
         Task<Template> Get(string id);
         Task Remove(Template Template);
         Task Remove(string id);
         Task Update(string id, Template Template);
+        Task<Field> CreateFieldTemplate(Field field);
+        Task UpdateFieldTemplate(string id, Field field);
+        Task RemoveFieldTemplate(Field field);
+        Task RemoveFieldTemplate(string id);
     }
 }

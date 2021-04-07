@@ -33,21 +33,21 @@ namespace NeurekaApi.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(Template Template)
+        public async Task<IActionResult> Create(Template template)
         {
-            await _templateService.Create(Template);
+            await _templateService.Create(template);
 
-            return Ok(CreatedAtRoute("Template", new { id = Template.Id.ToString(), Template }));
+            return Ok(CreatedAtRoute("Template", new { id = template.Id.ToString(), template }));
         }
 
         [HttpPut("id:length(24)")]
-        public async Task<IActionResult> Update(string id, Template Template)
+        public async Task<IActionResult> Update(string id, Template template)
         {
             var p = _templateService.Get(id);
             if (p == null)
                 return NotFound();
 
-            await _templateService.Update(id, Template);
+            await _templateService.Update(id, template);
 
             return Ok();
         }

@@ -174,10 +174,27 @@ export const createtemplate = template =>
       .catch(error => reject(error));
   });
 
+  export const createFieldTemplate = template =>
+  new Promise((resolve, reject) => {
+    apiClient
+      .post("fieldtemplate", template)
+      .then(response => resolve(response.data.value))
+      .catch(error => reject(error));
+  });
+
 export const getTemplates = () =>
   new Promise((resolve, reject) => {
     apiClient
       .get("Template")
+      .then(response => resolve(response.data))
+      .catch(error => reject(error));
+  });
+
+
+  export const getFieldTemplates = () =>
+  new Promise((resolve, reject) => {
+    apiClient
+      .get("fieldtemplate")
       .then(response => resolve(response.data))
       .catch(error => reject(error));
   });
@@ -190,6 +207,14 @@ export const editTemplate = template =>
       .catch(error => reject(error));
   });
 
+  export const editFieldTemplate = template =>
+  new Promise((resolve, reject) => {
+    apiClient
+      .put(`fieldTemplate/id:length(24)?id=${template.id}`, template)
+      .then(response => resolve(response))
+      .catch(error => reject(error));
+  });
+
 export const removeTemplate = id =>
   new Promise((resolve, reject) => {
     apiClient
@@ -197,6 +222,15 @@ export const removeTemplate = id =>
       .then(response => resolve(response))
       .catch(error => reject(error));
   });
+
+  export const removeFieldTemplate = id =>
+  new Promise((resolve, reject) => {
+    apiClient
+      .delete(`fieldTemplate/id:length(24)?id=${id}`)
+      .then(response => resolve(response))
+      .catch(error => reject(error));
+  });
+
 
 export const getTemplate = id =>
   new Promise((resolve, reject) => {
