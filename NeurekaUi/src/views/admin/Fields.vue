@@ -28,11 +28,13 @@
             <div class="col">
               <div class="d-flex justify-end align-center">
                 <v-dialog v-model="dialog" width="800px">
-                  <template v-slot:activator="{ on }">
+                  <!--
+                    <template v-slot:activator="{ on }">
                     <v-btn color="success" dark v-on="on">
                       <v-icon>add</v-icon>
                     </v-btn>
                   </template>
+                  -->
                   <v-card>
                     <v-card-title>
                       <span class="headline">{{ formTitle }}</span>

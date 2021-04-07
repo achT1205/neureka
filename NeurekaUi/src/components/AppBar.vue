@@ -27,7 +27,7 @@
         small
         text
         to="/admin/forms"
-        >Forms Templating</v-btn
+        >Custom Forms</v-btn
       >
       <v-btn
         color="secondary"
@@ -35,7 +35,7 @@
         small
         text
         to="/admin/fields"
-        >Fields Templating</v-btn
+        >Custom Fields</v-btn
       >
     </v-toolbar-items>
     <v-spacer></v-spacer>

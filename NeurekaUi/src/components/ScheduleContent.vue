@@ -768,17 +768,17 @@
                 <v-col clos="12">
                   <v-radio-group
                     v-model="field.option.type"
-                    @change="curencyOrDecimalChange(field.option.type)"
+                    @change="currencyOrDecimalChange(field.option.type)"
                     row
                   >
-                    <v-radio label="Curenry" value="curenry"></v-radio>
+                    <v-radio label="Currenry" value="currenry"></v-radio>
                     <v-radio label="Decimal" value="decimal"></v-radio>
                     <v-radio label="Percentage" value="percentage"></v-radio>
                   </v-radio-group>
                 </v-col>
               </v-row>
               <v-col
-                v-if="field.option.type === 'curenry'"
+                v-if="field.option.type === 'currenry'"
                 class="align-center justify-space-between"
                 cols="12"
               >
@@ -788,8 +788,8 @@
                   :items="currencies"
                   item-text="name"
                   item-value="id"
-                  label="Shose a curency"
-                  placeholder="Shose a curency"
+                  label="Shose a currency"
+                  placeholder="Shose a currency"
                 ></v-select>
               </v-col>
             </v-row>
@@ -1171,7 +1171,7 @@ export default {
             masked: false /* doesn't work with directive */,
             min: -999999999,
             max: 999999999,
-            type: "curency",
+            type: "currency",
           },
         },
         {
@@ -1320,6 +1320,8 @@ export default {
   watch: {
     dialog(val) {
       if (!val) {
+        this.fieldTemplate.option = this.field.icon;
+        this.fieldTemplate.option = this.field.option;
         this.field = {};
       }
     },
@@ -1758,14 +1760,13 @@ export default {
       if (!this.fieldTemplate.title || !this.fieldTemplate.title) {
         return;
       }
-
       this.fieldTemplate.id = this.generateNewId();
+      this.fieldTemplate.modeld = 0;
       this.$store.dispatch("addFieldTemplate", this.fieldTemplate);
       this.fieldTemplateDialog = false;
     },
     generateNewId() {
       const timestamp = ((new Date().getTime() / 1000) | 0).toString(16);
-
       const id =
         timestamp +
         "xxxxxxxxxxxxxxxx"
@@ -1775,18 +1776,21 @@ export default {
           .toLowerCase();
       return id;
     },
-    curencyOrDecimalChange(type) {
-      if (type === "curency") {
-        this.field.money.prefix = "";
-        this.field.money.suffix = "";
+    currencyOrDecimalChange(type) {
+      if (type === "currency") {
+        this.field.icon = "money";
+        this.field.option.prefix = "";
+        this.field.option.suffix = "";
       }
       if (type === "decimal") {
-        this.field.money.prefix = "";
-        this.field.money.suffix = "";
+        this.field.icon = "10k";
+        this.field.option.prefix = "";
+        this.field.option.suffix = "";
       }
       if (type === "percentage") {
-        this.field.money.prefix = "";
-        this.field.money.suffix = " %";
+        this.field.icon = "%";
+        this.field.option.prefix = "";
+        this.field.option.suffix = " %";
       }
     },
   },

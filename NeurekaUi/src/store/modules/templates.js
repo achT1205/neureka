@@ -4,6 +4,7 @@ import {
   editTemplate,
   editFieldTemplate,
   removeTemplate,
+  removeFieldTemplate,
   getTemplate,
   createFieldTemplate,
   getFieldTemplates
@@ -50,6 +51,11 @@ const TemplateModule = {
     removeTemplate({ dispatch }, payload) {
       removeTemplate(payload).then(() => dispatch("getTemplates"));
     },
+
+    removeFieldTemplate({ dispatch }, payload) {
+      removeFieldTemplate(payload).then(() => dispatch("getFieldTemplates"));
+    },
+
     getTemplate({ commit }, payload) {
       getTemplate(payload).then(data => {
         commit("SET_TEMPLATE", data);
