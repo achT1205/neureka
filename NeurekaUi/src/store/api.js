@@ -134,12 +134,43 @@ export const getPatients = () =>
       .catch(error => reject(error));
   });
 
-export const createVisit = visit =>
+export const createVisit = v =>
   new Promise((resolve, reject) => {
+
+   const visit = {...v}
+    let i = 0;
+    var formIndex = []
+    visit.fields.forEach(form => {
+      if (!form.isVisible) { formIndex.push(i) }
+      else {
+        let fields = form.fields;
+        let j = 0;
+        fields.forEach(field => {
+          if (!field.isVisible) {
+            form.fields.splice(j, 1);
+          }
+          j++;
+        });
+      }
+      i++;
+    });
+
+    formIndex.forEach(index => {
+      visit.fields.splice(index,1);
+    });
+
+
     apiClient
-      .post("Visit", visit)
+      .post("Visit", v)
       .then(response => resolve(response.data.value))
       .catch(error => reject(error));
+
+      apiClient
+      .post("Patient/visits", visit)
+      .then(response => resolve(response.data.value))
+      .catch(error => reject(error));
+
+
   });
 
 export const getVisits = id =>
@@ -174,7 +205,7 @@ export const createtemplate = template =>
       .catch(error => reject(error));
   });
 
-  export const createFieldTemplate = template =>
+export const createFieldTemplate = template =>
   new Promise((resolve, reject) => {
     apiClient
       .post("fieldtemplate", template)
@@ -191,7 +222,7 @@ export const getTemplates = () =>
   });
 
 
-  export const getFieldTemplates = () =>
+export const getFieldTemplates = () =>
   new Promise((resolve, reject) => {
     apiClient
       .get("fieldtemplate")
@@ -207,7 +238,7 @@ export const editTemplate = template =>
       .catch(error => reject(error));
   });
 
-  export const editFieldTemplate = template =>
+export const editFieldTemplate = template =>
   new Promise((resolve, reject) => {
     apiClient
       .put(`fieldTemplate/id:length(24)?id=${template.id}`, template)
@@ -223,7 +254,7 @@ export const removeTemplate = id =>
       .catch(error => reject(error));
   });
 
-  export const removeFieldTemplate = id =>
+export const removeFieldTemplate = id =>
   new Promise((resolve, reject) => {
     apiClient
       .delete(`fieldTemplate/id:length(24)?id=${id}`)

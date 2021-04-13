@@ -55,7 +55,9 @@
                 :type="subfield.type"
                 v-model="subfield.model"
                 :readonly="subfield.readonly"
+                :disabled="subfield.disabled"
                 :prepend-inner-icon="subfield.icon"
+                :maxlength="subfield.maxlength"
                 @change="
                   $store.commit('SET_EDITING_INPROGRESS', true, { root: true })
                 "
@@ -89,6 +91,7 @@
                 :type="subfield.type"
                 v-money="subfield.option"
                 :readonly="subfield.readonly"
+                :disabled="subfield.disabled"
                 v-model.lazy="subfield.model"
                 @change="
                   $store.commit('SET_EDITING_INPROGRESS', true, { root: true })
@@ -122,6 +125,8 @@
                 "
                 v-model="subfield.model"
                 :readonly="subfield.readonly"
+                :disabled="subfield.disabled"
+                :maxlength="subfield.maxlength"
                 :prepend-inner-icon="subfield.icon"
                 @change="
                   $store.commit('SET_EDITING_INPROGRESS', true, { root: true })
@@ -174,6 +179,7 @@
                 v-else-if="subfield.type === 'checkbox'"
                 v-model="subfield.model"
                 :readonly="subfield.readonly"
+                :disabled="subfield.disabled"
               >
                 <template v-slot:label>
                   <div>
@@ -200,6 +206,7 @@
                 v-else-if="subfield.type === 'switch'"
                 v-model="subfield.model"
                 :readonly="subfield.readonly"
+                :disabled="subfield.disabled"
               >
                 <template v-slot:label>
                   <div>
@@ -230,6 +237,7 @@
                   outlined
                   v-model="subfield.model"
                   :readonly="subfield.readonly"
+                  :disabled="subfield.disabled"
                   :items="subfield.selects"
                   :label="subfield.title"
                   :placeholder="
@@ -318,6 +326,7 @@
                   <v-radio-group
                     v-model="subfield.model"
                     :readonly="subfield.readonly"
+                    :disabled="subfield.disabled"
                     :row="subfield.radioDirection"
                   >
                     <v-radio
@@ -385,6 +394,7 @@
                   outlined
                   v-model="subfield.model"
                   :readonly="subfield.readonly"
+                  :disabled="subfield.disabled"
                   :placeholder="
                     subfield.multiple
                       ? 'Upload your documents'
@@ -664,6 +674,14 @@
                   }`"
                 ></v-checkbox>
               </v-col>
+              <v-col class="align-center justify-space-between" cols="6">
+                <v-checkbox
+                  v-model="field.disabled"
+                  :label="`Disabled ? : ${
+                    field.disabled ? field.disabled.toString() : ''
+                  }`"
+                ></v-checkbox>
+              </v-col>
               <v-col
                 v-if="field.type === 'files'"
                 class="align-center justify-space-between"
@@ -674,6 +692,21 @@
                   label="Multiple files ?"
                 ></v-checkbox>
               </v-col>
+
+              <v-row
+                class="mx-2"
+                v-if="['text', 'email', 'textarea'].includes(field.type)"
+              >
+                <v-col cols="12">
+                  <v-text-field
+                    outlined
+                    v-model.number="field.maxlength"
+                    label="Maxlength"
+                    clearable
+                    placeholder="Maxlength"
+                  ></v-text-field>
+                </v-col>
+              </v-row>
 
               <v-row class="mx-2" v-if="field.type === 'radiogroup'">
                 <v-col class="align-center justify-space-between" cols="12">
@@ -1140,6 +1173,8 @@ export default {
           model: null,
           isVisible: false,
           readonly: false,
+          disabled: false,
+          maxlength: 1000,
         },
         {
           id: null,
@@ -1151,6 +1186,8 @@ export default {
           model: null,
           isVisible: false,
           readonly: false,
+          disabled: false,
+          maxlength: 15,
         },
         {
           id: null,
@@ -1162,6 +1199,7 @@ export default {
           model: null,
           isVisible: false,
           readonly: false,
+          disabled: false,
           option: {
             decimal: ",",
             thousands: ".",
@@ -1184,6 +1222,8 @@ export default {
           model: null,
           isVisible: false,
           readonly: false,
+          disabled: false,
+          maxlength: 300,
         },
         {
           id: null,
@@ -1195,6 +1235,7 @@ export default {
           model: null,
           isVisible: false,
           readonly: false,
+          disabled: false,
         },
         {
           id: null,
@@ -1206,6 +1247,7 @@ export default {
           model: null,
           isVisible: false,
           readonly: false,
+          disabled: false,
         },
         {
           id: null,
@@ -1217,6 +1259,7 @@ export default {
           model: null,
           isVisible: false,
           readonly: false,
+          disabled: false,
         },
         {
           id: null,
@@ -1228,6 +1271,7 @@ export default {
           model: null,
           isVisible: false,
           readonly: false,
+          disabled: false,
         },
         {
           id: null,
@@ -1239,6 +1283,8 @@ export default {
           model: null,
           isVisible: false,
           readonly: false,
+          disabled: false,
+          maxlength: 2000,
         },
         {
           id: null,
@@ -1252,6 +1298,7 @@ export default {
           isVisible: false,
           radios: [],
           readonly: false,
+          disabled: false,
         },
         {
           id: null,
@@ -1265,6 +1312,7 @@ export default {
           multiple: false,
           selects: [],
           readonly: false,
+          disabled: false,
         },
         {
           id: null,
@@ -1278,6 +1326,7 @@ export default {
           multiple: true,
           selects: [],
           readonly: false,
+          disabled: false,
         },
 
         {
@@ -1291,6 +1340,7 @@ export default {
           isVisible: false,
           multiple: false,
           readonly: false,
+          disabled: false,
         },
       ],
       selectedSession: null,
@@ -1674,6 +1724,7 @@ export default {
       this.subfieldindex = visit.fields[this.sessionIndex].fields.findIndex(
         (f) => f.id === field.id
       );
+      debugger;
       this.field = {
         ...field,
       };
@@ -1681,9 +1732,10 @@ export default {
     },
     closeDialog() {
       this.dialog = false;
-      this.subfieldindex = null;
-      this.field = null;
-      this.dialog = false;
+      setTimeout(function () {
+        this.subfieldindex = null;
+        this.field = null;
+      }, 3000);
     },
     save() {
       if (this.editingSession) {

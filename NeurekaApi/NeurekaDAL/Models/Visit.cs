@@ -87,6 +87,10 @@ namespace NeurekaDAL.Models
 
         public bool Readonly { get; set; }
 
+        public bool Disabled { get; set; }
+
+        public int? Maxlength { get; set; }
+
         public Option Option { get; set; }
 
         public IEnumerable<Radio> Radios

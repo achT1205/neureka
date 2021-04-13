@@ -10,6 +10,7 @@
         string Password { get; set; }
         string TemplatesCollectionName { get; set; }
         string FieldTemplatesCollectionName { get; set; }
+        string PatientVisitsCollectionName { get; set; }
         string EncryptingKey { get; set; }
         string Secret { get; set; }
         string Issuer { get; set; }
