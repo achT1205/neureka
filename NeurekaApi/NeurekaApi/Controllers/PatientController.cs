@@ -72,7 +72,7 @@ namespace NeurekaApi.Controllers
 
         [Route("visits")]
         [HttpPost]
-        public async Task<IActionResult> CreatePatientVisit(VisitDto  visitDto)
+        public async Task<IActionResult> CreatePatientVisit(VisitDto visitDto)
         {
 
             var visit = _mapper.Map<Visit>(visitDto);
@@ -80,7 +80,8 @@ namespace NeurekaApi.Controllers
             return Ok(CreatedAtRoute("Visit", new { id = visitDto.Id.ToString(), visitDto }));
         }
 
-        [HttpPut("visits/{id}")]
+        [Route("visits/{id:length(24)}")]
+        [HttpPut]
         public async Task<IActionResult> UpdatePatientVisit(string id, Visit Visit)
         {
             var p = _patientService.GetPatientVisit(id);
@@ -91,7 +92,8 @@ namespace NeurekaApi.Controllers
             return Ok();
         }
 
-        [HttpDelete("visits/{id}")]
+        [Route("visits/{clientid:length(24)}/visits")]
+        [HttpDelete]
         public async Task<IActionResult> DeletePatientVisit(string id)
         {
             var p = _patientService.GetPatientVisit(id);
@@ -103,17 +105,20 @@ namespace NeurekaApi.Controllers
             return Ok();
         }
 
-        [HttpGet("{d}/visits")]
-        public async Task<IActionResult> GetVisits(string id)
+
+        [Route("{clientid:length(24)}/visits")]
+        [HttpGet]
+        public async Task<IActionResult> GetVisits(string clientid)
         {
-            var p = await _patientService.GetPatientVisitByPatientId(id);
+            var p = await _patientService.GetPatientVisitByPatientId(clientid);
             if (p == null)
                 return NotFound();
 
             return Ok(p);
         }
 
-        [HttpGet("visits/{id}")]
+        [Route("visits/{id:length(24)}")]
+        [HttpGet]
         public async Task<IActionResult> GetVisit(string visitid)
         {
             var p = await _patientService.GetPatientVisit(visitid);

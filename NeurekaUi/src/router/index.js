@@ -38,6 +38,11 @@ const routes = [
     name: "500"
   },
   {
+    path: "/clients/:id",
+    component: () => import("@/views/client/client.vue"),
+    name: "Client"
+  },
+  {
     path: "/",
     component: DocLayout,
     redirect: "/patients",

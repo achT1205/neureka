@@ -137,7 +137,7 @@ export const getPatients = () =>
 export const createVisit = v =>
   new Promise((resolve, reject) => {
 
-   const visit = {...v}
+    const visit = { ...v }
     let i = 0;
     var formIndex = []
     visit.fields.forEach(form => {
@@ -156,7 +156,7 @@ export const createVisit = v =>
     });
 
     formIndex.forEach(index => {
-      visit.fields.splice(index,1);
+      visit.fields.splice(index, 1);
     });
 
 
@@ -165,7 +165,7 @@ export const createVisit = v =>
       .then(response => resolve(response.data.value))
       .catch(error => reject(error));
 
-      apiClient
+    apiClient
       .post("Patient/visits", visit)
       .then(response => resolve(response.data.value))
       .catch(error => reject(error));
@@ -189,12 +189,46 @@ export const removeVisit = id =>
       .catch(error => reject(error));
   });
 
-export const editVisit = visit =>
+export const editVisit = v =>
   new Promise((resolve, reject) => {
+    editPatientVisit(v);
     apiClient
-      .put(`Visit/id:length(24)?id=${visit.id}`, visit)
-      .then(response => resolve(response))
+    .put(`Visit/id:length(24)?id=${v.id}`, v)
+    .then(response => resolve(response))
+    .catch(error => reject(error));
+  });
+
+  export const editPatientVisit = v =>
+  new Promise((resolve, reject) => {
+
+    const visit = { ...v }
+    let i = 0;
+    var formIndex = []
+    visit.fields.forEach(form => {
+      if (!form.isVisible) { formIndex.push(i) }
+      else {
+        let fields = form.fields;
+        let j = 0;
+        fields.forEach(field => {
+          if (!field.isVisible) {
+            form.fields.splice(j, 1);
+          }
+          j++;
+        });
+      }
+      i++;
+    });
+    formIndex.forEach(index => {
+      visit.fields.splice(index, 1);
+    });
+
+    apiClient
+      .put(`/Patient/visits/${visit.id}`, visit)
+      .then(response => {
+        resolve(response)
+      })
       .catch(error => reject(error));
+
   });
 
 export const createtemplate = template =>
@@ -275,6 +309,23 @@ export const getVisit = id =>
   new Promise((resolve, reject) => {
     apiClient
       .get(`Visit/${id}`)
+      .then(response => resolve(response.data))
+      .catch(error => reject(error));
+  });
+
+export const getPatientVisit = id =>
+  new Promise((resolve, reject) => {
+    apiClient
+      .get(`/Patient/visits/${id}`)
+      .then(response => resolve(response.data))
+      .catch(error => reject(error));
+  });
+
+
+export const getPatientVisits = id =>
+  new Promise((resolve, reject) => {
+    apiClient
+      .get(`/Patient/${id}/visits`)
       .then(response => resolve(response.data))
       .catch(error => reject(error));
   });

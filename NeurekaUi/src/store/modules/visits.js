@@ -6,7 +6,7 @@ import {
   getVisit,
   deleteFile,
   uploadFile,
-  exportVisits
+  exportVisits,
 } from "../api";
 
 const VisitModule = {
