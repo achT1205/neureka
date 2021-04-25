@@ -136,13 +136,13 @@ export const getPatients = () =>
 
 export const createVisit = v =>
   new Promise((resolve, reject) => {
-
-    const visit = { ...v }
+    const visit = { ...v };
     let i = 0;
-    var formIndex = []
+    var formIndex = [];
     visit.fields.forEach(form => {
-      if (!form.isVisible) { formIndex.push(i) }
-      else {
+      if (!form.isVisible) {
+        formIndex.push(i);
+      } else {
         let fields = form.fields;
         let j = 0;
         fields.forEach(field => {
@@ -159,7 +159,6 @@ export const createVisit = v =>
       visit.fields.splice(index, 1);
     });
 
-
     apiClient
       .post("Visit", v)
       .then(response => resolve(response.data.value))
@@ -169,8 +168,6 @@ export const createVisit = v =>
       .post("Patient/visits", visit)
       .then(response => resolve(response.data.value))
       .catch(error => reject(error));
-
-
   });
 
 export const getVisits = id =>
@@ -191,22 +188,21 @@ export const removeVisit = id =>
 
 export const editVisit = v =>
   new Promise((resolve, reject) => {
-    editPatientVisit(v);
     apiClient
-    .put(`Visit/id:length(24)?id=${v.id}`, v)
-    .then(response => resolve(response))
-    .catch(error => reject(error));
+      .put(`Visit/id:length(24)?id=${v.id}`, v)
+      .then(response => resolve(response))
+      .catch(error => reject(error));
   });
 
-  export const editPatientVisit = v =>
+export const editPatientVisit = v =>
   new Promise((resolve, reject) => {
-
-    const visit = { ...v }
+    const visit = { ...v };
     let i = 0;
-    var formIndex = []
+    var formIndex = [];
     visit.fields.forEach(form => {
-      if (!form.isVisible) { formIndex.push(i) }
-      else {
+      if (!form.isVisible) {
+        formIndex.push(i);
+      } else {
         let fields = form.fields;
         let j = 0;
         fields.forEach(field => {
@@ -225,10 +221,9 @@ export const editVisit = v =>
     apiClient
       .put(`/Patient/visits/${visit.id}`, visit)
       .then(response => {
-        resolve(response)
+        resolve(response);
       })
       .catch(error => reject(error));
-
   });
 
 export const createtemplate = template =>
@@ -254,7 +249,6 @@ export const getTemplates = () =>
       .then(response => resolve(response.data))
       .catch(error => reject(error));
   });
-
 
 export const getFieldTemplates = () =>
   new Promise((resolve, reject) => {
@@ -296,7 +290,6 @@ export const removeFieldTemplate = id =>
       .catch(error => reject(error));
   });
 
-
 export const getTemplate = id =>
   new Promise((resolve, reject) => {
     apiClient
@@ -320,7 +313,6 @@ export const getPatientVisit = id =>
       .then(response => resolve(response.data))
       .catch(error => reject(error));
   });
-
 
 export const getPatientVisits = id =>
   new Promise((resolve, reject) => {

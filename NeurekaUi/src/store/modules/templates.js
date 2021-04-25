@@ -20,7 +20,8 @@ const TemplateModule = {
     SET_TEMPLATES: (state, payload) => (state.templates = payload),
     SET_TEMPLATE: (state, payload) => (state.currentTemplate = payload),
     SET_FIELD_TEMPLATES: (state, payload) => (state.fieldtemplates = payload),
-    SET_TFIELD_TEMPLATE: (state, payload) => (state.currentFieldTemplate = payload),
+    SET_TFIELD_TEMPLATE: (state, payload) =>
+      (state.currentFieldTemplate = payload)
   },
   actions: {
     addTemplate({ dispatch }, payload) {
@@ -41,7 +42,7 @@ const TemplateModule = {
         dispatch("getTemplates", payload);
       });
     },
-    editFieldTemplate({ commit , dispatch}, payload) {
+    editFieldTemplate({ commit, dispatch }, payload) {
       editFieldTemplate(payload).then(() => {
         commit("SET_EDITING_INPROGRESS", false, { root: true });
         dispatch("getFieldTemplates");
@@ -64,9 +65,9 @@ const TemplateModule = {
   },
   getters: {
     templates: state => state.templates,
-    currentTemplate: state => state.currentTemplate, 
-    fieldtemplates : state=> state.fieldtemplates,
-    currentFieldTemplate : state=> state.currentFieldTemplate,
+    currentTemplate: state => state.currentTemplate,
+    fieldtemplates: state => state.fieldtemplates,
+    currentFieldTemplate: state => state.currentFieldTemplate
   }
 };
 

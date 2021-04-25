@@ -251,7 +251,7 @@
           </v-btn>
           <v-btn small color="error">
             <v-icon @click="deleteItem(item)">
-              mdi-delete
+              delete
             </v-icon>
           </v-btn>
         </template>

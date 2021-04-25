@@ -504,7 +504,7 @@
                       close
                       color="teal"
                       text-color="white"
-                      close-icon="mdi-delete"
+                      close-icon="delete"
                       @click:close="removeSelectItem(selectindex)"
                       >{{ select.title }}</v-chip
                     >
@@ -530,7 +530,7 @@
       >
         <template v-slot:activator="{ on }">
           <v-btn bottom color="pink" dark fab small fixed right v-on="on">
-            <v-icon>mdi-plus</v-icon>
+            <v-icon>add</v-icon>
           </v-btn>
         </template>
         <v-card class="pa-3">
@@ -543,7 +543,7 @@
                 @start="isDragging = true"
                 @end="isDragging = false"
                 :group="{ name: 'people', pull: 'clone', put: false }"
-                :clone="cloneDog"
+                :clone="cloneInput"
               >
                 <transition-group type="transition" :name="'flip-list'">
                   <v-list-item
@@ -885,7 +885,7 @@ export default {
         root: true
       });
     },
-    cloneDog(item) {
+    cloneInput(item) {
       const f = {
         ...item
       };

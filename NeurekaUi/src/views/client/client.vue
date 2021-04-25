@@ -1,16 +1,16 @@
 <template>
-    <div>client</div>
+  <div>client</div>
 </template>
 
 <script>
 import { mapGetters } from "vuex";
 export default {
-    computed: {
+  computed: {
     ...mapGetters(["clientVisits", "clientVisit"])
   },
   created() {
     //this.$store.dispatch("getPatientVisit", this.$route.params.id);
     this.$store.dispatch("getPatientVisits", this.$route.params.id);
   }
-}
+};
 </script>

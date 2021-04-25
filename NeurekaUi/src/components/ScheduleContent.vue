@@ -22,6 +22,7 @@
               @editSessionvisit="editSessionvisit"
               @removeSessionvisit="removeSessionvisit"
               @editVisibility="editVisibility"
+              @canOnlyRead="canOnlyRead"
               @duplicateForm="duplicateForm"
             />
           </v-card-title>
@@ -34,7 +35,7 @@
             :move="onMove"
             @start="isDragging = true"
             @end="onEnd"
-            group="people"
+            group="input"
           >
             <v-col
               class="align-center justify-space-between list-group-item"
@@ -72,6 +73,7 @@
                     @edit="edit"
                     @remove="remove"
                     @editVisibility="editVisibility"
+                    @canOnlyRead="canOnlyRead"
                     @duplicateField="duplicateField"
                     @saveAsFieldTemplate="saveAsFieldTemplate"
                   />
@@ -107,6 +109,7 @@
                     @edit="edit"
                     @remove="remove"
                     @editVisibility="editVisibility"
+                    @canOnlyRead="canOnlyRead"
                     @duplicateField="duplicateField"
                     @saveAsFieldTemplate="saveAsFieldTemplate"
                   />
@@ -142,11 +145,39 @@
                     @edit="edit"
                     @remove="remove"
                     @editVisibility="editVisibility"
+                    @canOnlyRead="canOnlyRead"
                     @duplicateField="duplicateField"
                     @saveAsFieldTemplate="saveAsFieldTemplate"
                   />
                 </template>
               </v-textarea>
+              <v-row v-else-if="subfield.type === 'editor'">
+                <v-col cols="12">
+                  <label class="d-flex justify-start">
+                    {{
+                      subfield.title ? subfield.title : "Field" + subfieldindex
+                    }}
+                  </label>
+                  <label class="d-flex justify-end">
+                    <field-actions
+                      :actions="fieldActions"
+                      :field="field"
+                      :index="index"
+                      :subfield="subfield"
+                      :subfieldindex="subfieldindex"
+                      @edit="edit"
+                      @remove="remove"
+                      @editVisibility="editVisibility"
+                      @canOnlyRead="canOnlyRead"
+                      @duplicateField="duplicateField"
+                      @saveAsFieldTemplate="saveAsFieldTemplate"
+                    />
+                  </label>
+                </v-col>
+                <v-col cols="12">
+                  <vue-editor v-model="subfield.model"></vue-editor>
+                </v-col>
+              </v-row>
               <date-picker-field
                 v-else-if="subfield.type === 'date'"
                 :subfield="subfield"
@@ -155,6 +186,7 @@
                 @edit="edit"
                 @remove="remove"
                 @editVisibility="editVisibility"
+                @canOnlyRead="canOnlyRead"
                 @updateDate="updateDate"
                 @duplicateField="duplicateField"
                 @saveAsFieldTemplate="saveAsFieldTemplate"
@@ -169,6 +201,7 @@
                 @edit="edit"
                 @remove="remove"
                 @editVisibility="editVisibility"
+                @canOnlyRead="canOnlyRead"
                 @updateDate="updateTime"
                 @duplicateField="duplicateField"
                 @saveAsFieldTemplate="saveAsFieldTemplate"
@@ -195,6 +228,7 @@
                       @edit="edit"
                       @remove="remove"
                       @editVisibility="editVisibility"
+                      @canOnlyRead="canOnlyRead"
                       @duplicateField="duplicateField"
                       @saveAsFieldTemplate="saveAsFieldTemplate"
                     />
@@ -222,6 +256,7 @@
                       @edit="edit"
                       @remove="remove"
                       @editVisibility="editVisibility"
+                      @canOnlyRead="canOnlyRead"
                       @duplicateField="duplicateField"
                       @saveAsFieldTemplate="saveAsFieldTemplate"
                     />
@@ -261,6 +296,7 @@
                       @edit="edit"
                       @remove="remove"
                       @editVisibility="editVisibility"
+                      @canOnlyRead="canOnlyRead"
                       @duplicateField="duplicateField"
                       @saveAsFieldTemplate="saveAsFieldTemplate"
                     />
@@ -299,6 +335,7 @@
                       @edit="edit"
                       @remove="remove"
                       @editVisibility="editVisibility"
+                      @canOnlyRead="canOnlyRead"
                       @duplicateField="duplicateField"
                       @saveAsFieldTemplate="saveAsFieldTemplate"
                     />
@@ -320,6 +357,7 @@
                     @edit="edit"
                     @remove="remove"
                     @editVisibility="editVisibility"
+                    @canOnlyRead="canOnlyRead"
                     @duplicateField="duplicateField"
                     @saveAsFieldTemplate="saveAsFieldTemplate"
                   />
@@ -351,7 +389,7 @@
                                 v-on="on"
                                 color="grey"
                               >
-                                <v-icon>mdi-dots-vertical</v-icon>
+                                <v-icon>more_vert</v-icon>
                               </v-btn>
                             </template>
 
@@ -439,6 +477,7 @@
                       @edit="edit"
                       @remove="remove"
                       @editVisibility="editVisibility"
+                      @canOnlyRead="canOnlyRead"
                       @duplicateField="duplicateField"
                       @saveAsFieldTemplate="saveAsFieldTemplate"
                     />
@@ -455,7 +494,7 @@
                       close
                       color="teal"
                       text-color="white"
-                      close-icon="mdi-delete"
+                      close-icon="delete"
                       @click:close="
                         delefile(index, subfieldindex, fileInfosIndex)
                       "
@@ -666,22 +705,6 @@
                   placeholder="Shose a width"
                 ></v-select>
               </v-col>
-              <v-col class="align-center justify-space-between" cols="6">
-                <v-checkbox
-                  v-model="field.readonly"
-                  :label="`Readonly ? : ${
-                    field.readonly ? field.readonly.toString() : ''
-                  }`"
-                ></v-checkbox>
-              </v-col>
-              <v-col class="align-center justify-space-between" cols="6">
-                <v-checkbox
-                  v-model="field.disabled"
-                  :label="`Disabled ? : ${
-                    field.disabled ? field.disabled.toString() : ''
-                  }`"
-                ></v-checkbox>
-              </v-col>
               <v-col
                 v-if="field.type === 'files'"
                 class="align-center justify-space-between"
@@ -750,7 +773,7 @@
                 </v-col>
               </v-row>
               <v-row class="mx-2" v-if="field && field.selects">
-                <h5>Selectin items</h5>
+                <h5>Selection items</h5>
                 <v-col cols="12">
                   <v-chip
                     v-for="(select, selectindex) in field.selects"
@@ -759,7 +782,7 @@
                     close
                     color="teal"
                     text-color="white"
-                    close-icon="mdi-delete"
+                    close-icon="delete"
                     @click:close="removeSelectItem(selectindex)"
                     >{{ select.title }}</v-chip
                   >
@@ -956,7 +979,7 @@
               v-on="on"
               v-show="currentVisit.fields && currentVisit.fields.length > 0"
             >
-              <v-icon>mdi-plus</v-icon>
+              <v-icon>add</v-icon>
             </v-btn>
           </template>
           <v-card class="pa-3">
@@ -968,8 +991,8 @@
                   :move="onMove"
                   @start="isDragging = true"
                   @end="onEnd"
-                  :group="{ name: 'people', pull: 'clone', put: false }"
-                  :clone="cloneDog"
+                  :group="{ name: 'input', pull: 'clone', put: false }"
+                  :clone="cloneInput"
                 >
                   <transition-group type="transition" :name="'flip-list'">
                     <v-list-item
@@ -994,8 +1017,8 @@
                   :move="onMove"
                   @start="isDragging = true"
                   @end="onEnd"
-                  :group="{ name: 'people', pull: 'clone', put: false }"
-                  :clone="cloneDog"
+                  :group="{ name: 'input', pull: 'clone', put: false }"
+                  :clone="cloneInput"
                 >
                   <transition-group type="transition" :name="'flip-list'">
                     <v-list-item
@@ -1025,6 +1048,7 @@ import TimePickerField from "@/components/TimePickerField.vue";
 import draggable from "vuedraggable";
 import FormActions from "@/components/FormActions.vue";
 import FieldActions from "@/components/FieldActions.vue";
+import { VueEditor } from "vue2-editor";
 import { VMoney } from "v-money";
 //import { uploadFile } from "@/store/api";
 import { mapGetters } from "vuex";
@@ -1037,10 +1061,16 @@ export default {
     DatePickerField,
     TimePickerField,
     draggable,
+    VueEditor,
   },
   directives: { money: VMoney },
   data() {
     return {
+      customToolbar: [
+        ["bold", "italic", "underline"],
+        [{ list: "ordered" }, { list: "bullet" }],
+        ["image", "code-block"],
+      ],
       formActions: [
         {
           title: "Save as Template",
@@ -1059,7 +1089,7 @@ export default {
           icon: "control_point_duplicate",
         },
         {
-          titles: ["Allow patient to see", "Hide to the patient"],
+          titles: ["Patient can see", "Patient can not see"],
           icons: ["visibility", "visibility_off"],
         },
       ],
@@ -1077,8 +1107,12 @@ export default {
           icon: "control_point_duplicate",
         },
         {
-          titles: ["Allow patient to see", "Hide to the patient"],
+          titles: ["Patient can see", "Patient can not see"],
           icons: ["visibility", "visibility_off"],
+        },
+        {
+          titles: ["Patient can edit ", "Patient can only read"],
+          icons: ["lock_open", "lock"],
         },
         {
           title: "Save as Template",
@@ -1160,6 +1194,7 @@ export default {
         type: "form",
         title: null,
         icon: "list_alt",
+        isVisible: false,
         fields: [],
       },
       inputTypes: [
@@ -1289,6 +1324,19 @@ export default {
         {
           id: null,
           title: "",
+          icon: "edit_note",
+          col: "12",
+          inputType: "field",
+          type: "editor",
+          model: "<h1>Some initial content</h1>",
+          isVisible: false,
+          readonly: false,
+          disabled: false,
+          maxlength: 2000,
+        },
+        {
+          id: null,
+          title: "",
           icon: "radio_button_checked",
           col: "12",
           inputType: "field",
@@ -1398,7 +1446,7 @@ export default {
     dragOptions() {
       return {
         animation: 0,
-        group: "description",
+        group: "input",
         disabled: !this.editable,
         ghostClass: "ghost",
       };
@@ -1471,10 +1519,8 @@ export default {
         root: true,
       });
     },
-    cloneDog(item) {
-      const f = {
-        ...item,
-      };
+    cloneInput(item) {
+      const f = Object.assign({}, item);
       f.id = this.generateNewId();
       this.editingVisit = true;
       return f;
@@ -1488,12 +1534,26 @@ export default {
     },
     editVisibility(index, subfieldindex) {
       const visit = this.currentVisit;
-      if (!subfieldindex) {
+      if (!subfieldindex && subfieldindex !== 0) {
         visit.fields[index].isVisible = !visit.fields[index].isVisible;
-      } else {
+      } else if (subfieldindex >= 0) {
         visit.fields[index].fields[subfieldindex].isVisible = !visit.fields[
           index
         ].fields[subfieldindex].isVisible;
+      }
+      this.$store.commit("SET_VISIT", visit);
+      this.$store.commit("SET_EDITING_INPROGRESS", true, {
+        root: true,
+      });
+    },
+    canOnlyRead(index, subfieldindex) {
+      const visit = this.currentVisit;
+      if (!subfieldindex && subfieldindex !== 0) {
+        visit.fields[index].readonly = !visit.fields[index].readonly;
+      } else {
+        visit.fields[index].fields[subfieldindex].readonly = !visit.fields[
+          index
+        ].fields[subfieldindex].readonly;
       }
       this.$store.commit("SET_VISIT", visit);
       this.$store.commit("SET_EDITING_INPROGRESS", true, {
@@ -1541,7 +1601,7 @@ export default {
       //this.$scrollTo("#form_id_" + id, 200, options);
     },
     removeRadio(index, subfieldindex, radioIndex) {
-      const visit = this.currentVisit;
+      const visit = {...this.currentVisit};
       visit.fields[index].fields[subfieldindex].radios.splice(radioIndex, 1);
       this.$store.commit("SET_VISIT", visit);
       this.$store.commit("SET_EDITING_INPROGRESS", true, {
@@ -1580,7 +1640,7 @@ export default {
     editRadio(index, subfieldindex, subfield, radio) {
       this.sessionIndex = index;
       this.subfieldindex = subfieldindex;
-      this.field = subfield;
+      this.field = {...subfield};
       this.currentRadio = radio;
       this.radioTitle = radio.title;
       this.radioDialog = true;
@@ -1592,8 +1652,8 @@ export default {
         const radioIndex = this.field.radios.findIndex(
           (r) => r.id === this.currentRadio.id
         );
-        this.field.radios[radioIndex] = this.currentRadio;
-        visit.fields[this.sessionIndex].fields[this.subfieldindex] = this.field;
+        this.field.radios[radioIndex] = {...this.currentRadio};
+        visit.fields[this.sessionIndex].fields[this.subfieldindex] = {...this.field};
         this.$store.commit("SET_VISIT", visit);
         this.$store.commit("SET_EDITING_INPROGRESS", true, {
           root: true,
@@ -1615,7 +1675,7 @@ export default {
           this.field.radios.push(radio);
         }
         const visit = this.currentVisit;
-        visit.fields[this.sessionIndex].fields[this.subfieldindex] = this.field;
+        visit.fields[this.sessionIndex].fields[this.subfieldindex] = {...this.field};
         this.$store.commit("SET_VISIT", visit);
         this.$store.commit("SET_EDITING_INPROGRESS", true, {
           root: true,
@@ -1630,14 +1690,15 @@ export default {
         title: this.selectTitle,
         id: this.generateNewId(),
       };
-      if (!this.field.selects) {
-        this.field.selects = [select];
+      const field = {...this.field}
+      if (!field.selects) {
+        field.selects = [select];
       } else {
-        this.field.selects.push(select);
+        field.selects.push(select);
       }
 
       const visit = this.currentVisit;
-      visit.fields[this.sessionIndex].fields[this.subfieldindex] = this.field;
+      visit.fields[this.sessionIndex].fields[this.subfieldindex] = {...field};
       this.$store.commit("SET_VISIT", visit);
       this.$store.commit("SET_EDITING_INPROGRESS", true, {
         root: true,
@@ -1724,7 +1785,6 @@ export default {
       this.subfieldindex = visit.fields[this.sessionIndex].fields.findIndex(
         (f) => f.id === field.id
       );
-      debugger;
       this.field = {
         ...field,
       };
@@ -1752,6 +1812,7 @@ export default {
         this.sessionName = null;
         this.currentSession = null;
         this.editingSession = false;
+        this.field = {};
       } else {
         if (this.field && this.field.id) {
           const visit = this.currentVisit;
@@ -1764,6 +1825,7 @@ export default {
             root: true,
           });
           this.dialog = false;
+          this.field = {};
         } else {
           const field = {
             ...this.field,
@@ -1776,6 +1838,7 @@ export default {
             root: true,
           });
           this.dialog = false;
+          this.field = {};
         }
       }
     },

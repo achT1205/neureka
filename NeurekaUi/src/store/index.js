@@ -5,7 +5,7 @@ import VisitModule from "./modules/visits";
 import TemplateModule from "./modules/templates";
 import EventModule from "./modules/events";
 import UserModule from "./modules/users";
-import ClientModule from "./modules/client"
+import ClientModule from "./modules/client";
 
 Vue.use(Vuex);
 

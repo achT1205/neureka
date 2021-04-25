@@ -132,7 +132,7 @@
             <v-icon small @click="editItem(item)">mdi-pencil</v-icon>
           </v-btn>
           <v-btn small color="error">
-            <v-icon small @click="deleteItem(item)">mdi-delete</v-icon>
+            <v-icon small @click="deleteItem(item)">delete</v-icon>
           </v-btn>
         </template>
       </v-data-table>

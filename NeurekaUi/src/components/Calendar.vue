@@ -85,7 +85,7 @@
               <v-icon>mdi-heart</v-icon>
             </v-btn>
             <v-btn icon>
-              <v-icon>mdi-dots-vertical</v-icon>
+              <v-icon>more_vert</v-icon>
             </v-btn>
           </v-toolbar>
           <v-card-text>
