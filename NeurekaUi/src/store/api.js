@@ -322,6 +322,15 @@ export const getPatientVisits = id =>
       .catch(error => reject(error));
   });
 
+
+export const getClientVisit = id =>
+new Promise((resolve, reject) => {
+  apiClient
+    .get(`/Patient/${id}/openvisit`)
+    .then(response => resolve(response.data))
+    .catch(error => reject(error));
+});
+
 export const deleteFile = fileName =>
   new Promise((resolve, reject) => {
     apiClient

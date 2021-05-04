@@ -38,6 +38,16 @@ namespace NeurekaDAL.Repositories
             return await _context.PatientVisits.FindAsync(condition).Result.ToListAsync();
 
         }
+
+        public async Task<Visit> GetPatientOpenVisitByPatientId(string patientId)
+        {
+
+            var condition = Builders<Visit>.Filter.Eq(v => v.PatientId, patientId);
+            condition = condition & Builders<Visit>.Filter.Eq(v => v.Closed, true);
+            var result = await _context.PatientVisits.FindAsync(condition).Result.FirstOrDefaultAsync();
+            return result;
+
+        }
         public async Task UpdatePatientVisit(string id, Visit visit) => await _context.PatientVisits.ReplaceOneAsync<Visit>(p => p.Id == id, visit);
         public async Task RemovePatientVisit(Visit visit) => await _context.PatientVisits.DeleteOneAsync<Visit>(p => p.Id == visit.Id);
         public async Task RemovePatientVisit(string id) => await _context.PatientVisits.DeleteOneAsync<Visit>(p => p.Id == id);

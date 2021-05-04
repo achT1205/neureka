@@ -10,7 +10,7 @@ export default {
   },
   created() {
     //this.$store.dispatch("getPatientVisit", this.$route.params.id);
-    this.$store.dispatch("getPatientVisits", this.$route.params.id);
+    this.$store.dispatch("getClientVisit", this.$route.params.id);
   }
 };
 </script>

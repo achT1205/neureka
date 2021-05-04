@@ -117,6 +117,19 @@ namespace NeurekaApi.Controllers
             return Ok(p);
         }
 
+
+        [Route("{clientid:length(24)}/openvisit")]
+        [HttpGet]
+        public async Task<IActionResult> GetOpenVisit(string clientid)
+        {
+            var p = await _patientService.GetPatientOpenVisitByPatientId(clientid);
+            if (p == null)
+                return NotFound();
+
+            return Ok(p);
+        }
+
+
         [Route("visits/{id:length(24)}")]
         [HttpGet]
         public async Task<IActionResult> GetVisit(string visitid)

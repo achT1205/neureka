@@ -18,5 +18,6 @@ namespace NeurekaService.Services
         Task RemovePatientVisit(Visit visit);
         Task RemovePatientVisit(string id);
         Task<IEnumerable<Visit>> GetPatientVisitByPatientId(string patientId);
+        Task<Visit> GetPatientOpenVisitByPatientId(string patientId);
     }
 }

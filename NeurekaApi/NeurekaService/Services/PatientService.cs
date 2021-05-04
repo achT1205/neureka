@@ -58,5 +58,6 @@ namespace NeurekaService.Services
         public async Task RemovePatientVisit(string id) => await _patientRepository.RemovePatientVisit(id);
 
         public async Task<IEnumerable<Visit>> GetPatientVisitByPatientId(string patientId) => await _patientRepository.GetPatientVisitByPatientId(patientId);
+        public async Task<Visit> GetPatientOpenVisitByPatientId (string patientId) => await _patientRepository.GetPatientOpenVisitByPatientId(patientId);
     }
 }

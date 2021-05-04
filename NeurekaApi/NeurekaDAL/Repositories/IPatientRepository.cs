@@ -18,5 +18,6 @@ namespace NeurekaDAL.Repositories
         Task RemovePatientVisit(Visit visit);
         Task RemovePatientVisit(string id);
         Task<IEnumerable<Visit>> GetPatientVisitByPatientId(string patientId);
+        Task<Visit> GetPatientOpenVisitByPatientId(string patientId);
     }
 }
