@@ -31,17 +31,13 @@
             class="row mx-2 content-row"
             tag="div"
             v-model="field.fields"
-            v-bind="dragOptions"
-            :move="onMove"
-            @start="isDragging = true"
-            @end="onEnd"
-            group="input"
+            :options="dragOptions"
           >
             <v-col
               class="align-center justify-space-between list-group-item"
               v-for="(subfield, subfieldindex) in field.fields"
               :cols="subfield.col"
-              :key="subfield.id ? subfield.id : subfieldindex"
+              :key="uuid(subfield)"
             >
               <v-text-field
                 outlined
@@ -89,7 +85,7 @@
                 :placeholder="
                   subfield.title ? subfield.title : 'Field' + subfieldindex
                 "
-                v-else-if="subfield.type === 'currency / decimal / percentage'"
+                v-else-if="subfield.type === 'decimal'"
                 :type="subfield.type"
                 v-money="subfield.option"
                 :readonly="subfield.readonly"
@@ -370,11 +366,11 @@
                     <v-radio
                       v-for="(radio, radioIndex) in subfield.radios"
                       :key="radioIndex"
-                      :value="radio.title"
+                      :value="radio"
                     >
                       <template v-slot:label>
                         <div>
-                          {{ radio.title }}
+                          {{ radio }}
                           <v-menu
                             bottom
                             left
@@ -399,7 +395,7 @@
                                   editRadio(
                                     index,
                                     subfieldindex,
-                                    subfield,
+                                    radioIndex,
                                     radio
                                   )
                                 "
@@ -681,182 +677,12 @@
     </v-dialog>
 
     <v-dialog v-model="dialog" persistent width="800px">
-      <v-card class="pa-3">
-        <v-container>
-          <v-flex transition="slide-x-transition">
-            <v-row class="mx-2">
-              <v-col class="align-center justify-space-between" cols="6">
-                <v-text-field
-                  outlined
-                  v-model="field.title"
-                  label="Field Name"
-                  clearable
-                  placeholder="Field Name"
-                ></v-text-field>
-              </v-col>
-              <v-col class="align-center justify-space-between" cols="6">
-                <v-select
-                  outlined
-                  v-model="field.col"
-                  :items="cols"
-                  item-text="title"
-                  item-value="id"
-                  label="Shose a width"
-                  placeholder="Shose a width"
-                ></v-select>
-              </v-col>
-              <v-col
-                v-if="field.type === 'files'"
-                class="align-center justify-space-between"
-                cols="12"
-              >
-                <v-checkbox
-                  v-model="field.multiple"
-                  label="Multiple files ?"
-                ></v-checkbox>
-              </v-col>
-
-              <v-row
-                class="mx-2"
-                v-if="['text', 'email', 'textarea'].includes(field.type)"
-              >
-                <v-col cols="12">
-                  <v-text-field
-                    outlined
-                    v-model.number="field.maxlength"
-                    label="Maxlength"
-                    clearable
-                    placeholder="Maxlength"
-                  ></v-text-field>
-                </v-col>
-              </v-row>
-
-              <v-row class="mx-2" v-if="field.type === 'radiogroup'">
-                <v-col class="align-center justify-space-between" cols="12">
-                  <v-select
-                    outlined
-                    v-model="field.radioDirection"
-                    :items="radioDirections"
-                    item-text="title"
-                    item-value="id"
-                    label="Dierction"
-                    placeholder="Dierction"
-                  ></v-select>
-                </v-col>
-
-                <v-col cols="12">
-                  <v-text-field
-                    outlined
-                    v-model="radioTitle"
-                    clearable
-                    placeholder="Type a new item and enter 'Enter' Key to add"
-                    label="Add a new Radio item"
-                    @keyup.enter="saveRadio"
-                    :prepend-inner-icon="'title'"
-                  ></v-text-field>
-                </v-col>
-              </v-row>
-            </v-row>
-            <v-flex
-              v-if="field.type === 'selections' || field.type === 'selection'"
-            >
-              <v-row class="mx-2">
-                <v-col cols="12">
-                  <v-text-field
-                    outlined
-                    v-model="selectTitle"
-                    clearable
-                    placeholder="Type a new item and enter 'Enter' Key to add"
-                    label="Add a new selection item"
-                    @keyup.enter="saveSelectionItem"
-                  ></v-text-field>
-                </v-col>
-              </v-row>
-              <v-row class="mx-2" v-if="field && field.selects">
-                <h5>Selection items</h5>
-                <v-col cols="12">
-                  <v-chip
-                    v-for="(select, selectindex) in field.selects"
-                    :key="selectindex"
-                    class="ma-2"
-                    close
-                    color="teal"
-                    text-color="white"
-                    close-icon="delete"
-                    @click:close="removeSelectItem(selectindex)"
-                    >{{ select.title }}</v-chip
-                  >
-                </v-col>
-              </v-row>
-            </v-flex>
-            <v-row
-              class="mx-2"
-              v-if="field.type === 'currency / decimal / percentage'"
-            >
-              <v-col class="align-center justify-space-between" cols="6">
-                <v-text-field
-                  outlined
-                  v-model="field.option.min"
-                  label="Minimum Value"
-                  clearable
-                  placeholder="Minimum Value"
-                ></v-text-field>
-              </v-col>
-              <v-col class="align-center justify-space-between" cols="6">
-                <v-text-field
-                  outlined
-                  v-model="field.option.max"
-                  label="Maximum Value"
-                  clearable
-                  placeholder="Maximum Value"
-                ></v-text-field>
-              </v-col>
-              <v-col class="align-center justify-space-between" cols="6">
-                <v-text-field
-                  outlined
-                  v-model="field.option.precision"
-                  label="Precision"
-                  clearable
-                  placeholder="Precision"
-                ></v-text-field>
-              </v-col>
-              <v-row>
-                <v-col clos="12">
-                  <v-radio-group
-                    v-model="field.option.type"
-                    @change="currencyOrDecimalChange(field.option.type)"
-                    row
-                  >
-                    <v-radio label="Currenry" value="currenry"></v-radio>
-                    <v-radio label="Decimal" value="decimal"></v-radio>
-                    <v-radio label="Percentage" value="percentage"></v-radio>
-                  </v-radio-group>
-                </v-col>
-              </v-row>
-              <v-col
-                v-if="field.option.type === 'currenry'"
-                class="align-center justify-space-between"
-                cols="12"
-              >
-                <v-select
-                  outlined
-                  v-model="field.option.prefix"
-                  :items="currencies"
-                  item-text="name"
-                  item-value="id"
-                  label="Shose a currency"
-                  placeholder="Shose a currency"
-                ></v-select>
-              </v-col>
-            </v-row>
-          </v-flex>
-        </v-container>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn text color="primary" @click="closeDialog">Close</v-btn>
-          <v-btn text @click="save">Save</v-btn>
-        </v-card-actions>
-      </v-card>
+      <edit-field-options
+        :field="field"
+        @closeDialog="closeDialog"
+        @save="save"
+        @close="closeDialog"
+      />
     </v-dialog>
 
     <v-dialog v-model="fromDialog" width="800px">
@@ -987,12 +813,8 @@
               <v-list>
                 <draggable
                   v-model="inputTypes"
-                  v-bind="dragOptions"
-                  :move="onMove"
-                  @start="isDragging = true"
-                  @end="onEnd"
-                  :group="{ name: 'input', pull: 'clone', put: false }"
-                  :clone="cloneInput"
+                  :options="availableItemOptions"
+                  :clone="handleClone"
                 >
                   <transition-group type="transition" :name="'flip-list'">
                     <v-list-item
@@ -1013,18 +835,14 @@
                 <v-subheader>Custom inputs</v-subheader>
                 <draggable
                   v-model="fieldtemplates"
-                  v-bind="dragOptions"
-                  :move="onMove"
-                  @start="isDragging = true"
-                  @end="onEnd"
-                  :group="{ name: 'input', pull: 'clone', put: false }"
-                  :clone="cloneInput"
+                  :options="availableItemOptions"
+                  :clone="handleClone"
                 >
                   <transition-group type="transition" :name="'flip-list'">
                     <v-list-item
                       class="list-group-item"
                       v-for="element in fieldtemplates"
-                      :key="element.id"
+                      :key="uuid(element)"
                     >
                       <v-list-item-action>
                         <v-icon light>{{ element.icon }}</v-icon>
@@ -1048,6 +866,7 @@ import TimePickerField from "@/components/TimePickerField.vue";
 import draggable from "vuedraggable";
 import FormActions from "@/components/FormActions.vue";
 import FieldActions from "@/components/FieldActions.vue";
+import EditFieldOptions from "@/components/EditFieldOptions.vue";
 import { VueEditor } from "vue2-editor";
 import { VMoney } from "v-money";
 //import { uploadFile } from "@/store/api";
@@ -1062,15 +881,11 @@ export default {
     TimePickerField,
     draggable,
     VueEditor,
+    EditFieldOptions,
   },
   directives: { money: VMoney },
   data() {
     return {
-      customToolbar: [
-        ["bold", "italic", "underline"],
-        [{ list: "ordered" }, { list: "bullet" }],
-        ["image", "code-block"],
-      ],
       formActions: [
         {
           title: "Save as Template",
@@ -1128,21 +943,12 @@ export default {
       fromDialog: false,
       editingVisit: false,
       fab: false,
-      editable: true,
-      isDragging: false,
-      delayedDragging: false,
       adding: false,
       sessionIndex: null,
-      dragedElement: null,
       menu: false,
       subfieldindex: null,
-      currentRadio: null,
       radioTitle: null,
-      selectTitle: null,
       radioDialog: false,
-      selectionDialog: false,
-      fromDateMenu: false,
-      fromTimeMenu: false,
       template: {},
       fieldTemplate: {},
       field: {},
@@ -1151,43 +957,7 @@ export default {
       currentSession: null,
       removingDialog: false,
       col: null,
-      cols: [
-        {
-          id: "12",
-          title: "full width",
-        },
-        {
-          id: "6",
-          title: "1/2",
-        },
-        {
-          id: "4",
-          title: "1/3",
-        },
-        {
-          id: "3",
-          title: "1/4",
-        },
-        {
-          id: "2",
-          title: "1/6",
-        },
-        {
-          id: "1",
-          title: "1/12",
-        },
-      ],
       inputType: null,
-      radioDirections: [
-        {
-          id: false,
-          title: "column",
-        },
-        {
-          id: true,
-          title: "row",
-        },
-      ],
       defaultForm: {
         id: null,
         inputType: "session",
@@ -1230,7 +1000,7 @@ export default {
           icon: "money",
           col: "12",
           inputType: "field",
-          type: "currency / decimal / percentage",
+          type: "decimal",
           model: null,
           isVisible: false,
           readonly: false,
@@ -1391,28 +1161,26 @@ export default {
           disabled: false,
         },
       ],
-      selectedSession: null,
       sessionName: "",
-      visitType: "session",
       dialog: false,
       templateDialog: false,
       fieldTemplateDialog: false,
-      drag: false,
-
-      list2: [
-        {
-          name: "1",
-          id: 1,
+      dragOptions: {
+        animation: 0,
+        group: "inputs",
+      },
+      availableItemOptions: {
+        group: {
+          name: "inputs",
+          pull: "clone",
+          put: false,
         },
-      ],
-      currencies: [
-        { name: "USD", id: "$ " },
-        { name: "EUR", id: "€ " },
-        { name: "GBP", id: "£ " },
-      ],
+        sort: false,
+      },
     };
   },
   created() {
+    debugger
     this.$store.dispatch("getVisit", this.id);
   },
   watch: {
@@ -1422,15 +1190,6 @@ export default {
         this.fieldTemplate.option = this.field.option;
         this.field = {};
       }
-    },
-    isDragging(newValue) {
-      if (newValue) {
-        this.delayedDragging = true;
-        return;
-      }
-      this.$nextTick(() => {
-        this.delayedDragging = false;
-      });
     },
     editingVisit(val) {
       this.$emit("isEditingVisit", val);
@@ -1443,22 +1202,8 @@ export default {
         ? this.currentVisit.fields.filter((s) => s.type === "session")
         : [];
     },
-    dragOptions() {
-      return {
-        animation: 0,
-        group: "input",
-        disabled: !this.editable,
-        ghostClass: "ghost",
-      };
-    },
   },
   methods: {
-    onEnd() {
-      this.$store.commit("SET_EDITING_INPROGRESS", true, {
-        root: true,
-      });
-      this.isDragging = false;
-    },
     customFilter(item, queryText) {
       const textOne = item.title.toLowerCase();
       const textTwo = item.description.toLowerCase();
@@ -1477,7 +1222,7 @@ export default {
             type: model[i].type,
             index: index,
             subfieldindex: subfieldindex,
-            id: this.generateNewId(),
+            id: this.uuid({}),
             formdata: formdata,
           });
         }
@@ -1519,19 +1264,15 @@ export default {
         root: true,
       });
     },
-    cloneInput(item) {
-      const f = Object.assign({}, item);
-      f.id = this.generateNewId();
-      this.editingVisit = true;
-      return f;
+    handleClone(item) {
+      // Create a fresh copy of item
+      let cloneMe = JSON.parse(JSON.stringify(item));
+
+      this.$delete(cloneMe, "uid");
+
+      return cloneMe;
     },
-    onMove({ relatedContext, draggedContext }) {
-      const relatedElement = relatedContext.element;
-      const draggedElement = draggedContext.element;
-      return (
-        (!relatedElement || !relatedElement.fixed) && !draggedElement.fixed
-      );
-    },
+
     editVisibility(index, subfieldindex) {
       const visit = this.currentVisit;
       if (!subfieldindex && subfieldindex !== 0) {
@@ -1570,8 +1311,7 @@ export default {
         };
         this.selectedTemplate = null;
       }
-      const id = this.generateNewId();
-      form.id = id;
+      form.id = this.uuid(form);
       const visit = this.currentVisit;
       if (!visit.fields) visit.fields = [];
       visit.fields.push(form);
@@ -1581,27 +1321,9 @@ export default {
       });
       this.active = null;
       this.fromDialog = false;
-
-      /* const options = {
-                                                                                container: "#visit-container",
-                                                                                easing: "ease-in",
-                                                                                offset: 0,
-                                                                                force: true,
-                                                                                Closeable: true,
-                                                                                x: false,
-                                                                                y: true
-                                                                              }; */
-      /* const opt = {
-                                                                                selector: "#visit-container",
-                                                                                duration: 300,
-                                                                                offset: 0,
-                                                                                easing: "easeInOutCubic",
-                                                                              };
-                                                                              this.$vuetify.goTo(this.$refs.id, opt); */
-      //this.$scrollTo("#form_id_" + id, 200, options);
     },
     removeRadio(index, subfieldindex, radioIndex) {
-      const visit = {...this.currentVisit};
+      const visit = { ...this.currentVisit };
       visit.fields[index].fields[subfieldindex].radios.splice(radioIndex, 1);
       this.$store.commit("SET_VISIT", visit);
       this.$store.commit("SET_EDITING_INPROGRESS", true, {
@@ -1609,103 +1331,26 @@ export default {
       });
     },
 
-    openRadioDialog(index, subfieldindex, subfield) {
+    editRadio(index, subfieldindex, radioIndex, radio) {
       this.sessionIndex = index;
       this.subfieldindex = subfieldindex;
-      this.field = subfield;
-      this.radioDialog = true;
-    },
-
-    openSelectionDialog(index, subfieldindex, subfield) {
-      this.sessionIndex = index;
-      this.subfieldindex = subfieldindex;
-      this.field = subfield;
-      this.selectionDialog = true;
-    },
-
-    removeSelectItem(selectindex) {
-      const visit = {
-        ...this.currentVisit,
-      };
-      this.field.selects.splice(selectindex, 1);
-      visit.fields[this.sessionIndex].fields[this.subfieldindex].selects.splice(
-        selectindex,
-        1
-      );
-      this.$store.commit("SET_VISIT", visit);
-      this.$store.commit("SET_EDITING_INPROGRESS", true, {
-        root: true,
-      });
-    },
-    editRadio(index, subfieldindex, subfield, radio) {
-      this.sessionIndex = index;
-      this.subfieldindex = subfieldindex;
-      this.field = {...subfield};
-      this.currentRadio = radio;
-      this.radioTitle = radio.title;
+      this.radioIndex = radioIndex;
+      this.radioTitle = radio;
       this.radioDialog = true;
     },
     saveRadio() {
-      if (this.currentRadio && this.currentRadio.id) {
-        const visit = this.currentVisit;
-        this.currentRadio.title = this.radioTitle;
-        const radioIndex = this.field.radios.findIndex(
-          (r) => r.id === this.currentRadio.id
-        );
-        this.field.radios[radioIndex] = {...this.currentRadio};
-        visit.fields[this.sessionIndex].fields[this.subfieldindex] = {...this.field};
-        this.$store.commit("SET_VISIT", visit);
-        this.$store.commit("SET_EDITING_INPROGRESS", true, {
-          root: true,
-        });
-        this.radioTitle = null;
-        this.sessionIndex = null;
-        this.subfieldindex = null;
-        this.currentRadio = null;
-        this.field = {};
-        this.radioDialog = false;
-      } else {
-        const radio = {
-          title: this.radioTitle,
-          id: this.generateNewId(),
-        };
-        if (!this.field.radios) {
-          this.field.radios = [radio];
-        } else {
-          this.field.radios.push(radio);
-        }
-        const visit = this.currentVisit;
-        visit.fields[this.sessionIndex].fields[this.subfieldindex] = {...this.field};
-        this.$store.commit("SET_VISIT", visit);
-        this.$store.commit("SET_EDITING_INPROGRESS", true, {
-          root: true,
-        });
-        this.radioTitle = null;
-        this.radioDialog = false;
-      }
-    },
-
-    saveSelectionItem() {
-      const select = {
-        title: this.selectTitle,
-        id: this.generateNewId(),
-      };
-      const field = {...this.field}
-      if (!field.selects) {
-        field.selects = [select];
-      } else {
-        field.selects.push(select);
-      }
-
       const visit = this.currentVisit;
-      visit.fields[this.sessionIndex].fields[this.subfieldindex] = {...field};
+      visit.fields[this.sessionIndex].fields[this.subfieldindex].radios[
+        this.radioIndex
+      ] = this.radioTitle;
       this.$store.commit("SET_VISIT", visit);
-      this.$store.commit("SET_EDITING_INPROGRESS", true, {
-        root: true,
-      });
-
-      this.selectTitle = null;
+      this.radioTitle = null;
+      this.sessionIndex = null;
+      this.subfieldindex = null;
+      this.radioDialog = false;
+      this.radioIndex = null;
     },
+
     remove(sessionIndex, fieldindex) {
       const visit = this.currentVisit;
       visit.fields[sessionIndex].fields.splice(fieldindex, 1);
@@ -1714,31 +1359,36 @@ export default {
         root: true,
       });
     },
+
     duplicateForm(index, form) {
       const visit = this.currentVisit;
-      const duble = {
+      const doble = {
         ...form,
       };
-      duble.id = this.generateNewId();
-      visit.fields.splice(index + 1, 0, duble);
+      delete doble.id;
+      doble.id = this.uuid(doble);
+      visit.fields.splice(index + 1, 0, doble);
       this.$store.commit("SET_VISIT", visit);
       this.$store.commit("SET_EDITING_INPROGRESS", true, {
         root: true,
       });
     },
+
     duplicateField(index, subfieldindex, subfield) {
       const visit = this.currentVisit;
-      const duble = {
+      const doble = {
         ...subfield,
       };
-      duble.id = this.generateNewId();
+      delete doble.id;
+      doble.id = this.uuid(doble);
 
-      visit.fields[index].fields.splice(subfieldindex + 1, 0, duble);
+      visit.fields[index].fields.splice(subfieldindex + 1, 0, doble);
       this.$store.commit("SET_VISIT", visit);
       this.$store.commit("SET_EDITING_INPROGRESS", true, {
         root: true,
       });
     },
+
     saveAsFieldTemplate(template) {
       this.fieldTemplate = {
         ...template,
@@ -1746,6 +1396,7 @@ export default {
       this.fieldTemplate.modeld = null;
       this.fieldTemplateDialog = true;
     },
+
     removeSessionvisit(index) {
       const visit = this.currentVisit;
       if (
@@ -1762,6 +1413,7 @@ export default {
         this.removingDialog = !this.removingDialog;
       }
     },
+
     confirRemovingVisit() {
       const visit = this.currentVisit;
       visit.fields.splice(this.sessionIndex, 1);
@@ -1772,6 +1424,7 @@ export default {
       this.sessionIndex = null;
       this.removingDialog = false;
     },
+
     editSessionvisit(session) {
       this.sessionName = session.title;
       this.currentSession = session;
@@ -1797,7 +1450,7 @@ export default {
         this.field = null;
       }, 3000);
     },
-    save() {
+    save(field) {
       if (this.editingSession) {
         this.currentSession.title = this.sessionName;
         const visit = this.currentVisit;
@@ -1814,12 +1467,12 @@ export default {
         this.editingSession = false;
         this.field = {};
       } else {
-        if (this.field && this.field.id) {
+        if (field && field.id) {
           const visit = this.currentVisit;
           const fieldIndex = visit.fields[this.sessionIndex].fields.findIndex(
             (f) => f.id === this.field.id
           );
-          visit.fields[this.sessionIndex].fields[fieldIndex] = this.field;
+          visit.fields[this.sessionIndex].fields[fieldIndex] = field;
           this.$store.commit("SET_VISIT", visit);
           this.$store.commit("SET_EDITING_INPROGRESS", true, {
             root: true,
@@ -1830,7 +1483,8 @@ export default {
           const field = {
             ...this.field,
           };
-          field.id = this.generateNewId();
+          delete field.id;
+          field.id = this.uuid(field);
           const visit = this.currentVisit;
           visit.fields[this.sessionIndex].fields.push(field);
           this.$store.commit("SET_VISIT", visit);
@@ -1867,7 +1521,7 @@ export default {
         return;
       }
       delete this.template.patientId;
-      this.template.id = this.generateNewId();
+      this.template.id = this.uuid(this.template);
       this.$store.dispatch("addTemplate", this.template);
       this.templateDialog = false;
     },
@@ -1875,38 +1529,23 @@ export default {
       if (!this.fieldTemplate.title || !this.fieldTemplate.title) {
         return;
       }
-      this.fieldTemplate.id = this.generateNewId();
+      this.fieldTemplate.id = this.uuid(this.fieldTemplate);
       this.fieldTemplate.modeld = 0;
       this.$store.dispatch("addFieldTemplate", this.fieldTemplate);
       this.fieldTemplateDialog = false;
     },
-    generateNewId() {
+    uuid(e) {
+      if (e.id) return e.id;
       const timestamp = ((new Date().getTime() / 1000) | 0).toString(16);
-      const id =
+      const key =
         timestamp +
         "xxxxxxxxxxxxxxxx"
           .replace(/[x]/g, function () {
             return ((Math.random() * 16) | 0).toString(16);
           })
           .toLowerCase();
-      return id;
-    },
-    currencyOrDecimalChange(type) {
-      if (type === "currency") {
-        this.field.icon = "money";
-        this.field.option.prefix = "";
-        this.field.option.suffix = "";
-      }
-      if (type === "decimal") {
-        this.field.icon = "10k";
-        this.field.option.prefix = "";
-        this.field.option.suffix = "";
-      }
-      if (type === "percentage") {
-        this.field.icon = "%";
-        this.field.option.prefix = "";
-        this.field.option.suffix = " %";
-      }
+      this.$set(e, "id", key);
+      return e.id;
     },
   },
 };

@@ -62,6 +62,19 @@
                 <v-tooltip bottom>
                   <template v-slot:activator="{ on }">
                     <v-icon
+                      class="ml-3"
+                      x-small
+                      color="black"
+                      v-on="on"
+                      @click="OpenOrcloseVisit(index)"
+                      >{{!visit.closed ? "lock" :"lock_open"}} </v-icon
+                    >
+                  </template>
+                 {{!visit.closed ? "Close this visit" :"Open this vist"}}
+                </v-tooltip>
+                <v-tooltip bottom>
+                  <template v-slot:activator="{ on }">
+                    <v-icon
                       color="black"
                       class="ml-3"
                       x-small
@@ -411,6 +424,15 @@ export default {
         this.edit(index);
       }
     },
+    OpenOrcloseVisit(index){
+      const visit = this.visits[index];
+      visit.closed = !visit.closed  ? true : false;;
+      this.$store.dispatch("editVisit", {
+        visit: visit,
+        filesData: null,
+      });
+    },
+
     edit(index) {
       this.forceOverlay = true;
       this.$store.dispatch("getVisit", this.visits[index].id);
@@ -480,7 +502,6 @@ export default {
     },
     generateNewId() {
       const timestamp = ((new Date().getTime() / 1000) | 0).toString(16);
-
       const id =
         timestamp +
         "xxxxxxxxxxxxxxxx"

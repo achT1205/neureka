@@ -55,6 +55,13 @@ namespace NeurekaDAL.Models
 
         }
 
+        public bool Closed
+        {
+            get; set;
+
+        }
+
+
     }
 
     public class Field
@@ -93,13 +100,13 @@ namespace NeurekaDAL.Models
 
         public Option Option { get; set; }
 
-        public IEnumerable<Radio> Radios
+        public IEnumerable<string> Radios
         {
             get; set;
 
         }
 
-        public IEnumerable<Select> Selects
+        public IEnumerable<string> Selects
         {
             get; set;
 
@@ -118,23 +125,6 @@ namespace NeurekaDAL.Models
         }
     }
 
-    public class Radio
-    {
-        [BsonId]
-        [BsonRepresentation(BsonType.ObjectId)]
-        public string Id { get; set; }
-
-        public string Title { get; set; }
-    }
-
-    public class Select
-    {
-        [BsonId]
-        [BsonRepresentation(BsonType.ObjectId)]
-        public string Id { get; set; }
-
-        public string Title { get; set; }
-    }
 
     public class FileInfomation
     {

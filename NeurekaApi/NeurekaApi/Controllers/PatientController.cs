@@ -9,7 +9,7 @@ using NeurekaService.Services;
 
 namespace NeurekaApi.Controllers
 {
-    [Authorize]
+    //[Authorize(Roles ="admin")]
     [ApiController]
     [Route("[controller]")]
     public class PatientController : ControllerBase
