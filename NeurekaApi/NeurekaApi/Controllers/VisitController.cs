@@ -108,8 +108,8 @@ namespace NeurekaApi.Controllers
                                 {
                                     foreach (var s in field.Selects)
                                     {
-                                        if (s.Id.ToString() == m)
-                                            data = data + "," + s.Title;
+                                        //if (s.Id.ToString() == m)
+                                            data = data + "," + s;
                                     }
 
                                 }
@@ -121,8 +121,8 @@ namespace NeurekaApi.Controllers
                                 var data = "";
                                 foreach (var s in field.Selects)
                                 {
-                                    if (s.Id.ToString() == field.Model)
-                                        data = s.Title;
+                                    //if (s.Id.ToString() == field.Model)
+                                        data = s;
                                 }
                                 worksheet.Range[i + 3, j + 4 + k].Text = data;
                             }

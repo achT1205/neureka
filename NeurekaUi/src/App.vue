@@ -8,7 +8,7 @@
 import { mapGetters } from "vuex";
 export default {
   computed: {
-    ...mapGetters(["editingInprogress"])
+    ...mapGetters(["editingInprogress"]),
   },
   methods: {
     preventNav(event) {
@@ -17,7 +17,7 @@ export default {
       }
       event.preventDefault();
       event.returnValue = "";
-    }
+    },
   },
   beforeMount() {
     window.addEventListener("beforeunload", this.preventNav);
@@ -34,7 +34,7 @@ export default {
       }
       this.$store.commit("AUTH_SUCCESS", user);
     }
-  }
+  },
 };
 </script>
 <style lang="scss">

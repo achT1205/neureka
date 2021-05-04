@@ -74,7 +74,12 @@ const UserModule = {
           if (data.user.role === "secretary") {
             dispatch("getUsersDovtors", "doctor");
           }
-          router.push("/");
+          if (data.user.role === "patient") {
+            router.push(`/clients/${data.user.id}`);
+          }
+          else {
+            router.push("/");
+          }
         })
         .catch(error => {
           const err = {

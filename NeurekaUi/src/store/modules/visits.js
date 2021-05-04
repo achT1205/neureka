@@ -54,7 +54,7 @@ const VisitModule = {
     },
     removeVisit({ dispatch }, payload) {
       removeVisit(payload.visitId).then(() =>
-        dispatch("getVisits", payload.patientId)
+       dispatch("getVisits", payload.patientId)
       );
     },
     editVisit({ commit, dispatch }, payload) {
