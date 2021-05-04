@@ -194,37 +194,6 @@ export const editVisit = v =>
       .catch(error => reject(error));
   });
 
-export const editPatientVisit = v =>
-  new Promise((resolve, reject) => {
-    const visit = { ...v };
-    let i = 0;
-    var formIndex = [];
-    visit.fields.forEach(form => {
-      if (!form.isVisible) {
-        formIndex.push(i);
-      } else {
-        let fields = form.fields;
-        let j = 0;
-        fields.forEach(field => {
-          if (!field.isVisible) {
-            form.fields.splice(j, 1);
-          }
-          j++;
-        });
-      }
-      i++;
-    });
-    formIndex.forEach(index => {
-      visit.fields.splice(index, 1);
-    });
-
-    apiClient
-      .put(`/Patient/visits/${visit.id}`, visit)
-      .then(response => {
-        resolve(response);
-      })
-      .catch(error => reject(error));
-  });
 
 export const createtemplate = template =>
   new Promise((resolve, reject) => {
@@ -306,23 +275,6 @@ export const getVisit = id =>
       .catch(error => reject(error));
   });
 
-export const getPatientVisit = id =>
-  new Promise((resolve, reject) => {
-    apiClient
-      .get(`/Patient/visits/${id}`)
-      .then(response => resolve(response.data))
-      .catch(error => reject(error));
-  });
-
-export const getPatientVisits = id =>
-  new Promise((resolve, reject) => {
-    apiClient
-      .get(`/Patient/${id}/visits`)
-      .then(response => resolve(response.data))
-      .catch(error => reject(error));
-  });
-
-
 export const getClientVisit = id =>
 new Promise((resolve, reject) => {
   apiClient
@@ -330,6 +282,17 @@ new Promise((resolve, reject) => {
     .then(response => resolve(response.data))
     .catch(error => reject(error));
 });
+
+
+export const updateClientVisit = v =>
+new Promise((resolve, reject) => {
+  debugger;
+  apiClient
+    .put(`/Patient/updatevisit`, v)
+    .then(response => resolve(response.data))
+    .catch(error => reject(error));
+});
+
 
 export const deleteFile = fileName =>
   new Promise((resolve, reject) => {

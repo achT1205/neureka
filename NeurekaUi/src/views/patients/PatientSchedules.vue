@@ -5,7 +5,7 @@
       <div>
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
-            <v-btn icon>
+            <v-btn icon :disabled="!canCreateNewVisit">
               <v-icon v-on="on" @click.prevent="addNewEvent">add</v-icon>
             </v-btn>
           </template>
@@ -67,7 +67,7 @@
                       color="black"
                       v-on="on"
                       @click="OpenOrcloseVisit(index)"
-                      >{{ !visit.closed ? "lock" : "lock_open" }}
+                      >{{ !visit.closed ? "lock_open" : "lock" }}
                     </v-icon>
                   </template>
                   {{ !visit.closed ? "Close this visit" : "Open this vist" }}
@@ -105,7 +105,7 @@
             </v-tabs-items>
           </template>
           <template v-else>
-            <v-alert color="primary" class="mb-0" style="color:white;">
+            <v-alert color="primary" class="mb-0" style="color: white">
               There is currently no visit for
               <strong v-if="patient"
                 >{{ patient.firstName }} {{ patient.lastName }}
@@ -261,7 +261,7 @@ export default {
     DatePicker,
     TimePicker,
     ColorPicker,
-    ScheduleContent
+    ScheduleContent,
   },
   data() {
     return {
@@ -285,7 +285,7 @@ export default {
         endDate: null,
         endTime: null,
         color: null,
-        fields: []
+        fields: [],
       },
       defaultEvent: {
         id: null,
@@ -295,23 +295,30 @@ export default {
         endDate: null,
         endTime: null,
         color: null,
-        fields: []
+        fields: [],
       },
       scheduleName: "",
-      scheduleTitledialog: false
+      scheduleTitledialog: false,
     };
   },
   computed: {
+    canCreateNewVisit() {
+      if (this.visits && this.visits.some((v) => v.closed === false)) {
+        return false;
+      } else {
+        return true;
+      }
+    },
     ...mapGetters([
       "patients",
       "visits",
       "currentVisit",
       "authenticatedUser",
       "doctors",
-      "editingInprogress"
+      "editingInprogress",
     ]),
     patient() {
-      return this.patients.find(x => x.id == this.$route.params.id);
+      return this.patients.find((x) => x.id == this.$route.params.id);
     },
     today() {
       let today = new Date();
@@ -320,7 +327,7 @@ export default {
       const yyyy = today.getFullYear();
       today = yyyy + "-" + mm + "-" + dd;
       return today;
-    }
+    },
   },
   watch: {
     patient(val, old) {
@@ -342,7 +349,7 @@ export default {
       if (val !== old) {
         this.$store.commit("SET_VISIT", this.visits[val]);
       }
-    }
+    },
   },
   methods: {
     addNewEvent() {
@@ -351,16 +358,16 @@ export default {
           message: `Changes that you made may not be saved. Are your sure you want to continue ?`,
           button: {
             no: "No",
-            yes: "Yes"
+            yes: "Yes",
           },
-          callback: confirm => {
+          callback: (confirm) => {
             if (confirm) {
               this.scheduleTitledialog = !this.scheduleTitledialog;
               this.valid = true;
             } else {
               return;
             }
-          }
+          },
         });
       } else {
         this.scheduleTitledialog = !this.scheduleTitledialog;
@@ -410,15 +417,15 @@ export default {
           message: `Changes that you made may not be saved. Are your sure you want to continue ?`,
           button: {
             no: "No",
-            yes: "Yes"
+            yes: "Yes",
           },
-          callback: confirm => {
+          callback: (confirm) => {
             if (confirm) {
               this.edit(index);
             } else {
               return;
             }
-          }
+          },
         });
       } else {
         this.edit(index);
@@ -429,7 +436,7 @@ export default {
       visit.closed = !visit.closed ? true : false;
       this.$store.dispatch("editVisit", {
         visit: visit,
-        filesData: null
+        filesData: null,
       });
     },
 
@@ -440,7 +447,7 @@ export default {
       const that = this;
       setTimeout(() => {
         that.event = {
-          ...that.currentVisit
+          ...that.currentVisit,
         };
         that.valid = true;
         that.scheduleTitledialog = !that.scheduleTitledialog;
@@ -455,7 +462,7 @@ export default {
     confirRemovingVisit() {
       this.$store.dispatch("removeVisit", {
         visitId: this.currentVisit.id,
-        patientId: this.$route.params.id
+        patientId: this.$route.params.id,
       });
       this.removingDialog = false;
     },
@@ -476,7 +483,7 @@ export default {
           visit: this.event,
           filesData: this.filesData,
           all: true,
-          patientId: this.$route.params.id
+          patientId: this.$route.params.id,
         });
         this.scheduleTitledialog = false;
         this.event = this.defaultEvent;
@@ -488,7 +495,7 @@ export default {
         this.event.patientId = this.$route.params.id;
         this.$store.dispatch("createVisit", {
           visit: this.event,
-          patientId: this.$route.params.id
+          patientId: this.$route.params.id,
         });
         this.forceOverlay = true;
         this.scheduleTitledialog = false;
@@ -505,7 +512,7 @@ export default {
       const id =
         timestamp +
         "xxxxxxxxxxxxxxxx"
-          .replace(/[x]/g, function() {
+          .replace(/[x]/g, function () {
             return ((Math.random() * 16) | 0).toString(16);
           })
           .toLowerCase();
@@ -520,23 +527,23 @@ export default {
           message: `Changes that you made may not be saved. Are your sure you want to continue ?`,
           button: {
             no: "No",
-            yes: "Yes"
+            yes: "Yes",
           },
-          callback: confirm => {
+          callback: (confirm) => {
             if (confirm) {
               this.$store.dispatch("exportVisits", this.patient);
             } else {
               return;
             }
-          }
+          },
         });
       } else {
         this.$store.dispatch("exportVisits", this.patient);
       }
-    }
+    },
   },
   mounted() {
     this.$store.dispatch("getVisits", this.$route.params.id);
-  }
+  },
 };
 </script>

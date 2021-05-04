@@ -185,14 +185,14 @@ namespace NeurekaApi.Controllers
         }
 
         [HttpPut("id:length(24)")]
-        public async Task<IActionResult> Update(string id, Visit Visit)
+        public async Task<IActionResult> Update(string id, Visit visit)
         {
             var p = _visitService.Get(id);
             if (p == null)
                 return NotFound();
 
-            await _visitService.Update(id, Visit);
-            _ = _hubContext.Clients.All.SendAsync("ReceiveNewUpdatedVisit", Visit);
+            await _visitService.Update(id, visit);
+            _ = _hubContext.Clients.All.SendAsync("ReceiveNewUpdatedVisit", visit);
             return Ok();
         }
 

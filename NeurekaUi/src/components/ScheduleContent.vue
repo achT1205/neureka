@@ -51,8 +51,6 @@
                 v-if="['text', 'number', 'email'].includes(subfield.type)"
                 :type="subfield.type"
                 v-model="subfield.model"
-                :readonly="subfield.readonly"
-                :disabled="subfield.disabled"
                 :prepend-inner-icon="subfield.icon"
                 :maxlength="subfield.maxlength"
                 @change="
@@ -88,8 +86,6 @@
                 v-else-if="subfield.type === 'decimal'"
                 :type="subfield.type"
                 v-money="subfield.option"
-                :readonly="subfield.readonly"
-                :disabled="subfield.disabled"
                 v-model.lazy="subfield.model"
                 @change="
                   $store.commit('SET_EDITING_INPROGRESS', true, { root: true })
@@ -123,8 +119,6 @@
                   subfield.title ? subfield.title : 'Field' + subfieldindex
                 "
                 v-model="subfield.model"
-                :readonly="subfield.readonly"
-                :disabled="subfield.disabled"
                 :maxlength="subfield.maxlength"
                 :prepend-inner-icon="subfield.icon"
                 @change="
@@ -207,8 +201,6 @@
               <v-checkbox
                 v-else-if="subfield.type === 'checkbox'"
                 v-model="subfield.model"
-                :readonly="subfield.readonly"
-                :disabled="subfield.disabled"
               >
                 <template v-slot:label>
                   <div>
@@ -235,8 +227,6 @@
               <v-switch
                 v-else-if="subfield.type === 'switch'"
                 v-model="subfield.model"
-                :readonly="subfield.readonly"
-                :disabled="subfield.disabled"
               >
                 <template v-slot:label>
                   <div>
@@ -267,8 +257,6 @@
                 <v-select
                   outlined
                   v-model="subfield.model"
-                  :readonly="subfield.readonly"
-                  :disabled="subfield.disabled"
                   :items="subfield.selects"
                   :label="subfield.title"
                   :placeholder="
@@ -359,8 +347,6 @@
                   />
                   <v-radio-group
                     v-model="subfield.model"
-                    :readonly="subfield.readonly"
-                    :disabled="subfield.disabled"
                     :row="subfield.radioDirection"
                   >
                     <v-radio
@@ -427,8 +413,6 @@
                 <v-file-input
                   outlined
                   v-model="subfield.model"
-                  :readonly="subfield.readonly"
-                  :disabled="subfield.disabled"
                   :placeholder="
                     subfield.multiple
                       ? 'Upload your documents'
@@ -881,7 +865,7 @@ export default {
     TimePickerField,
     draggable,
     VueEditor,
-    EditFieldOptions
+    EditFieldOptions,
   },
   directives: { money: VMoney },
   data() {
@@ -889,50 +873,50 @@ export default {
       formActions: [
         {
           title: "Save as Template",
-          icon: "favorite"
+          icon: "favorite",
         },
         {
           title: "Edit",
-          icon: "edit"
+          icon: "edit",
         },
         {
           title: "Remove",
-          icon: "delete"
+          icon: "delete",
         },
         {
           title: "Duplicate",
-          icon: "control_point_duplicate"
+          icon: "control_point_duplicate",
         },
         {
           titles: ["Patient can see", "Patient can not see"],
-          icons: ["visibility", "visibility_off"]
-        }
+          icons: ["visibility", "visibility_off"],
+        },
       ],
       fieldActions: [
         {
           title: "Edit",
-          icon: "edit"
+          icon: "edit",
         },
         {
           title: "Remove",
-          icon: "delete"
+          icon: "delete",
         },
         {
           title: "Duplicate",
-          icon: "control_point_duplicate"
+          icon: "control_point_duplicate",
         },
         {
           titles: ["Patient can see", "Patient can not see"],
-          icons: ["visibility", "visibility_off"]
+          icons: ["visibility", "visibility_off"],
         },
         {
           titles: ["Patient can edit ", "Patient can only read"],
-          icons: ["lock_open", "lock"]
+          icons: ["lock_open", "lock"],
         },
         {
           title: "Save as Template",
-          icon: "favorite"
-        }
+          icon: "favorite",
+        },
       ],
       snackbar: false,
       snackText: "",
@@ -965,7 +949,7 @@ export default {
         title: null,
         icon: "list_alt",
         isVisible: false,
-        fields: []
+        fields: [],
       },
       inputTypes: [
         {
@@ -979,7 +963,7 @@ export default {
           isVisible: false,
           readonly: false,
           disabled: false,
-          maxlength: 1000
+          maxlength: 1000,
         },
         {
           id: null,
@@ -992,7 +976,7 @@ export default {
           isVisible: false,
           readonly: false,
           disabled: false,
-          maxlength: 15
+          maxlength: 15,
         },
         {
           id: null,
@@ -1014,8 +998,8 @@ export default {
             masked: false /* doesn't work with directive */,
             min: -999999999,
             max: 999999999,
-            type: "currency"
-          }
+            type: "currency",
+          },
         },
         {
           id: null,
@@ -1028,7 +1012,7 @@ export default {
           isVisible: false,
           readonly: false,
           disabled: false,
-          maxlength: 300
+          maxlength: 300,
         },
         {
           id: null,
@@ -1040,7 +1024,7 @@ export default {
           model: null,
           isVisible: false,
           readonly: false,
-          disabled: false
+          disabled: false,
         },
         {
           id: null,
@@ -1052,7 +1036,7 @@ export default {
           model: null,
           isVisible: false,
           readonly: false,
-          disabled: false
+          disabled: false,
         },
         {
           id: null,
@@ -1064,7 +1048,7 @@ export default {
           model: null,
           isVisible: false,
           readonly: false,
-          disabled: false
+          disabled: false,
         },
         {
           id: null,
@@ -1076,7 +1060,7 @@ export default {
           model: null,
           isVisible: false,
           readonly: false,
-          disabled: false
+          disabled: false,
         },
         {
           id: null,
@@ -1089,7 +1073,7 @@ export default {
           isVisible: false,
           readonly: false,
           disabled: false,
-          maxlength: 2000
+          maxlength: 2000,
         },
         {
           id: null,
@@ -1102,7 +1086,7 @@ export default {
           isVisible: false,
           readonly: false,
           disabled: false,
-          maxlength: 2000
+          maxlength: 2000,
         },
         {
           id: null,
@@ -1116,7 +1100,7 @@ export default {
           isVisible: false,
           radios: [],
           readonly: false,
-          disabled: false
+          disabled: false,
         },
         {
           id: null,
@@ -1130,7 +1114,7 @@ export default {
           multiple: false,
           selects: [],
           readonly: false,
-          disabled: false
+          disabled: false,
         },
         {
           id: null,
@@ -1144,7 +1128,7 @@ export default {
           multiple: true,
           selects: [],
           readonly: false,
-          disabled: false
+          disabled: false,
         },
 
         {
@@ -1158,8 +1142,8 @@ export default {
           isVisible: false,
           multiple: false,
           readonly: false,
-          disabled: false
-        }
+          disabled: false,
+        },
       ],
       sessionName: "",
       dialog: false,
@@ -1167,20 +1151,19 @@ export default {
       fieldTemplateDialog: false,
       dragOptions: {
         animation: 0,
-        group: "inputs"
+        group: "inputs",
       },
       availableItemOptions: {
         group: {
           name: "inputs",
           pull: "clone",
-          put: false
+          put: false,
         },
-        sort: false
-      }
+        sort: false,
+      },
     };
   },
   created() {
-    debugger;
     this.$store.dispatch("getVisit", this.id);
   },
   watch: {
@@ -1193,15 +1176,15 @@ export default {
     },
     editingVisit(val) {
       this.$emit("isEditingVisit", val);
-    }
+    },
   },
   computed: {
     ...mapGetters(["currentVisit", "templates", "fieldtemplates"]),
     sessions() {
       return this.currentVisit.fields
-        ? this.currentVisit.fields.filter(s => s.type === "session")
+        ? this.currentVisit.fields.filter((s) => s.type === "session")
         : [];
-    }
+    },
   },
   methods: {
     customFilter(item, queryText) {
@@ -1223,14 +1206,14 @@ export default {
             index: index,
             subfieldindex: subfieldindex,
             id: this.uuid({}),
-            formdata: formdata
+            formdata: formdata,
           });
         }
       }
     },
     delefile(sessionIndex, fieldIndex, fileIndex) {
       const visit = {
-        ...this.currentVisit
+        ...this.currentVisit,
       };
       const fileInfo =
         visit.fields[sessionIndex].fields[fieldIndex].fileInfos[fileIndex];
@@ -1239,7 +1222,7 @@ export default {
         fieldIndex,
         fileIndex,
         visit,
-        fileInfo
+        fileInfo,
       });
     },
     ShoseTemplate(target) {
@@ -1253,7 +1236,7 @@ export default {
       visit.fields[index].fields[subfieldindex].model = val;
       this.$store.commit("SET_VISIT", visit);
       this.$store.commit("SET_EDITING_INPROGRESS", true, {
-        root: true
+        root: true,
       });
     },
     updateTime(index, subfieldindex, val) {
@@ -1261,7 +1244,7 @@ export default {
       visit.fields[index].fields[subfieldindex].model = val;
       this.$store.commit("SET_VISIT", visit);
       this.$store.commit("SET_EDITING_INPROGRESS", true, {
-        root: true
+        root: true,
       });
     },
     handleClone(item) {
@@ -1282,9 +1265,12 @@ export default {
           index
         ].fields[subfieldindex].isVisible;
       }
-      this.$store.commit("SET_VISIT", visit);
+      this.$store.dispatch("editVisit", {
+        visit: visit,
+        filesData: this.filesData,
+      });
       this.$store.commit("SET_EDITING_INPROGRESS", true, {
-        root: true
+        root: true,
       });
     },
     canOnlyRead(index, subfieldindex) {
@@ -1296,18 +1282,22 @@ export default {
           index
         ].fields[subfieldindex].readonly;
       }
-      this.$store.commit("SET_VISIT", visit);
+      this.$store.dispatch("editVisit", {
+        visit: visit,
+        filesData: this.filesData,
+      });
+
       this.$store.commit("SET_EDITING_INPROGRESS", true, {
-        root: true
+        root: false,
       });
     },
     addForm() {
       let form = {
-        ...this.defaultForm
+        ...this.defaultForm,
       };
       if (this.selectedTemplate) {
         form = {
-          ...this.templates.find(t => t.id === this.selectedTemplate)
+          ...this.templates.find((t) => t.id === this.selectedTemplate),
         };
         this.selectedTemplate = null;
       }
@@ -1317,7 +1307,7 @@ export default {
       visit.fields.push(form);
       this.$store.commit("SET_VISIT", visit);
       this.$store.commit("SET_EDITING_INPROGRESS", true, {
-        root: true
+        root: true,
       });
       this.active = null;
       this.fromDialog = false;
@@ -1327,7 +1317,7 @@ export default {
       visit.fields[index].fields[subfieldindex].radios.splice(radioIndex, 1);
       this.$store.commit("SET_VISIT", visit);
       this.$store.commit("SET_EDITING_INPROGRESS", true, {
-        root: true
+        root: true,
       });
     },
 
@@ -1354,30 +1344,34 @@ export default {
     remove(sessionIndex, fieldindex) {
       const visit = this.currentVisit;
       visit.fields[sessionIndex].fields.splice(fieldindex, 1);
-      this.$store.commit("SET_VISIT", visit);
+      this.$store.dispatch("editVisit", {
+        visit: visit,
+        filesData: this.filesData,
+      });
+
       this.$store.commit("SET_EDITING_INPROGRESS", true, {
-        root: true
+        root: false,
       });
     },
 
     duplicateForm(index, form) {
       const visit = this.currentVisit;
       const doble = {
-        ...form
+        ...form,
       };
       delete doble.id;
       doble.id = this.uuid(doble);
       visit.fields.splice(index + 1, 0, doble);
       this.$store.commit("SET_VISIT", visit);
       this.$store.commit("SET_EDITING_INPROGRESS", true, {
-        root: true
+        root: true,
       });
     },
 
     duplicateField(index, subfieldindex, subfield) {
       const visit = this.currentVisit;
       const doble = {
-        ...subfield
+        ...subfield,
       };
       delete doble.id;
       doble.id = this.uuid(doble);
@@ -1385,13 +1379,13 @@ export default {
       visit.fields[index].fields.splice(subfieldindex + 1, 0, doble);
       this.$store.commit("SET_VISIT", visit);
       this.$store.commit("SET_EDITING_INPROGRESS", true, {
-        root: true
+        root: true,
       });
     },
 
     saveAsFieldTemplate(template) {
       this.fieldTemplate = {
-        ...template
+        ...template,
       };
       this.fieldTemplate.modeld = null;
       this.fieldTemplateDialog = true;
@@ -1404,9 +1398,13 @@ export default {
         visit.fields[index].fields.length === 0
       ) {
         visit.fields.splice(index, 1);
-        this.$store.commit("SET_VISIT", visit);
+        this.$store.dispatch("editVisit", {
+          visit: visit,
+          filesData: this.filesData,
+        });
+
         this.$store.commit("SET_EDITING_INPROGRESS", true, {
-          root: true
+          root: false,
         });
       } else {
         this.sessionIndex = index;
@@ -1417,9 +1415,13 @@ export default {
     confirRemovingVisit() {
       const visit = this.currentVisit;
       visit.fields.splice(this.sessionIndex, 1);
-      this.$store.commit("SET_VISIT", visit);
+      this.$store.dispatch("editVisit", {
+        visit: visit,
+        filesData: this.filesData,
+      });
+
       this.$store.commit("SET_EDITING_INPROGRESS", true, {
-        root: true
+        root: false,
       });
       this.sessionIndex = null;
       this.removingDialog = false;
@@ -1433,19 +1435,19 @@ export default {
     edit(sessionIndex, field) {
       this.sessionIndex = sessionIndex;
       const visit = {
-        ...this.currentVisit
+        ...this.currentVisit,
       };
       this.subfieldindex = visit.fields[this.sessionIndex].fields.findIndex(
-        f => f.id === field.id
+        (f) => f.id === field.id
       );
       this.field = {
-        ...field
+        ...field,
       };
       this.dialog = !this.dialog;
     },
     closeDialog() {
       this.dialog = false;
-      setTimeout(function() {
+      setTimeout(function () {
         this.subfieldindex = null;
         this.field = null;
       }, 3000);
@@ -1455,12 +1457,12 @@ export default {
         this.currentSession.title = this.sessionName;
         const visit = this.currentVisit;
         const index = visit.fields.findIndex(
-          f => f.id === this.currentSession.id
+          (f) => f.id === this.currentSession.id
         );
         visit.fields[index].title = this.sessionName;
         this.$store.commit("SET_VISIT", visit);
         this.$store.commit("SET_EDITING_INPROGRESS", true, {
-          root: true
+          root: true,
         });
         this.sessionName = null;
         this.currentSession = null;
@@ -1470,18 +1472,18 @@ export default {
         if (field && field.id) {
           const visit = this.currentVisit;
           const fieldIndex = visit.fields[this.sessionIndex].fields.findIndex(
-            f => f.id === this.field.id
+            (f) => f.id === this.field.id
           );
           visit.fields[this.sessionIndex].fields[fieldIndex] = field;
           this.$store.commit("SET_VISIT", visit);
           this.$store.commit("SET_EDITING_INPROGRESS", true, {
-            root: true
+            root: true,
           });
           this.dialog = false;
           this.field = {};
         } else {
           const field = {
-            ...this.field
+            ...this.field,
           };
           delete field.id;
           field.id = this.uuid(field);
@@ -1489,7 +1491,7 @@ export default {
           visit.fields[this.sessionIndex].fields.push(field);
           this.$store.commit("SET_VISIT", visit);
           this.$store.commit("SET_EDITING_INPROGRESS", true, {
-            root: true
+            root: true,
           });
           this.dialog = false;
           this.field = {};
@@ -1499,7 +1501,7 @@ export default {
     saveVisitData() {
       this.$store.dispatch("editVisit", {
         visit: this.currentVisit,
-        filesData: this.filesData
+        filesData: this.filesData,
       });
       this.snackbar = true;
       this.snackText = "The data has been saved successfully !";
@@ -1507,9 +1509,9 @@ export default {
     },
     saveAsTemplate(template) {
       this.template = {
-        ...template
+        ...template,
       };
-      this.template.fields.forEach(f => {
+      this.template.fields.forEach((f) => {
         f.model = null;
         f.fileInfos = null;
         f.models = null;
@@ -1540,14 +1542,14 @@ export default {
       const key =
         timestamp +
         "xxxxxxxxxxxxxxxx"
-          .replace(/[x]/g, function() {
+          .replace(/[x]/g, function () {
             return ((Math.random() * 16) | 0).toString(16);
           })
           .toLowerCase();
       this.$set(e, "id", key);
       return e.id;
-    }
-  }
+    },
+  },
 };
 </script>
 

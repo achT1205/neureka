@@ -7,6 +7,11 @@ namespace NeurekaDAL.Models
 {
     public class Visit
     {
+        public Visit()
+        {
+            Fields = new List<Field>();
+        }
+
         [BsonId]
         [BsonRequired]
         [BsonRepresentation(BsonType.ObjectId)]
@@ -49,7 +54,7 @@ namespace NeurekaDAL.Models
 
         }
 
-        public IEnumerable<Field> Fields
+        public List<Field> Fields
         {
             get; set;
 
@@ -66,6 +71,15 @@ namespace NeurekaDAL.Models
 
     public class Field
     {
+        public Field()
+        {
+            Fields = new List<Field>();
+            Models = new List<string>();
+            Radios = new List<string>();
+            Selects = new List<string>();
+            FileInfos = new List<FileInfomation>();
+        }
+
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; set; }
@@ -84,7 +98,7 @@ namespace NeurekaDAL.Models
 
         public string Description { get; set; }
 
-        public IEnumerable<string> Models { get; set; }
+        public List<string> Models { get; set; }
 
         public bool RadioDirection { get; set; }
 
@@ -100,25 +114,25 @@ namespace NeurekaDAL.Models
 
         public Option Option { get; set; }
 
-        public IEnumerable<string> Radios
+        public List<string> Radios
         {
             get; set;
 
         }
 
-        public IEnumerable<string> Selects
+        public List<string> Selects
         {
             get; set;
 
         }
 
-        public IEnumerable<FileInfomation> FileInfos
+        public List<FileInfomation> FileInfos
         {
             get; set;
 
         }
 
-        public IEnumerable<Field> Fields
+        public List<Field> Fields
         {
             get; set;
 

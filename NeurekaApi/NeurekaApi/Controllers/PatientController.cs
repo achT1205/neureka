@@ -3,7 +3,9 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using NeurekaApi.Dtos;
+using NeurekaApi.Hubs;
 using NeurekaDAL.Models;
 using NeurekaService.Services;
 
@@ -17,11 +19,13 @@ namespace NeurekaApi.Controllers
         private readonly IPatientService _patientService;
         private readonly IVisitService _visitService;
         private readonly IMapper _mapper;
-        public PatientController(IPatientService patientService, IVisitService visitService, IMapper mapper)
+        private readonly IHubContext<NotificationHub> _hubContext;
+        public PatientController(IPatientService patientService, IVisitService visitService, IMapper mapper, IHubContext<NotificationHub> hubcontext)
         {
             _patientService = patientService;
             _visitService = visitService;
             _mapper = mapper;
+            _hubContext = hubcontext;
         }
 
         [HttpGet]
@@ -70,53 +74,6 @@ namespace NeurekaApi.Controllers
             return Ok();
         }
 
-        [Route("visits")]
-        [HttpPost]
-        public async Task<IActionResult> CreatePatientVisit(VisitDto visitDto)
-        {
-
-            var visit = _mapper.Map<Visit>(visitDto);
-            await _patientService.CreatePatientVisit(visit);
-            return Ok(CreatedAtRoute("Visit", new { id = visitDto.Id.ToString(), visitDto }));
-        }
-
-        [Route("visits/{id:length(24)}")]
-        [HttpPut]
-        public async Task<IActionResult> UpdatePatientVisit(string id, Visit Visit)
-        {
-            var p = _patientService.GetPatientVisit(id);
-            if (p == null)
-                return NotFound();
-
-            await _patientService.UpdatePatientVisit(id, Visit);
-            return Ok();
-        }
-
-        [Route("visits/{clientid:length(24)}/visits")]
-        [HttpDelete]
-        public async Task<IActionResult> DeletePatientVisit(string id)
-        {
-            var p = _patientService.GetPatientVisit(id);
-            if (p == null)
-                return NotFound();
-
-            await _patientService.RemovePatientVisit(id);
-
-            return Ok();
-        }
-
-
-        [Route("{clientid:length(24)}/visits")]
-        [HttpGet]
-        public async Task<IActionResult> GetVisits(string clientid)
-        {
-            var p = await _patientService.GetPatientVisitByPatientId(clientid);
-            if (p == null)
-                return NotFound();
-
-            return Ok(p);
-        }
-
 
         [Route("{clientid:length(24)}/openvisit")]
         [HttpGet]
@@ -130,15 +87,14 @@ namespace NeurekaApi.Controllers
         }
 
 
-        [Route("visits/{id:length(24)}")]
-        [HttpGet]
-        public async Task<IActionResult> GetVisit(string visitid)
+        [HttpPut("updatevisit")]
+        public async Task<IActionResult> UpdatePatientVisit(Visit visit)
         {
-            var p = await _patientService.GetPatientVisit(visitid);
-            if (p == null)
-                return NotFound();
+            await _patientService.UpdatePatientOpenVisit(visit);
+            _ = _hubContext.Clients.All.SendAsync("ReceiveNewUpdatedVisit", await _patientService.GetPatientOpenVisitByPatientId(visit.PatientId));
 
-            return Ok(p);
+
+            return Ok();
         }
     }
 }
