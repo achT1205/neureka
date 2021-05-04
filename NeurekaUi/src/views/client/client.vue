@@ -95,7 +95,10 @@
                   </label>
                 </v-col>
                 <v-col cols="12">
-                  <vue-editor v-if="!subfield.readonly" v-model="subfield.model" ></vue-editor>
+                  <vue-editor
+                    v-if="!subfield.readonly"
+                    v-model="subfield.model"
+                  ></vue-editor>
                   <div v-else v-html="subfield.model"></div>
                 </v-col>
               </v-row>
@@ -305,7 +308,7 @@ export default {
   data() {
     return {
       saving: false,
-      localVisit: {},
+      localVisit: {}
     };
   },
   watch: {
@@ -313,23 +316,23 @@ export default {
       if (val && val !== old) {
         this.localVisit = JSON.parse(JSON.stringify(val));
       }
-    },
+    }
   },
   directives: { money: VMoney },
   components: {
     DatePickerField,
     TimePickerField,
-    VueEditor,
+    VueEditor
   },
   computed: {
-    ...mapGetters(["clientVisit"]),
+    ...mapGetters(["clientVisit"])
   },
   methods: {
     updateDate(index, subfieldindex, val) {
       this.localVisit.fields[index].fields[subfieldindex].model = val;
       this.$store.commit("SET_CLIENT_VISIT", this.localVisit);
       this.$store.commit("SET_EDITING_INPROGRESS", true, {
-        root: true,
+        root: true
       });
     },
 
@@ -337,20 +340,20 @@ export default {
       this.localVisit.fields[index].fields[subfieldindex].model = val;
       this.$store.commit("SET_VISIT", this.localVisit);
       this.$store.commit("SET_EDITING_INPROGRESS", true, {
-        root: true,
+        root: true
       });
     },
     save() {
       const visit = this.localVisit;
       this.$store.dispatch("updateClientVisit", visit);
       this.$store.commit("SET_EDITING_INPROGRESS", false, {
-        root: true,
+        root: true
       });
     },
     cancel() {
       const visit = this.clientVisit;
       this.localVisit = JSON.parse(JSON.stringify(visit));
-    },
-  },
+    }
+  }
 };
 </script>

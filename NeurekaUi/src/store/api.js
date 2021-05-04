@@ -194,7 +194,6 @@ export const editVisit = v =>
       .catch(error => reject(error));
   });
 
-
 export const createtemplate = template =>
   new Promise((resolve, reject) => {
     apiClient
@@ -276,23 +275,21 @@ export const getVisit = id =>
   });
 
 export const getClientVisit = id =>
-new Promise((resolve, reject) => {
-  apiClient
-    .get(`/Patient/${id}/openvisit`)
-    .then(response => resolve(response.data))
-    .catch(error => reject(error));
-});
-
+  new Promise((resolve, reject) => {
+    apiClient
+      .get(`/Patient/${id}/openvisit`)
+      .then(response => resolve(response.data))
+      .catch(error => reject(error));
+  });
 
 export const updateClientVisit = v =>
-new Promise((resolve, reject) => {
-  debugger;
-  apiClient
-    .put(`/Patient/updatevisit`, v)
-    .then(response => resolve(response.data))
-    .catch(error => reject(error));
-});
-
+  new Promise((resolve, reject) => {
+    debugger;
+    apiClient
+      .put(`/Patient/updatevisit`, v)
+      .then(response => resolve(response.data))
+      .catch(error => reject(error));
+  });
 
 export const deleteFile = fileName =>
   new Promise((resolve, reject) => {

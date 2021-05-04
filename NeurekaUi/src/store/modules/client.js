@@ -7,7 +7,7 @@ const ClientModule = {
   mutations: {
     SET_CLIENT_VISIT: (state, payload) => {
       console.log(payload);
-      state.clientVisit = payload
+      state.clientVisit = payload;
     }
   },
   actions: {
@@ -20,7 +20,7 @@ const ClientModule = {
       updateClientVisit(payload)
         .then(data => commit("SET_CLIENT_VISIT", data))
         .catch(() => commit("SET_CLIENT_VISIT", {}));
-    },
+    }
   },
   getters: {
     clientVisit: state => state.clientVisit

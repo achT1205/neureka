@@ -98,7 +98,7 @@ export default {
   data() {
     return {
       fromDateMenu: false,
-      fromDateVal: this.subfield.model,
+      fromDateVal: this.subfield.model
     };
   },
   props: [
@@ -113,12 +113,12 @@ export default {
     "duplicateField",
     "client",
     "saveAsFieldTemplate",
-    "canOnlyRead",
+    "canOnlyRead"
   ],
   watch: {
     fromDateVal(val) {
       this.$emit("updateDate", this.index, this.subfieldindex, val);
-    },
-  },
+    }
+  }
 };
 </script>

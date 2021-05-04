@@ -98,7 +98,7 @@ export default {
   data() {
     return {
       fromTimeMenu: false,
-      fromTimeVal: this.subfield.model,
+      fromTimeVal: this.subfield.model
     };
   },
   props: [
@@ -113,17 +113,17 @@ export default {
     "duplicateField",
     "client",
     "saveAsFieldTemplate",
-    "canOnlyRead",
+    "canOnlyRead"
   ],
   watch: {
     fromTimeVal(val) {
       this.$emit("updateDate", this.index, this.subfieldindex, val);
-    },
+    }
   },
   methods: {
     handelTimeChage() {
       this.fromTimeMenu = false;
-    },
-  },
+    }
+  }
 };
 </script>

@@ -57,7 +57,7 @@ export default {
 
       this.connection.on("ReceiveNewUpdatedVisit", visit => {
         console.log("updated visit", visit);
-        this.$store.dispatch("getVisits", visit.patientId)
+        this.$store.dispatch("getVisits", visit.patientId);
       });
     }
   },

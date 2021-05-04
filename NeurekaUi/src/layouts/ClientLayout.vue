@@ -17,19 +17,19 @@ import ClientAppBar from "@/components/ClientAppBar";
 import { mapGetters } from "vuex";
 export default {
   components: {
-    ClientAppBar,
+    ClientAppBar
   },
   computed: {
-    ...mapGetters(["authenticatedUser"]),
+    ...mapGetters(["authenticatedUser"])
   },
   props: {
-    source: String,
+    source: String
   },
   data: () => ({
     drawer: null,
     dialog: false,
     currentPatient: null,
-    search: null,
+    search: null
   }),
   created() {
     this.$store.dispatch("getClientVisit", this.$route.params.id);
@@ -49,16 +49,16 @@ export default {
         .then(() => {
           console.log("hub notification", "success connection");
         })
-        .catch((error) => {
+        .catch(error => {
           console.log(error.toString());
         });
     },
     getRealTimeData() {
-      this.connection.on("ReceiveNewUpdatedVisit", (visit) => {
+      this.connection.on("ReceiveNewUpdatedVisit", visit => {
         if (visit && visit.id)
           this.$store.dispatch("getClientVisit", this.$route.params.id);
       });
-    },
-  },
+    }
+  }
 };
 </script>
