@@ -46,7 +46,7 @@ const routes = [
         path: "/clients/:id",
         component: () => import("@/views/client/client.vue"),
         name: "client"
-      },
+      }
     ]
   },
   {
@@ -123,7 +123,6 @@ const router = new VueRouter({
 });
 
 router.beforeEach((to, from, next) => {
-
   const authenticated = localStorage.user
     ? JSON.parse(localStorage.user)
     : null;
@@ -132,12 +131,13 @@ router.beforeEach((to, from, next) => {
     store.commit("SET_EDITING_INPROGRESS", false);
     next();
     return;
+  } else if (
+    authenticated &&
+    authenticated.user.role === "patient" &&
+    to.name !== "client"
+  ) {
+    next({ name: "client", params: { id: authenticated.user.id } });
   }
-
-  else if (authenticated && authenticated.user.role === "patient" && to.name !== "client") {
-    next({ name: "client", params: { id: authenticated.user.id } })
-  }
-
 
   if (to.name === "login" && authenticated) next({ name: "patients" });
   else if (
@@ -168,8 +168,6 @@ router.beforeEach((to, from, next) => {
       });
     }
   }
-
-
 });
 
 export default router;

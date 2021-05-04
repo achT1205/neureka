@@ -76,8 +76,7 @@ const UserModule = {
           }
           if (data.user.role === "patient") {
             router.push(`/clients/${data.user.id}`);
-          }
-          else {
+          } else {
             router.push("/");
           }
         })

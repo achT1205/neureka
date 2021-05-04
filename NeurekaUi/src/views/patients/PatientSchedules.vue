@@ -67,10 +67,10 @@
                       color="black"
                       v-on="on"
                       @click="OpenOrcloseVisit(index)"
-                      >{{!visit.closed ? "lock" :"lock_open"}} </v-icon
-                    >
+                      >{{ !visit.closed ? "lock" : "lock_open" }}
+                    </v-icon>
                   </template>
-                 {{!visit.closed ? "Close this visit" :"Open this vist"}}
+                  {{ !visit.closed ? "Close this visit" : "Open this vist" }}
                 </v-tooltip>
                 <v-tooltip bottom>
                   <template v-slot:activator="{ on }">
@@ -424,12 +424,12 @@ export default {
         this.edit(index);
       }
     },
-    OpenOrcloseVisit(index){
+    OpenOrcloseVisit(index) {
       const visit = this.visits[index];
-      visit.closed = !visit.closed  ? true : false;;
+      visit.closed = !visit.closed ? true : false;
       this.$store.dispatch("editVisit", {
         visit: visit,
-        filesData: null,
+        filesData: null
       });
     },
 

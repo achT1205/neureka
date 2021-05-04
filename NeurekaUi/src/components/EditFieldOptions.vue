@@ -126,10 +126,7 @@
             </v-col>
           </v-row>
         </v-flex>
-        <v-row
-          class="mx-2"
-          v-if="localfield.type === 'decimal'"
-        >
+        <v-row class="mx-2" v-if="localfield.type === 'decimal'">
           <v-col class="align-center justify-space-between" cols="6">
             <v-text-field
               outlined
@@ -158,10 +155,7 @@
               placeholder="Precision"
             ></v-text-field>
           </v-col>
-          <v-col
-            class="align-center justify-space-between"
-            cols="4"
-          >
+          <v-col class="align-center justify-space-between" cols="4">
             <v-select
               outlined
               v-model="localfield.option.prefix"
@@ -172,10 +166,7 @@
               placeholder="Shose a symbole"
             ></v-select>
           </v-col>
-          <v-col
-            class="align-center justify-space-between"
-            cols="4"
-          >
+          <v-col class="align-center justify-space-between" cols="4">
             <v-select
               outlined
               v-model="localfield.option.suffix"
@@ -208,51 +199,51 @@ export default {
         { name: "USD", id: " $ " },
         { name: "EUR", id: " € " },
         { name: "GBP", id: " £ " },
-        { name: "Kg", id: " Kg " },
+        { name: "Kg", id: " Kg " }
       ],
       cols: [
         {
           id: "12",
-          title: "full width",
+          title: "full width"
         },
         {
           id: "6",
-          title: "1/2",
+          title: "1/2"
         },
         {
           id: "4",
-          title: "1/3",
+          title: "1/3"
         },
         {
           id: "3",
-          title: "1/4",
+          title: "1/4"
         },
         {
           id: "2",
-          title: "1/6",
+          title: "1/6"
         },
         {
           id: "1",
-          title: "1/12",
-        },
+          title: "1/12"
+        }
       ],
       localfield: {},
       radioDirections: [
         {
           id: false,
-          title: "column",
+          title: "column"
         },
         {
           id: true,
-          title: "row",
-        },
-      ],
+          title: "row"
+        }
+      ]
     };
   },
   watch: {
     field(val, old) {
       if (val && val != old) this.localfield = this.field;
-    },
+    }
   },
   mounted() {
     this.localfield = JSON.parse(JSON.stringify(this.field));
@@ -272,7 +263,7 @@ export default {
       const key =
         timestamp +
         "xxxxxxxxxxxxxxxx"
-          .replace(/[x]/g, function () {
+          .replace(/[x]/g, function() {
             return ((Math.random() * 16) | 0).toString(16);
           })
           .toLowerCase();
@@ -285,7 +276,7 @@ export default {
     },
     removeRadioItem(item) {
       this.localfield.selects.splice(this.localfield.radios.indexOf(item), 1);
-    },
-  },
+    }
+  }
 };
 </script>

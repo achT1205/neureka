@@ -1,6 +1,6 @@
 <template>
   <v-main>
-    <client-app-bar/>
+    <client-app-bar />
     <v-container fluid>
       <v-row>
         <v-col>
@@ -29,6 +29,6 @@ export default {
     dialog: false,
     currentPatient: null,
     search: null
-  }),
+  })
 };
 </script>
