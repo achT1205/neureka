@@ -127,47 +127,35 @@ router.beforeEach((to, from, next) => {
     ? JSON.parse(localStorage.user)
     : null;
 
-  if (to.name === "login" && !store.getters.authenticatedUser) {
-    store.commit("SET_EDITING_INPROGRESS", false);
+  if (!store.getters.editingInprogress) {
     next();
-    return;
-  } else if (
-    authenticated &&
-    authenticated.user.role === "patient" &&
-    to.name !== "client"
-  ) {
-    next({ name: "client", params: { id: authenticated.user.id } });
+  } else {
+    Vue.$confirm({
+      message: `Changes that you made may not be saved. Are your sure you want to continue ?`,
+      button: {
+        no: "No",
+        yes: "Yes"
+      },
+      callback: confirm => {
+        if (confirm) {
+          store.commit("SET_EDITING_INPROGRESS", false);
+          next();
+        } else {
+          next(false);
+        }
+      }
+    });
   }
 
-  if (to.name === "login" && authenticated) next({ name: "patients" });
-  else if (
-    to.name !== "change-password" &&
-    authenticated &&
-    !authenticated.user.changePassword
-  )
-    next({ name: "change-password" });
-  else if (to.name !== "login" && !authenticated) next({ name: "login" });
-  else {
-    if (!store.getters.editingInprogress) {
-      next();
-    } else {
-      Vue.$confirm({
-        message: `Changes that you made may not be saved. Are your sure you want to continue ?`,
-        button: {
-          no: "No",
-          yes: "Yes"
-        },
-        callback: confirm => {
-          if (confirm) {
-            store.commit("SET_EDITING_INPROGRESS", false);
-            next();
-          } else {
-            next(false);
-          }
-        }
-      });
-    }
-  }
+  if (authenticated && authenticated.user.role && !authenticated.user.changePassword && to.name !== "change-password") next({ name: "change-password", });
+
+  if (authenticated && authenticated.user.role === "patient" && authenticated.user.changePassword && to.name !== "client") next({ name: "client", params: { id: authenticated.user.id } });
+
+  if ((to.name === "login") && authenticated && authenticated.user.role === "admin" && authenticated.user.changePassword) next({ name: "patients" });
+
+  if ((to.name === "login") && authenticated && authenticated.user.role === "patient" && authenticated.user.changePassword) next({ name: "client", params: { id: authenticated.user.id } });
+
+  if ((!authenticated || !authenticated.user || !authenticated.user.role) && to.name !== "login") next({ name: "login" });
 });
 
 export default router;

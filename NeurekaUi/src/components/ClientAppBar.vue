@@ -8,9 +8,9 @@
     <v-spacer></v-spacer>
     <v-spacer></v-spacer>
     <div class="d-flex align-center">
-      <div class="avatar-info">
+      <div v-if="authenticatedUser && authenticatedUser.user" class="avatar-info">
         <div class="avatar-name">
-          <span>
+          <span >
             {{ authenticatedUser.user.firstName }}
             {{ authenticatedUser.user.lastName }}
           </span>
