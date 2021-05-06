@@ -1,7 +1,6 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
 import DocLayout from "@/layouts/DoctorLayout.vue";
-// import AdminLayout from "@/layouts/AdminLayout.vue";
 import store from "@/store";
 
 Vue.use(VueRouter);
@@ -87,11 +86,6 @@ const routes = [
         component: () => import("../views/admin/Fields.vue"),
         name: "Fields"
       },
-      /*{
-        path: "fields/:id",
-        component: () => import("../views/admin/Field.vue"),
-        name: "Fields"
-      },*/
       {
         path: "forms/:id",
         component: () => import("../views/admin/FormFields.vue"),
@@ -147,15 +141,43 @@ router.beforeEach((to, from, next) => {
     });
   }
 
-  if (authenticated && authenticated.user.role && !authenticated.user.changePassword && to.name !== "change-password") next({ name: "change-password", });
+  if (
+    authenticated &&
+    authenticated.user.role &&
+    !authenticated.user.changePassword &&
+    to.name !== "change-password"
+  )
+    next({ name: "change-password" });
 
-  if (authenticated && authenticated.user.role === "patient" && authenticated.user.changePassword && to.name !== "client") next({ name: "client", params: { id: authenticated.user.id } });
+  if (
+    authenticated &&
+    authenticated.user.role === "patient" &&
+    authenticated.user.changePassword &&
+    to.name !== "client"
+  )
+    next({ name: "client", params: { id: authenticated.user.id } });
 
-  if ((to.name === "login") && authenticated && authenticated.user.role === "admin" && authenticated.user.changePassword) next({ name: "patients" });
+  if (
+    to.name === "login" &&
+    authenticated &&
+    authenticated.user.role === "admin" &&
+    authenticated.user.changePassword
+  )
+    next({ name: "patients" });
 
-  if ((to.name === "login") && authenticated && authenticated.user.role === "patient" && authenticated.user.changePassword) next({ name: "client", params: { id: authenticated.user.id } });
+  if (
+    to.name === "login" &&
+    authenticated &&
+    authenticated.user.role === "patient" &&
+    authenticated.user.changePassword
+  )
+    next({ name: "client", params: { id: authenticated.user.id } });
 
-  if ((!authenticated || !authenticated.user || !authenticated.user.role) && to.name !== "login") next({ name: "login" });
+  if (
+    (!authenticated || !authenticated.user || !authenticated.user.role) &&
+    to.name !== "login"
+  )
+    next({ name: "login" });
 });
 
 export default router;
