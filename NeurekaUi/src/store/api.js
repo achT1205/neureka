@@ -160,12 +160,7 @@ export const createVisit = v =>
     });
 
     apiClient
-      .post("Visit", v)
-      .then(response => resolve(response.data.value))
-      .catch(error => reject(error));
-
-    apiClient
-      .post("Patient/visits", visit)
+      .post("Visit", visit)
       .then(response => resolve(response.data.value))
       .catch(error => reject(error));
   });

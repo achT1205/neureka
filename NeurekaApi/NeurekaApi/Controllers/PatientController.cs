@@ -99,8 +99,7 @@ namespace NeurekaApi.Controllers
             notification.VisitTitle = visit.Title;
             notification.PatientId = userId;
             notification.FromRole = "patient";
-            if (visit.Published)
-                _ = _hubContext.Clients.All.SendAsync("ReceiveNewUpdatedVisit", notification);
+            _ = _hubContext.Clients.All.SendAsync("ReceiveNewUpdatedVisit", notification);
 
             return Ok();
         }

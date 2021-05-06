@@ -17,19 +17,19 @@ import AppBar from "@/components/AppBar";
 import { mapGetters } from "vuex";
 export default {
   components: {
-    AppBar
+    AppBar,
   },
   computed: {
-    ...mapGetters(["patients", "authenticatedUser"])
+    ...mapGetters(["patients", "authenticatedUser"]),
   },
   props: {
-    source: String
+    source: String,
   },
   data: () => ({
     drawer: null,
     dialog: false,
     currentPatient: null,
-    search: null
+    search: null,
   }),
   methods: {
     redirectTo(to) {
@@ -45,23 +45,26 @@ export default {
         .then(() => {
           console.log("hub notification", "success connection");
         })
-        .catch(error => {
+        .catch((error) => {
           console.log(error.toString());
         });
     },
     getRealTimeData() {
-      this.connection.on("ReceiveAddedVisit", visit => {
+      this.connection.on("ReceiveAddedVisit", (visit) => {
         console.log("added visit", visit);
         this.$store.commit("ADD_NEW_TO_LIST", visit);
       });
 
-      this.connection.on("ReceiveNewUpdatedVisit", notification => {
-        if (notification.FromId != this.authenticatedUser.id)
+      this.connection.on("ReceiveNewUpdatedVisit", (notification) => {
+        if (notification.FromId != this.authenticatedUser.user.id) {
           this.$store.commit("SET_NOTIFICATION", notification);
-        if (notification && notification.patientId)
-          this.$store.dispatch("getVisits", notification.patientId);
+        }
+        if (notification && notification.patientId) {
+          //this.$store.dispatch("getVisits", notification.patientId);
+          this.$store.dispatch("getVisit", notification.visitId);
+        }
       });
-    }
+    },
   },
   created() {
     this.$store.dispatch("getPatients");
@@ -76,6 +79,6 @@ export default {
       ? JSON.parse(localStorage.notifications)
       : [];
     this.$store.commit("SET_NOTIFICATIONS", notifications);
-  }
+  },
 };
 </script>

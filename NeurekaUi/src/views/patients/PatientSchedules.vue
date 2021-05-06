@@ -341,7 +341,10 @@ export default {
     },
     visits(val, old) {
       if (val && old !== val) {
-        this.tab = val.length - 1;
+        if(val.length > old.length)
+        {
+          this.tab = val.length - 1;
+        }
       }
     },
     scheduleTitledialog(val) {

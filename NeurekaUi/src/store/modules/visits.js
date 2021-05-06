@@ -12,9 +12,11 @@ import {
 const VisitModule = {
   state: () => ({
     visits: [],
-    currentVisit: {}
+    currentVisit: {},
+    endEditing : false,
   }),
   mutations: {
+    SET_END_EDITING: (state, payload) => (state.endEditing = payload),
     SET_VISITS: (state, payload) => (state.visits = payload),
     SET_VISIT: (state, payload) => (state.currentVisit = payload),
     ADD_VISIT: (state, payload) => state.visits.push(payload),
@@ -63,9 +65,11 @@ const VisitModule = {
         editVisit(visit).then(() => {
           if (all) {
             dispatch("getVisits", patientId);
+            commit("SET_END_EDITING", true)
           } else {
             commit("SET_EDITING_INPROGRESS", false, { root: true });
             dispatch("getVisit", visit.id);
+            commit("SET_END_EDITING", true)
           }
         });
       } else {
@@ -95,6 +99,7 @@ const VisitModule = {
                 .model;
             }
             editVisit(visit).then(() => dispatch("getVisit", visit.id));
+            commit("SET_END_EDITING", true)
 
             //fileInfos.push(fileInfo);
 
@@ -143,7 +148,8 @@ const VisitModule = {
   },
   getters: {
     visits: state => state.visits,
-    currentVisit: state => state.currentVisit
+    currentVisit: state => state.currentVisit,
+    endEditing : state => state.endEditing
   }
 };
 
