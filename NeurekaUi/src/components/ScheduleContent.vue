@@ -741,7 +741,7 @@
     <v-flex v-if="currentVisit" class="full-flex-width">
       <v-alert
         v-if="currentVisit.fields && currentVisit.fields.length === 0"
-        class="full-flex-width"
+        class="full-flex-width text-center"
         color="warning"
         style="color: white"
       >

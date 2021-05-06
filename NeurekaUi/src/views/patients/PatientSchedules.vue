@@ -105,7 +105,7 @@
             </v-tabs-items>
           </template>
           <template v-else>
-            <v-alert color="primary" class="mb-0" style="color: white">
+            <v-alert color="primary text-center" class="mb-0" style="color: white">
               There is currently no visit for
               <strong v-if="patient"
                 >{{ patient.firstName }} {{ patient.lastName }}

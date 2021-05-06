@@ -39,4 +39,8 @@ export default {
 </script>
 <style lang="scss">
 @import "@/assets/scss/template.scss";
+
+.text-center {
+  text-align: center;
+}
 </style>

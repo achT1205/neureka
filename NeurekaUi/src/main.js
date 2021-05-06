@@ -5,10 +5,8 @@ import router from "./router";
 import store from "./store";
 import vuetify from "./plugins/vuetify";
 import VueConfirmDialog from "vue-confirm-dialog";
-import "./plugins/base";
 import "./plugins/chartist";
 import "./plugins/vee-validate";
-//import VuetifyMoney from "vuetify-money";
 import money from "v-money";
 
 Vue.use(VueConfirmDialog);
@@ -17,7 +15,6 @@ const VueScrollTo = require("vue-scrollto");
 
 Vue.config.productionTip = false;
 Vue.use(VueScrollTo);
-//Vue.use(VuetifyMoney);
 Vue.use(money, { precision: 4 });
 new Vue({
   router,
