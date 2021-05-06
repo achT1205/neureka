@@ -726,7 +726,7 @@
       class="mt-5 d-flex justify-end"
       v-if="currentVisit && currentVisit.fields && currentVisit.fields.length"
     >
-      <v-btn class="ma-2" color="primary" @click="saveVisitData">Save</v-btn>
+      <v-btn class="ma-2" color="primary" @click="saveVisitData">Publish</v-btn>
     </div>
 
     <v-snackbar
@@ -1234,7 +1234,11 @@ export default {
     updateDate(index, subfieldindex, val) {
       const visit = this.currentVisit;
       visit.fields[index].fields[subfieldindex].model = val;
-      this.$store.commit("SET_VISIT", visit);
+      visit.published = false;
+      this.$store.dispatch("editVisit", {
+        visit: visit,
+        filesData: null
+      });
       this.$store.commit("SET_EDITING_INPROGRESS", true, {
         root: true
       });
@@ -1242,7 +1246,11 @@ export default {
     updateTime(index, subfieldindex, val) {
       const visit = this.currentVisit;
       visit.fields[index].fields[subfieldindex].model = val;
-      this.$store.commit("SET_VISIT", visit);
+      visit.published = false;
+      this.$store.dispatch("editVisit", {
+        visit: visit,
+        filesData: null
+      });
       this.$store.commit("SET_EDITING_INPROGRESS", true, {
         root: true
       });
@@ -1265,6 +1273,7 @@ export default {
           index
         ].fields[subfieldindex].isVisible;
       }
+      visit.published = false;
       this.$store.dispatch("editVisit", {
         visit: visit,
         filesData: this.filesData
@@ -1282,6 +1291,7 @@ export default {
           index
         ].fields[subfieldindex].readonly;
       }
+      visit.published = false;
       this.$store.dispatch("editVisit", {
         visit: visit,
         filesData: this.filesData
@@ -1305,7 +1315,11 @@ export default {
       const visit = this.currentVisit;
       if (!visit.fields) visit.fields = [];
       visit.fields.push(form);
-      this.$store.commit("SET_VISIT", visit);
+      visit.published = false;
+      this.$store.dispatch("editVisit", {
+        visit: visit,
+        filesData: null
+      });
       this.$store.commit("SET_EDITING_INPROGRESS", true, {
         root: true
       });
@@ -1315,7 +1329,11 @@ export default {
     removeRadio(index, subfieldindex, radioIndex) {
       const visit = { ...this.currentVisit };
       visit.fields[index].fields[subfieldindex].radios.splice(radioIndex, 1);
-      this.$store.commit("SET_VISIT", visit);
+      visit.published = false;
+      this.$store.dispatch("editVisit", {
+        visit: visit,
+        filesData: null
+      });
       this.$store.commit("SET_EDITING_INPROGRESS", true, {
         root: true
       });
@@ -1333,7 +1351,11 @@ export default {
       visit.fields[this.sessionIndex].fields[this.subfieldindex].radios[
         this.radioIndex
       ] = this.radioTitle;
-      this.$store.commit("SET_VISIT", visit);
+      visit.published = false;
+      this.$store.dispatch("editVisit", {
+        visit: visit,
+        filesData: null
+      });
       this.radioTitle = null;
       this.sessionIndex = null;
       this.subfieldindex = null;
@@ -1344,6 +1366,7 @@ export default {
     remove(sessionIndex, fieldindex) {
       const visit = this.currentVisit;
       visit.fields[sessionIndex].fields.splice(fieldindex, 1);
+      visit.published = false;
       this.$store.dispatch("editVisit", {
         visit: visit,
         filesData: this.filesData
@@ -1362,7 +1385,11 @@ export default {
       delete doble.id;
       doble.id = this.uuid(doble);
       visit.fields.splice(index + 1, 0, doble);
-      this.$store.commit("SET_VISIT", visit);
+      visit.published = false;
+      this.$store.dispatch("editVisit", {
+        visit: visit,
+        filesData: null
+      });
       this.$store.commit("SET_EDITING_INPROGRESS", true, {
         root: true
       });
@@ -1377,7 +1404,11 @@ export default {
       doble.id = this.uuid(doble);
 
       visit.fields[index].fields.splice(subfieldindex + 1, 0, doble);
-      this.$store.commit("SET_VISIT", visit);
+      visit.published = false;
+      this.$store.dispatch("editVisit", {
+        visit: visit,
+        filesData: null
+      });
       this.$store.commit("SET_EDITING_INPROGRESS", true, {
         root: true
       });
@@ -1398,6 +1429,7 @@ export default {
         visit.fields[index].fields.length === 0
       ) {
         visit.fields.splice(index, 1);
+        visit.published = false;
         this.$store.dispatch("editVisit", {
           visit: visit,
           filesData: this.filesData
@@ -1415,6 +1447,7 @@ export default {
     confirRemovingVisit() {
       const visit = this.currentVisit;
       visit.fields.splice(this.sessionIndex, 1);
+      visit.published = false;
       this.$store.dispatch("editVisit", {
         visit: visit,
         filesData: this.filesData
@@ -1460,7 +1493,11 @@ export default {
           f => f.id === this.currentSession.id
         );
         visit.fields[index].title = this.sessionName;
-        this.$store.commit("SET_VISIT", visit);
+        visit.published = false;
+        this.$store.dispatch("editVisit", {
+          visit: visit,
+          filesData: null
+        });
         this.$store.commit("SET_EDITING_INPROGRESS", true, {
           root: true
         });
@@ -1475,7 +1512,11 @@ export default {
             f => f.id === this.field.id
           );
           visit.fields[this.sessionIndex].fields[fieldIndex] = field;
-          this.$store.commit("SET_VISIT", visit);
+          visit.published = false;
+          this.$store.dispatch("editVisit", {
+            visit: visit,
+            filesData: null
+          });
           this.$store.commit("SET_EDITING_INPROGRESS", true, {
             root: true
           });
@@ -1489,7 +1530,11 @@ export default {
           field.id = this.uuid(field);
           const visit = this.currentVisit;
           visit.fields[this.sessionIndex].fields.push(field);
-          this.$store.commit("SET_VISIT", visit);
+          visit.published = false;
+          this.$store.dispatch("editVisit", {
+            visit: visit,
+            filesData: null
+          });
           this.$store.commit("SET_EDITING_INPROGRESS", true, {
             root: true
           });
@@ -1499,8 +1544,10 @@ export default {
       }
     },
     saveVisitData() {
+      const visit = { ...this.currentVisit };
+      visit.published = true;
       this.$store.dispatch("editVisit", {
-        visit: this.currentVisit,
+        visit: visit,
         filesData: this.filesData
       });
       this.snackbar = true;

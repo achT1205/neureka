@@ -39,7 +39,9 @@
       >
     </v-toolbar-items>
     <v-spacer></v-spacer>
+
     <div class="d-flex align-center">
+      <notifications />
       <div class="avatar-info">
         <div class="avatar-name">
           <span>
@@ -90,9 +92,7 @@
             <v-list-item-icon class="ml-0 mr-2">
               <v-icon>person</v-icon>
             </v-list-item-icon>
-            <v-list-item-title>
-              Profile
-            </v-list-item-title>
+            <v-list-item-title> Profile </v-list-item-title>
           </v-list-item>
           <v-divider></v-divider>
           <v-list-item @click="logout">
@@ -108,15 +108,20 @@
 </template>
 
 <script>
+import Notifications from "@/components/Notifications.vue";
 import { mapGetters } from "vuex";
 export default {
+  components: {
+    Notifications
+  },
   data() {
     return {
-      menu: false
+      menu: false,
+      notificationMenu: false
     };
   },
   computed: {
-    ...mapGetters(["authenticatedUser", "editingInprogress"])
+    ...mapGetters(["authenticatedUser", "editingInprogress", "notifications"])
   },
   methods: {
     redirectTo(to) {
@@ -146,6 +151,7 @@ export default {
 
 <style lang="scss" scoped>
 .avatar-info {
+  margin-left: 15px;
   color: #80bbbd;
 
   .avatar-name {

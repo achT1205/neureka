@@ -55,9 +55,11 @@ export default {
         this.$store.commit("ADD_NEW_TO_LIST", visit);
       });
 
-      this.connection.on("ReceiveNewUpdatedVisit", visit => {
-        console.log("updated visit", visit);
-        this.$store.dispatch("getVisits", visit.patientId);
+      this.connection.on("ReceiveNewUpdatedVisit", notification => {
+        if (notification.FromId != this.authenticatedUser.id)
+          this.$store.commit("SET_NOTIFICATION", notification);
+        if (notification && notification.patientId)
+          this.$store.dispatch("getVisits", notification.patientId);
       });
     }
   },
@@ -70,6 +72,10 @@ export default {
   },
   mounted() {
     this.getRealTimeData();
+    const notifications = localStorage.notifications
+      ? JSON.parse(localStorage.notifications)
+      : [];
+    this.$store.commit("SET_NOTIFICATIONS", notifications);
   }
 };
 </script>

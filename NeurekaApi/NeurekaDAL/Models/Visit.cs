@@ -66,6 +66,12 @@ namespace NeurekaDAL.Models
 
         }
 
+        public bool Published
+        {
+            get; set;
+
+        }
+
 
     }
 

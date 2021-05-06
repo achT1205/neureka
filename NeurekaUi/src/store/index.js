@@ -6,6 +6,7 @@ import TemplateModule from "./modules/templates";
 import EventModule from "./modules/events";
 import UserModule from "./modules/users";
 import ClientModule from "./modules/client";
+import NotificationModule from "./modules/notifications";
 
 Vue.use(Vuex);
 
@@ -27,6 +28,7 @@ export default new Vuex.Store({
     TemplateModule,
     EventModule,
     UserModule,
-    ClientModule
+    ClientModule,
+    NotificationModule
   }
 });

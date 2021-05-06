@@ -23,13 +23,15 @@ namespace NeurekaApi.Controllers
     public class VisitController : ControllerBase
     {
         private readonly IVisitService _visitService;
+        private readonly IUserService _userService;
         private readonly IMapper _mapper;
         private readonly IHubContext<NotificationHub> _hubContext;
-        public VisitController(IVisitService VisitService, IMapper mapper, IHubContext<NotificationHub> hubcontext)
+        public VisitController(IVisitService VisitService, IMapper mapper, IHubContext<NotificationHub> hubcontext, IUserService userService)
         {
             _visitService = VisitService;
             _mapper = mapper;
             _hubContext = hubcontext;
+            _userService = userService;
         }
 
         [Route("upload")]
@@ -192,7 +194,18 @@ namespace NeurekaApi.Controllers
                 return NotFound();
 
             await _visitService.Update(id, visit);
-            _ = _hubContext.Clients.All.SendAsync("ReceiveNewUpdatedVisit", visit);
+            var userId = visit.DoctorId;
+            var user = await _userService.Get(userId);
+            var notification = new Notification();
+            notification.FromFirstName = user.FirstName;
+            notification.FromLastName = user.LastName;
+            notification.FromId = userId;
+            notification.VisitId = visit.Id;
+            notification.VisitTitle = visit.Title;
+            notification.PatientId = visit.PatientId;
+            notification.FromRole = "admin";
+
+            _ = _hubContext.Clients.All.SendAsync("ReceiveNewUpdatedVisit", notification);
             return Ok();
         }
 

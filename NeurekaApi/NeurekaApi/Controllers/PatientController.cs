@@ -1,10 +1,7 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
-using NeurekaApi.Dtos;
 using NeurekaApi.Hubs;
 using NeurekaDAL.Models;
 using NeurekaService.Services;
@@ -91,8 +88,19 @@ namespace NeurekaApi.Controllers
         public async Task<IActionResult> UpdatePatientVisit(Visit visit)
         {
             await _patientService.UpdatePatientOpenVisit(visit);
-            _ = _hubContext.Clients.All.SendAsync("ReceiveNewUpdatedVisit", await _patientService.GetPatientOpenVisitByPatientId(visit.PatientId));
 
+            var userId = visit.PatientId;
+            var user = await _patientService.Get(userId);
+            var notification = new Notification();
+            notification.FromFirstName = user.FirstName;
+            notification.FromLastName = user.LastName;
+            notification.FromId = userId;
+            notification.VisitId = visit.Id;
+            notification.VisitTitle = visit.Title;
+            notification.PatientId = userId;
+            notification.FromRole = "patient";
+            if (visit.Published)
+                _ = _hubContext.Clients.All.SendAsync("ReceiveNewUpdatedVisit", notification);
 
             return Ok();
         }

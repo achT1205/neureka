@@ -39,7 +39,7 @@ apiClient.interceptors.response.use(
     }
   },
   error => {
-    if (error.response.status) {
+    if (error && error.response && error.response.status) {
       switch (error.response.status) {
         case 400:
           //do something
@@ -284,7 +284,6 @@ export const getClientVisit = id =>
 
 export const updateClientVisit = v =>
   new Promise((resolve, reject) => {
-    debugger;
     apiClient
       .put(`/Patient/updatevisit`, v)
       .then(response => resolve(response.data))

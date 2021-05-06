@@ -8,6 +8,7 @@
     <v-spacer></v-spacer>
     <v-spacer></v-spacer>
     <div class="d-flex align-center">
+      <notifications />
       <div
         v-if="authenticatedUser && authenticatedUser.user"
         class="avatar-info"
@@ -61,9 +62,7 @@
             <v-list-item-icon class="ml-0 mr-2">
               <v-icon>person</v-icon>
             </v-list-item-icon>
-            <v-list-item-title>
-              Profile
-            </v-list-item-title>
+            <v-list-item-title> Profile </v-list-item-title>
           </v-list-item>
           <v-divider></v-divider>
           <v-list-item @click="logout">
@@ -79,8 +78,12 @@
 </template>
 
 <script>
+import Notifications from "@/components/Notifications.vue";
 import { mapGetters } from "vuex";
 export default {
+  components: {
+    Notifications
+  },
   data() {
     return {
       menu: false
@@ -117,6 +120,7 @@ export default {
 
 <style lang="scss" scoped>
 .avatar-info {
+  margin-left: 15px;
   color: #80bbbd;
 
   .avatar-name {

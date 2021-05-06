@@ -37,6 +37,10 @@ export default {
   },
   mounted() {
     this.getRealTimeData();
+    const notifications = localStorage.notifications
+      ? JSON.parse(localStorage.notifications)
+      : [];
+    this.$store.commit("SET_NOTIFICATIONS", notifications);
   },
   methods: {
     hubConnection() {
@@ -54,9 +58,11 @@ export default {
         });
     },
     getRealTimeData() {
-      this.connection.on("ReceiveNewUpdatedVisit", visit => {
-        if (visit && visit.id)
-          this.$store.dispatch("getClientVisit", this.$route.params.id);
+      this.connection.on("ReceiveNewUpdatedVisit", notification => {
+        if (notification.fromId !== this.authenticatedUser.id)
+          this.$store.commit("SET_NOTIFICATION", notification);
+        if (notification && notification.patientId)
+          this.$store.dispatch("getClientVisit", notification.patientId);
       });
     }
   }

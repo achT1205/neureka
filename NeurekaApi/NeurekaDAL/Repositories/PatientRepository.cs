@@ -28,7 +28,7 @@ namespace NeurekaDAL.Repositories
         public async Task<Visit> GetPatientOpenVisitByPatientId(string patientId)
         {
             var visit = new Visit();
-            var result = await _context.Visits.FindAsync(x => x.PatientId == patientId && x.Closed == false).Result.FirstOrDefaultAsync();
+            var result = await _context.Visits.FindAsync(x => x.PatientId == patientId && x.Closed == false && x.Published == true).Result.FirstOrDefaultAsync();
             if (result != null)
             {
                 visit.Id = result.Id;

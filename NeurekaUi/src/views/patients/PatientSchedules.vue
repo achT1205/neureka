@@ -438,6 +438,7 @@ export default {
     OpenOrcloseVisit(index) {
       const visit = this.visits[index];
       visit.closed = !visit.closed ? true : false;
+      visit.published = false;
       this.$store.dispatch("editVisit", {
         visit: visit,
         filesData: null
@@ -483,6 +484,7 @@ export default {
         return;
       }
       if (this.editingVisit) {
+        this.event.published = false;
         this.$store.dispatch("editVisit", {
           visit: this.event,
           filesData: this.filesData,
