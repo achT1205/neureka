@@ -6,20 +6,22 @@ using System.Text;
 using System.Threading.Tasks;
 using MongoDB.Driver;
 using NeurekaDAL.Models;
+using SendGrid;
+using SendGrid.Helpers.Mail;
 
 namespace NeurekaDAL.Repositories
 {
     public class UserRepository : IUserRepository
     {
         private readonly INeurekaDBContext _context;
-        private readonly string _encryptingKey;
-        private readonly IMailKitConfig _mailKitConfig;
-        public UserRepository(INeurekaDBContext context, INeurekaAppSettings settings, IMailKitConfig mailKitConfig)
+        private readonly INeurekaAppSettings _settings;
+        private readonly ISendGridClient _sendGridClient;
+        public UserRepository(INeurekaDBContext context, INeurekaAppSettings settings, ISendGridClient sendGridClient)
         {
             var client = new MongoClient(settings.ConnectionString);
             _context = context;
-            _encryptingKey = settings.EncryptingKey;
-            _mailKitConfig = mailKitConfig;
+            _settings = settings;
+            _sendGridClient = sendGridClient;
         }
 
 
@@ -46,24 +48,9 @@ namespace NeurekaDAL.Repositories
             {
                 var pass = RandomPassword();
                 user.TempPassword = pass;
-                user.Password = EncryptString(pass, _encryptingKey);
+                user.Password = EncryptString(pass, _settings.EncryptingKey);
                 user.ChangePassword = false;
                 await _context.Users.ReplaceOneAsync<User>(p => p.Id == user.Id, user);
-
-                /* MailMessage message = new MailMessage();
-                 message.To.Add(new MailAddress(email));
-                 message.From = new MailAddress(_mailKitConfig.Sender);
-                 message.Subject = _mailKitConfig.Subject;
-                 message.Body = string.Format(_mailKitConfig.Message, pass);
-                 message.IsBodyHtml = false;
-                 using (SmtpClient _smtpClient = new SmtpClient(_mailKitConfig.SmtpServer, _mailKitConfig.Port))
-                 {
-                     _smtpClient.UseDefaultCredentials = true;
-                     _smtpClient.EnableSsl = true;
-                     _smtpClient.Credentials = new System.Net.NetworkCredential(_mailKitConfig.UserName, _mailKitConfig.Password);
-                     _smtpClient.Send(message);
-                 }*/
-
                 return pass;
             }
         }
@@ -89,15 +76,25 @@ namespace NeurekaDAL.Repositories
         {
             var pass = RandomPassword();
             user.TempPassword = pass;
-            user.Password = EncryptString(pass, _encryptingKey);
+            user.Password = EncryptString(pass, _settings.EncryptingKey);
             user.CreatedAt = DateTime.Now.ToString();
             user.ChangePassword = false;
             try { await _context.Users.InsertOneAsync(user); }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw ex;
             }
             user.Password = pass;
+
+            var from = new EmailAddress(_settings.FromEmail, _settings.FromName);
+            var to = new EmailAddress(user.Email, user.FirstName);
+            var templateData = new WelcomeEmailTemplateEntity();
+            templateData.login_link = _settings.FrontLink + "/loin";
+            templateData.password = pass;
+            templateData.email = user.Email;
+            templateData.patient_name = user.FirstName;
+            var msg = MailHelper.CreateSingleTemplateEmail(from, to, _settings.WelcomeTemplateId, templateData);
+            var response = await _sendGridClient.SendEmailAsync(msg);
             return user;
         }
 
@@ -107,7 +104,7 @@ namespace NeurekaDAL.Repositories
             if (!string.IsNullOrWhiteSpace(user.Password))
             {
                 enttity.ChangePassword = true;
-                enttity.Password = EncryptString(user.Password, _encryptingKey);
+                enttity.Password = EncryptString(user.Password, _settings.EncryptingKey);
                 enttity.TempPassword = null;
             }
             enttity.FirstName = user.FirstName;
@@ -129,7 +126,7 @@ namespace NeurekaDAL.Repositories
             var user = await _context.Users.FindAsync(condition).Result.FirstOrDefaultAsync();
             if (user != null)
             {
-                var decryptedPass = DecryptString(user.Password, _encryptingKey);
+                var decryptedPass = DecryptString(user.Password, _settings.EncryptingKey);
                 if (decryptedPass == password)
                 {
                     return true;
@@ -151,7 +148,7 @@ namespace NeurekaDAL.Repositories
                 var user = await _context.Users.FindAsync(condition).Result.FirstOrDefaultAsync();
                 user.ChangePassword = true;
                 user.TempPassword = null;
-                user.Password = EncryptString(password, _encryptingKey);
+                user.Password = EncryptString(password, _settings.EncryptingKey);
                 await _context.Users.ReplaceOneAsync<User>(p => p.Id == user.Id, user);
                 user.Password = null;
                 return true;

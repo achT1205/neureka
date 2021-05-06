@@ -18,5 +18,11 @@ namespace NeurekaDAL.Models
         public int AccessExpiration { get; set; }
         public string RefreshExpiration { get; set; }
         public string ConnectionString { get; set; }
+
+        public string FrontLink { get; set; }
+        public string WelcomeTemplateId { get; set; }
+        public string SendGridApiKey { get; set; }
+        public string FromEmail { get; set; }
+        public string FromName { get; set; }
     }
 }

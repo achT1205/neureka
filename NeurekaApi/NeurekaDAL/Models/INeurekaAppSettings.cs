@@ -17,5 +17,12 @@
         int AccessExpiration { get; set; }
         string RefreshExpiration { get; set; }
         string ConnectionString { get; set; }
+
+        string FrontLink { get; set; }
+        string WelcomeTemplateId { get; set; }
+        string SendGridApiKey { get; set; }
+        string FromEmail { get; set; }
+        public string FromName { get; set; }
+
     }
 }

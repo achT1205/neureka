@@ -12,6 +12,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
+using SendGrid.Extensions.DependencyInjection;
 
 namespace NeurekaApi
 {
@@ -65,8 +66,6 @@ namespace NeurekaApi
             });
             services.Configure<NeurekaAppSettings>(Configuration.GetSection(nameof(NeurekaAppSettings)));
             services.AddSingleton<INeurekaAppSettings>(sp => sp.GetRequiredService<IOptions<NeurekaAppSettings>>().Value);
-            services.Configure<MailKitConfig>(Configuration.GetSection(nameof(MailKitConfig)));
-            services.AddSingleton<IMailKitConfig>(sp => sp.GetRequiredService<IOptions<MailKitConfig>>().Value);
             services.AddTransient<IPatientService, PatientService>();
             services.AddTransient<IPatientRepository, PatientRepository>();
             services.AddTransient<IVisitService, VisitService>();
@@ -76,8 +75,13 @@ namespace NeurekaApi
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<IUserRepository, UserRepository>();
             services.AddAutoMapper(typeof(Startup));
-
             var settings = Configuration.GetSection("NeurekaAppSettings").Get<NeurekaAppSettings>();
+
+            services.AddSendGrid(options =>
+            {
+                options.ApiKey = settings.SendGridApiKey;
+            });
+
             services.AddAuthentication("OAuth")
               .AddJwtBearer("OAuth", config =>
               {
