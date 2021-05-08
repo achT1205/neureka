@@ -43,7 +43,7 @@ namespace NeurekaDAL.Repositories
                 visit.Closed = result.Closed;
                 foreach (var session in result.Fields)
                 {
-                    if (session.IsVisible)
+                    if (session.IsVisible.HasValue && session.IsVisible.Value)
                     {
                         var s = new Field();
                         s.Id = session.Id;
@@ -68,7 +68,7 @@ namespace NeurekaDAL.Repositories
                         foreach (var field in session.Fields)
                         {
                             var f = new Field();
-                            if (field.IsVisible)
+                            if (field.IsVisible.HasValue && field.IsVisible.Value)
                             {
                                 f.Id = field.Id;
                                 f.Col = field.Col;

@@ -102,19 +102,21 @@ namespace NeurekaDAL.Models
 
         public string Model { get; set; }
 
+        public bool? BoolModel { get; set; }
+
         public string Description { get; set; }
 
         public List<string> Models { get; set; }
 
-        public bool RadioDirection { get; set; }
+        public bool? RadioDirection { get; set; }
 
-        public bool IsVisible { get; set; }
+        public bool? IsVisible { get; set; }
 
-        public bool Multiple { get; set; }
+        public bool? Multiple { get; set; }
 
-        public bool Readonly { get; set; }
+        public bool? Readonly { get; set; }
 
-        public bool Disabled { get; set; }
+        public bool? Disabled { get; set; }
 
         public int? Maxlength { get; set; }
 
@@ -174,13 +176,13 @@ namespace NeurekaDAL.Models
 
         public string suffix { get; set; }
 
-        public int precision { get; set; }
+        public int? precision { get; set; }
 
         public string type { get; set; }
 
-        public int min { get; set; }
+        public int? min { get; set; }
 
-        public int max { get; set; }
+        public int? max { get; set; }
 
     }
 

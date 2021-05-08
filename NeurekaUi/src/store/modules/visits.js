@@ -13,10 +13,10 @@ const VisitModule = {
   state: () => ({
     visits: [],
     currentVisit: {},
-    endEditing : false,
+    endEditing: false
   }),
   mutations: {
-    SET_END_EDITING: (state, payload) => (state.endEditing = payload),
+    SET_END_END_EDITING: (state, payload) => (state.endEditing = payload),
     SET_VISITS: (state, payload) => (state.visits = payload),
     SET_VISIT: (state, payload) => (state.currentVisit = payload),
     ADD_VISIT: (state, payload) => state.visits.push(payload),
@@ -60,16 +60,17 @@ const VisitModule = {
       );
     },
     editVisit({ commit, dispatch }, payload) {
+      commit("SET_END_END_EDITING", false);
       const { visit, filesData, all, patientId } = payload;
       if (!filesData || filesData.length === 0) {
         editVisit(visit).then(() => {
           if (all) {
             dispatch("getVisits", patientId);
-            commit("SET_END_EDITING", true)
+            commit("SET_END_END_EDITING", true);
           } else {
             commit("SET_EDITING_INPROGRESS", false, { root: true });
             dispatch("getVisit", visit.id);
-            commit("SET_END_EDITING", true)
+            commit("SET_END_END_EDITING", true);
           }
         });
       } else {
@@ -98,8 +99,10 @@ const VisitModule = {
               delete visit.fields[fileData.index].fields[fileData.subfieldindex]
                 .model;
             }
-            editVisit(visit).then(() => dispatch("getVisit", visit.id));
-            commit("SET_END_EDITING", true)
+            editVisit(visit).then(() => {
+              dispatch("getVisit", visit.id);
+              commit("SET_END_END_EDITING", true);
+            });
 
             //fileInfos.push(fileInfo);
 
@@ -149,7 +152,7 @@ const VisitModule = {
   getters: {
     visits: state => state.visits,
     currentVisit: state => state.currentVisit,
-    endEditing : state => state.endEditing
+    endEditing: state => state.endEditing
   }
 };
 

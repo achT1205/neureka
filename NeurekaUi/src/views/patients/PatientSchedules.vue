@@ -21,6 +21,14 @@
           </template>
           Export visits to excel
         </v-tooltip>
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on }">
+            <v-btn icon>
+              <v-icon v-on="on" @click.prevent="exportVisits">equalizer</v-icon>
+            </v-btn>
+          </template>
+          Data Viz
+        </v-tooltip>
       </div>
     </div>
     <div class="content-page">
@@ -341,8 +349,7 @@ export default {
     },
     visits(val, old) {
       if (val && old !== val) {
-        if(val.length > old.length)
-        {
+        if (val.length > old.length) {
           this.tab = val.length - 1;
         }
       }

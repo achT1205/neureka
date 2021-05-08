@@ -6,81 +6,132 @@
           <v-card-title class="darken-2">
             {{ currentTemplate.title }}
             <v-spacer></v-spacer>
-            <template-actions
-              :actions="templateActions"
+            <form-actions
+            :templating="true"
+              :actions="formActions"
               :field="currentTemplate"
-              @editSessionTemplate="editSessionTemplate"
+              @editSessionvisit="editSessionvisit"
               @editVisibility="editVisibility"
             />
           </v-card-title>
+
           <draggable
             class="row mx-2 content-row"
             tag="div"
             v-model="currentTemplate.fields"
-            v-bind="dragOptions"
-            :move="onMove"
-            @start="isDragging = true"
-            @end="isDragging = false"
-            group="people"
+            :options="dragOptions"
           >
             <v-col
               class="align-center justify-space-between list-group-item"
               v-for="(subfield, subfieldindex) in currentTemplate.fields"
               :cols="subfield.col"
-              :key="subfield.id ? subfield.id : subfieldindex"
+              :key="uuid(subfield)"
             >
               <v-text-field
                 outlined
                 clearable
-                :label="
-                  subfield.title ? subfield.title : 'Field' + subfieldindex
-                "
-                :placeholder="
-                  subfield.title ? subfield.title : 'Field' + subfieldindex
-                "
+                :label="subfield.title ? subfield.title : 'Field' + subfieldindex"
+                :placeholder="subfield.title ? subfield.title : 'Field' + subfieldindex"
                 v-if="['text', 'number', 'email'].includes(subfield.type)"
                 :type="subfield.type"
                 v-model="subfield.model"
                 :prepend-inner-icon="subfield.icon"
+                :maxlength="subfield.maxlength"
+                @change="$store.commit('SET_EDITING_INPROGRESS', true, { root: true })"
               >
                 <template v-slot:append-outer>
-                  <template-field-actions
+                  <field-actions
                     :actions="fieldActions"
+                    :field="field"
+                    :index="null"
                     :subfield="subfield"
                     :subfieldindex="subfieldindex"
                     @edit="edit"
                     @remove="remove"
                     @editVisibility="editVisibility"
+                    @canOnlyRead="canOnlyRead"
+                    @duplicateField="duplicateField"
+                  />
+                </template>
+              </v-text-field>
+
+              <v-text-field
+                outlined
+                clearable
+                :label="subfield.title ? subfield.title : 'Field' + subfieldindex"
+                :placeholder="subfield.title ? subfield.title : 'Field' + subfieldindex"
+                v-else-if="subfield.type === 'decimal'"
+                :type="subfield.type"
+                v-money="subfield.option"
+                v-model.lazy="subfield.model"
+                @change="$store.commit('SET_EDITING_INPROGRESS', true, { root: true })"
+              >
+                <template v-slot:append-outer>
+                  <field-actions
+                    :actions="fieldActions"
+                    :field="field"
+                    :index="null"
+                    :subfield="subfield"
+                    :subfieldindex="subfieldindex"
+                    @edit="edit"
+                    @remove="remove"
+                    @editVisibility="editVisibility"
+                    @canOnlyRead="canOnlyRead"
                     @duplicateField="duplicateField"
                   />
                 </template>
               </v-text-field>
               <v-textarea
                 outlined
-                :placeholder="
-                  subfield.title ? subfield.title : 'Field' + subfieldindex
-                "
+                :placeholder="subfield.title ? subfield.title : 'Field' + subfieldindex"
                 v-else-if="subfield.type === 'textarea'"
                 clearable
                 clear-icon="close"
-                :label="
-                  subfield.title ? subfield.title : 'Field' + subfieldindex
-                "
+                :label="subfield.title ? subfield.title : 'Field' + subfieldindex"
                 v-model="subfield.model"
+                :maxlength="subfield.maxlength"
                 :prepend-inner-icon="subfield.icon"
+                @change="$store.commit('SET_EDITING_INPROGRESS', true, { root: true })"
               >
                 <template v-slot:append-outer>
-                  <template-field-actions
+                  <field-actions
                     :actions="fieldActions"
+                    :field="field"
+                    :index="null"
                     :subfield="subfield"
                     :subfieldindex="subfieldindex"
                     @edit="edit"
                     @remove="remove"
                     @editVisibility="editVisibility"
+                    @canOnlyRead="canOnlyRead"
                     @duplicateField="duplicateField"
                   />
                 </template>
               </v-textarea>
+              <v-row v-else-if="subfield.type === 'editor'">
+                <v-col cols="12">
+                  <label class="d-flex justify-start">
+                    {{ subfield.title ? subfield.title : "Field" + subfieldindex }}
+                  </label>
+                  <label class="d-flex justify-end">
+                    <field-actions
+                      :actions="fieldActions"
+                      :field="field"
+                      :index="null"
+                      :subfield="subfield"
+                      :subfieldindex="subfieldindex"
+                      @edit="edit"
+                      @remove="remove"
+                      @editVisibility="editVisibility"
+                      @canOnlyRead="canOnlyRead"
+                      @duplicateField="duplicateField"
+                    />
+                  </label>
+                </v-col>
+                <v-col cols="12">
+                  <vue-editor v-model="subfield.model"></vue-editor>
+                </v-col>
+              </v-row>
               <date-picker-field
                 v-else-if="subfield.type === 'date'"
                 :subfield="subfield"
@@ -89,7 +140,10 @@
                 @edit="edit"
                 @remove="remove"
                 @editVisibility="editVisibility"
+                @canOnlyRead="canOnlyRead"
                 @updateDate="updateDate"
+                @duplicateField="duplicateField"
+                :actions="fieldActions"
               />
 
               <time-picker-field
@@ -100,25 +154,29 @@
                 @edit="edit"
                 @remove="remove"
                 @editVisibility="editVisibility"
+                @canOnlyRead="canOnlyRead"
                 @updateDate="updateTime"
+                @duplicateField="duplicateField"
+                :actions="fieldActions"
               />
 
               <v-checkbox
                 v-else-if="subfield.type === 'checkbox'"
-                v-model="subfield.model"
+                v-model="subfield.boolModel"
               >
                 <template v-slot:label>
                   <div>
-                    {{
-                      subfield.title ? subfield.title : "Field_" + subfieldindex
-                    }}
-                    <template-field-actions
+                    {{ subfield.title ? subfield.title : "Field_" + subfieldindex }}
+                    <field-actions
                       :actions="fieldActions"
+                      :field="field"
+                      :index="null"
                       :subfield="subfield"
                       :subfieldindex="subfieldindex"
                       @edit="edit"
                       @remove="remove"
                       @editVisibility="editVisibility"
+                      @canOnlyRead="canOnlyRead"
                       @duplicateField="duplicateField"
                     />
                   </div>
@@ -127,20 +185,21 @@
 
               <v-switch
                 v-else-if="subfield.type === 'switch'"
-                v-model="subfield.model"
+                v-model="subfield.boolModel"
               >
                 <template v-slot:label>
                   <div>
-                    {{
-                      subfield.title ? subfield.title : "Field_" + subfieldindex
-                    }}
-                    <template-field-actions
+                    {{ subfield.title ? subfield.title : "Field_" + subfieldindex }}
+                    <field-actions
                       :actions="fieldActions"
+                      :field="field"
+                      :index="null"
                       :subfield="subfield"
                       :subfieldindex="subfieldindex"
                       @edit="edit"
                       @remove="remove"
                       @editVisibility="editVisibility"
+                      @canOnlyRead="canOnlyRead"
                       @duplicateField="duplicateField"
                     />
                   </div>
@@ -148,13 +207,17 @@
               </v-switch>
 
               <v-flex v-else-if="subfield.type === 'selection'">
-                {{ subfield.title ? subfield.title : "Field_" + subfieldindex }}
+                <label>{{
+                  subfield.title ? subfield.title : "Field_" + subfieldindex
+                }}</label>
                 <v-select
                   outlined
                   v-model="subfield.model"
                   :items="subfield.selects"
                   :label="subfield.title"
-                  :placeholder="subfield.title"
+                  :placeholder="
+                    subfield.title ? subfield.title : 'Field_' + subfieldindex
+                  "
                   :prepend-inner-icon="subfield.icon"
                   menu-props="auto"
                   single-line
@@ -164,13 +227,16 @@
                   no-data-text="No item available, click on '+' to add a new item "
                 >
                   <template v-slot:append-outer>
-                    <template-field-actions
+                    <field-actions
                       :actions="fieldActions"
+                      :field="field"
+                      :index="null"
                       :subfield="subfield"
                       :subfieldindex="subfieldindex"
                       @edit="edit"
                       @remove="remove"
                       @editVisibility="editVisibility"
+                      @canOnlyRead="canOnlyRead"
                       @duplicateField="duplicateField"
                     />
                   </template>
@@ -178,13 +244,17 @@
               </v-flex>
 
               <v-flex v-else-if="subfield.type === 'selections'">
-                {{ subfield.title ? subfield.title : "Field_" + subfieldindex }}
+                <label>{{
+                  subfield.title ? subfield.title : "Field_" + subfieldindex
+                }}</label>
                 <v-select
                   outlined
                   v-model="subfield.models"
                   :items="subfield.selects"
                   :label="subfield.title"
-                  :placeholder="subfield.title"
+                  :placeholder="
+                    subfield.title ? subfield.title : 'Field_' + subfieldindex
+                  "
                   :prepend-inner-icon="subfield.icon"
                   menu-props="auto"
                   single-line
@@ -195,13 +265,16 @@
                   chips
                 >
                   <template v-slot:append-outer>
-                    <template-field-actions
+                    <field-actions
                       :actions="fieldActions"
+                      :field="field"
+                      :index="null"
                       :subfield="subfield"
                       :subfieldindex="subfieldindex"
                       @edit="edit"
                       @remove="remove"
                       @editVisibility="editVisibility"
+                      @canOnlyRead="canOnlyRead"
                       @duplicateField="duplicateField"
                     />
                   </template>
@@ -210,109 +283,112 @@
 
               <v-flex v-else-if="subfield.type === 'radiogroup'">
                 <v-col cols="12">
-                  {{
-                    subfield.title ? subfield.title : "Field_" + subfieldindex
-                  }}
-                  <template-field-actions
+                  {{ subfield.title ? subfield.title : "Field_" + subfieldindex }}
+                  <field-actions
                     :actions="fieldActions"
+                    :field="field"
+                    :index="null"
                     :subfield="subfield"
                     :subfieldindex="subfieldindex"
                     @edit="edit"
                     @remove="remove"
                     @editVisibility="editVisibility"
+                    @canOnlyRead="canOnlyRead"
                     @duplicateField="duplicateField"
                   />
-                  <v-radio-group
-                    v-model="subfield.model"
-                    :row="subfield.radioDirection"
-                  >
+                  <v-radio-group v-model="subfield.model" :row="subfield.radioDirection">
                     <v-radio
                       v-for="(radio, radioIndex) in subfield.radios"
                       :key="radioIndex"
-                      :value="radio.title"
+                      :value="radio"
                     >
                       <template v-slot:label>
                         <div>
-                          {{ radio.title }}
-                          <v-tooltip bottom>
-                            <template v-slot:activator="{ on }">
-                              <v-icon
-                                small
-                                v-on="on"
+                          {{ radio }}
+                          <v-menu
+                            bottom
+                            left
+                            :close-on-content-click="false"
+                            transition="slide-x-transition"
+                          >
+                            <template v-slot:activator="{ on, attrs }">
+                              <v-btn dark icon v-bind="attrs" v-on="on" color="grey">
+                                <v-icon>more_vert</v-icon>
+                              </v-btn>
+                            </template>
+
+                            <v-list>
+                              <v-list-item
                                 @click="
-                                  editRadio(subfieldindex, subfield, radio)
+                                  editRadio(index, subfieldindex, radioIndex, radio)
                                 "
-                                >edit</v-icon
                               >
-                            </template>
-                            Edit
-                          </v-tooltip>
-                          <v-tooltip bottom>
-                            <template v-slot:activator="{ on }">
-                              <v-icon
-                                small
-                                v-on="on"
-                                @click="removeRadio(subfieldindex, radioIndex)"
-                                >delete</v-icon
+                                <v-list-item-action>
+                                  <v-icon>edit</v-icon>
+                                </v-list-item-action>
+                                <v-list-item-title>Edit</v-list-item-title>
+                              </v-list-item>
+                              <v-list-item
+                                @click="removeRadio(index, subfieldindex, radioIndex)"
                               >
-                            </template>
-                            Remove
-                          </v-tooltip>
+                                <v-list-item-action>
+                                  <v-icon>delete</v-icon>
+                                </v-list-item-action>
+                                <v-list-item-title>Remove</v-list-item-title>
+                              </v-list-item>
+                            </v-list>
+                          </v-menu>
                         </div>
                       </template>
                     </v-radio>
                   </v-radio-group>
                 </v-col>
               </v-flex>
-              <v-file-input
-                outlined
-                v-else-if="subfield.type === 'files'"
-                v-model="subfield.model"
-                :placeholder="
-                  subfield.multiple
-                    ? 'Upload your documents'
-                    : 'Upload your document'
-                "
-                :label="
-                  subfield.title ? subfield.title : 'Field' + subfieldindex
-                "
-                :multiple="subfield.multiple"
-                counter
-                prepend-icon=""
-                prepend-inner-icon="mdi-paperclip"
-              >
-                <template v-slot:selection="{ index, text }">
-                  <v-chip
-                    v-if="index < 2"
-                    color="blue accent-4"
-                    dark
-                    label
-                    small
-                    >{{ text }}</v-chip
-                  >
+              <v-flex v-else-if="subfield.type === 'files'">
+                <v-file-input
+                  outlined
+                  v-model="subfield.model"
+                  :placeholder="
+                    subfield.multiple ? 'Upload your documents' : 'Upload your document'
+                  "
+                  :label="subfield.title ? subfield.title : 'Field' + subfieldindex"
+                  :multiple="subfield.multiple"
+                  show-size
+                  counter
+                  prepend-icon
+                  prepend-inner-icon="mdi-paperclip"
+                  accept="application/*, image/*"
+                >
+                  <template v-slot:selection="{ index, text }">
+                    <v-chip v-if="index < 2" color="blue accent-4" dark label small>{{
+                      text
+                    }}</v-chip>
 
-                  <span
-                    v-else-if="index === 2"
-                    class="overline grey--text text--darken-3 mx-2"
-                    >+{{ subfield.model.length - 2 }} File(s)</span
-                  >
-                </template>
-                <template v-slot:append-outer>
-                  <template-field-actions
-                    :actions="fieldActions"
-                    :subfield="subfield"
-                    :subfieldindex="subfieldindex"
-                    @edit="edit"
-                    @remove="remove"
-                    @editVisibility="editVisibility"
-                    @duplicateField="duplicateField"
-                  />
-                </template>
-              </v-file-input>
+                    <span
+                      v-else-if="index === 2"
+                      class="overline grey--text text--darken-3 mx-2"
+                      >+{{ subfield.model.length - 2 }} File(s)</span
+                    >
+                  </template>
+                  <template v-slot:append-outer>
+                    <field-actions
+                      :actions="fieldActions"
+                      :field="field"
+                      :index="null"
+                      :subfield="subfield"
+                      :subfieldindex="subfieldindex"
+                      @edit="edit"
+                      @remove="remove"
+                      @editVisibility="editVisibility"
+                      @canOnlyRead="canOnlyRead"
+                      @duplicateField="duplicateField"
+                    />
+                  </template>
+                </v-file-input>
+              </v-flex>
             </v-col>
-          </draggable>
-        </v-card>
-      </v-flex>
+          </draggable> </v-card
+      ></v-flex>
       <v-dialog v-model="radioDialog" width="800px">
         <v-card class="pa-3">
           <v-container>
@@ -331,61 +407,11 @@
           </v-container>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn text color="primary" @click="radioDialog = false"
-              >Close</v-btn
-            >
+            <v-btn text color="primary" @click="radioDialog = false">Close</v-btn>
             <v-btn text @click="saveRadio">Save</v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
-
-      <v-dialog v-model="selectionDialog" width="800px">
-        <v-card class="pa-3">
-          <v-container>
-            <v-row class="mx-2">
-              <v-col cols="12">
-                <v-text-field
-                  outlined
-                  v-model="selectTitle"
-                  clearable
-                  placeholder="Item title"
-                  label="Item title"
-                  :prepend-inner-icon="'title'"
-                ></v-text-field>
-              </v-col>
-            </v-row>
-          </v-container>
-          <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn text color="primary" @click="selectionDialog = false"
-              >Close</v-btn
-            >
-            <v-btn text @click="saveSelectionItem">Save</v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
-
-      <div
-        class="mt-5"
-        v-if="
-          currentTemplate &&
-            currentTemplate.fields &&
-            currentTemplate.fields.length
-        "
-      >
-        <v-btn class="ma-2" outlined color="blue" @click="saveTemplate"
-          >Save</v-btn
-        >
-      </div>
-      <v-snackbar
-        v-model="snackbar"
-        :timeout="timeout"
-        absolute
-        bottom
-        color="success"
-        outlined
-        >{{ snackText }}</v-snackbar
-      >
 
       <v-dialog v-model="editingSession" width="800px">
         <v-card class="pa-3">
@@ -409,125 +435,39 @@
           </v-container>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn text color="primary" @click="editingSession = false"
-              >Close</v-btn
-            >
-            <v-btn text @click="saveSession">Save</v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
-
-      <v-dialog v-model="dialog" persistent width="800px">
-        <v-card class="pa-3">
-          <v-container>
-            <v-flex transition="slide-x-transition">
-              <v-row class="mx-2">
-                <v-col class="align-center justify-space-between" cols="6">
-                  <v-text-field
-                    outlined
-                    v-model="field.title"
-                    label="Field Name"
-                    clearable
-                    placeholder="Field Name"
-                  ></v-text-field>
-                </v-col>
-                <v-col class="align-center justify-space-between" cols="6">
-                  <v-select
-                    outlined
-                    v-model="field.col"
-                    :items="cols"
-                    item-text="title"
-                    item-value="id"
-                    label="Shose a width"
-                    placeholder="Shose a width"
-                  ></v-select>
-                </v-col>
-                <v-col
-                  v-if="field.type === 'files'"
-                  class="align-center justify-space-between"
-                  cols="12"
-                >
-                  <v-checkbox
-                    v-model="field.multiple"
-                    label="Multiple files ?"
-                  ></v-checkbox>
-                </v-col>
-
-                <v-row class="mx-2" v-if="field.type === 'radiogroup'">
-                  <v-col class="align-center justify-space-between" cols="12">
-                    <v-select
-                      outlined
-                      v-model="field.radioDirection"
-                      :items="radioDirections"
-                      item-text="title"
-                      item-value="id"
-                      label="Dierction"
-                      placeholder="Direction"
-                    ></v-select>
-                  </v-col>
-
-                  <v-col cols="12">
-                    <v-text-field
-                      outlined
-                      v-model="radioTitle"
-                      clearable
-                      placeholder="Type a new item and enter 'Enter' Key to add"
-                      label="Add a new Radio item"
-                      @keyup.enter="saveRadio"
-                      :prepend-inner-icon="'title'"
-                    ></v-text-field>
-                  </v-col>
-                </v-row>
-              </v-row>
-              <v-flex
-                v-if="field.type === 'selections' || field.type === 'selection'"
-              >
-                <v-row class="mx-2">
-                  <v-col cols="12">
-                    <v-text-field
-                      outlined
-                      v-model="selectTitle"
-                      clearable
-                      placeholder="Type a new item and enter 'Enter' Key to add"
-                      label="Add a new selection item"
-                      @keyup.enter="saveSelectionItem"
-                    ></v-text-field>
-                  </v-col>
-                </v-row>
-                <v-row class="mx-2" v-if="field && field.selects">
-                  <h5>Selectin items</h5>
-                  <v-col cols="12">
-                    <v-chip
-                      v-for="(select, selectindex) in field.selects"
-                      :key="selectindex"
-                      class="ma-2"
-                      close
-                      color="teal"
-                      text-color="white"
-                      close-icon="delete"
-                      @click:close="removeSelectItem(selectindex)"
-                      >{{ select.title }}</v-chip
-                    >
-                  </v-col>
-                </v-row>
-              </v-flex>
-            </v-flex>
-          </v-container>
-          <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn text color="primary" @click="closeDialog">Close</v-btn>
+            <v-btn text color="primary" @click="editingSession = false">Close</v-btn>
             <v-btn text @click="save">Save</v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
+
+      <div
+        class="mt-5"
+        v-if="currentTemplate && currentTemplate.fields && currentTemplate.fields.length"
+      >
+        <v-btn class="ma-2" outlined color="blue" @click="saveTemplate">Save</v-btn>
+      </div>
+      <v-snackbar
+        v-model="snackbar"
+        :timeout="timeout"
+        absolute
+        bottom
+        color="success"
+        outlined
+        >{{ snackText }}</v-snackbar
+      >
+
+      <v-dialog v-model="dialog" persistent width="800px">
+        <edit-field-options
+          :field="field"
+          @closeDialog="closeDialog"
+          @save="save"
+          @close="closeDialog"
+        />
+      </v-dialog>
     </v-flex>
     <v-flex>
-      <v-menu
-        v-model="menu"
-        :close-on-content-click="false"
-        :nudge-width="200"
-        offset-x
-      >
+      <v-menu v-model="menu" :close-on-content-click="false" :nudge-width="200" offset-x>
         <template v-slot:activator="{ on }">
           <v-btn bottom color="pink" dark fab small fixed right v-on="on">
             <v-icon>add</v-icon>
@@ -538,12 +478,8 @@
             <v-list>
               <draggable
                 v-model="inputTypes"
-                v-bind="dragOptions"
-                :move="onMove"
-                @start="isDragging = true"
-                @end="isDragging = false"
-                :group="{ name: 'people', pull: 'clone', put: false }"
-                :clone="cloneInput"
+                :options="availableItemOptions"
+                :clone="handleClone"
               >
                 <transition-group type="transition" :name="'flip-list'">
                   <v-list-item
@@ -569,117 +505,91 @@
 <script>
 import DatePickerField from "@/components/DatePickerField.vue";
 import TimePickerField from "@/components/TimePickerField.vue";
-import TemplateActions from "@/components/TemplateActions.vue";
-import TemplateFieldActions from "@/components/TemplateFieldActions.vue";
 import draggable from "vuedraggable";
+import FormActions from "@/components/FormActions.vue";
+import FieldActions from "@/components/FieldActions.vue";
+import EditFieldOptions from "@/components/EditFieldOptions.vue";
+import { VueEditor } from "vue2-editor";
+import { VMoney } from "v-money";
 import { mapGetters } from "vuex";
 export default {
   components: {
+    FormActions,
+    FieldActions,
     DatePickerField,
     TimePickerField,
-    TemplateActions,
     draggable,
-    TemplateFieldActions
+    VueEditor,
+    EditFieldOptions,
   },
+  directives: { money: VMoney },
   data() {
     return {
-      templateActions: [
+      formActions: [
         {
-          title: "Edit Session",
-          icon: "edit"
+          title: "Edit",
+          icon: "edit",
         },
         {
-          titles: ["Allow patient to see", "Hide to the patient"],
-          icons: ["visibility", "visibility_off"]
-        }
+          titles: ["Show to patient", "Hide to patient"],
+          icons: ["visibility", "visibility_off"],
+        },
       ],
       fieldActions: [
         {
           title: "Edit",
-          icon: "edit"
+          icon: "edit",
         },
         {
           title: "Remove",
-          icon: "delete"
+          icon: "delete",
         },
         {
           title: "Duplicate",
-          icon: "control_point_duplicate"
+          icon: "control_point_duplicate",
         },
         {
-          titles: ["Allow patient to see", "Hide to the patient"],
-          icons: ["visibility", "visibility_off"]
-        }
+          titles: ["Show to patient", "Hide to patient"],
+          icons: ["visibility", "visibility_off"],
+        },
+        {
+          titles: ["Patient can edit ", "Patient can only read"],
+          icons: ["lock_open", "lock"],
+        },
       ],
+      sessionName: "",
       snackbar: false,
-      snackText: "The template has been saved successfully !",
+      snackText: "",
       timeout: 2000,
+      filesData: [],
+      selectedTemplate: null,
+      active: null,
+      fromDialog: false,
+      editingVisit: false,
       fab: false,
-      editable: true,
-      isDragging: false,
-      delayedDragging: false,
+      adding: false,
+      sessionIndex: null,
       menu: false,
       subfieldindex: null,
-      currentRadio: null,
-      currentSelect: null,
       radioTitle: null,
-      selectTitle: null,
       radioDialog: false,
-      selectionDialog: false,
-      fromDateMenu: false,
-      fromTimeMenu: false,
-      validTemplate: true,
       template: {},
+      fieldTemplate: {},
       field: {},
       multiple: null,
       editingSession: false,
       currentSession: null,
       removingDialog: false,
       col: null,
-      cols: [
-        {
-          id: "12",
-          title: "full width"
-        },
-        {
-          id: "6",
-          title: "1/2"
-        },
-        {
-          id: "4",
-          title: "1/3"
-        },
-        {
-          id: "3",
-          title: "1/4"
-        },
-        {
-          id: "2",
-          title: "1/6"
-        },
-        {
-          id: "1",
-          title: "1/12"
-        }
-      ],
       inputType: null,
-      radioDirections: [
-        {
-          id: false,
-          title: "column"
-        },
-        {
-          id: true,
-          title: "row"
-        }
-      ],
       defaultForm: {
         id: null,
         inputType: "session",
         type: "form",
         title: null,
         icon: "list_alt",
-        fields: []
+        isVisible: false,
+        fields: [],
       },
       inputTypes: [
         {
@@ -690,7 +600,10 @@ export default {
           inputType: "field",
           type: "text",
           model: null,
-          isVisible: false
+          isVisible: false,
+          readonly: false,
+          disabled: false,
+          maxlength: 1000,
         },
         {
           id: null,
@@ -700,7 +613,33 @@ export default {
           inputType: "field",
           type: "number",
           model: null,
-          isVisible: false
+          isVisible: false,
+          readonly: false,
+          disabled: false,
+          maxlength: 15,
+        },
+        {
+          id: null,
+          title: "",
+          icon: "money",
+          col: "12",
+          inputType: "field",
+          type: "decimal",
+          model: null,
+          isVisible: false,
+          readonly: false,
+          disabled: false,
+          option: {
+            decimal: ",",
+            thousands: ".",
+            prefix: "",
+            suffix: "",
+            precision: 2,
+            masked: false /* doesn't work with directive */,
+            min: -999999999,
+            max: 999999999,
+            type: "currency",
+          },
         },
         {
           id: null,
@@ -710,7 +649,10 @@ export default {
           inputType: "field",
           type: "email",
           model: null,
-          isVisible: false
+          isVisible: false,
+          readonly: false,
+          disabled: false,
+          maxlength: 300,
         },
         {
           id: null,
@@ -720,7 +662,9 @@ export default {
           inputType: "field",
           type: "date",
           model: null,
-          isVisible: false
+          isVisible: false,
+          readonly: false,
+          disabled: false,
         },
         {
           id: null,
@@ -730,7 +674,9 @@ export default {
           inputType: "field",
           type: "time",
           model: null,
-          isVisible: false
+          isVisible: false,
+          readonly: false,
+          disabled: false,
         },
         {
           id: null,
@@ -739,8 +685,10 @@ export default {
           col: "2",
           inputType: "field",
           type: "checkbox",
-          model: null,
-          isVisible: false
+          boolModel: null,
+          isVisible: false,
+          readonly: false,
+          disabled: false,
         },
         {
           id: null,
@@ -749,8 +697,10 @@ export default {
           col: "2",
           inputType: "field",
           type: "switch",
-          model: null,
-          isVisible: false
+          boolModel: null,
+          isVisible: false,
+          readonly: false,
+          disabled: false,
         },
         {
           id: null,
@@ -760,7 +710,23 @@ export default {
           inputType: "field",
           type: "textarea",
           model: null,
-          isVisible: false
+          isVisible: false,
+          readonly: false,
+          disabled: false,
+          maxlength: 2000,
+        },
+        {
+          id: null,
+          title: "",
+          icon: "edit_note",
+          col: "12",
+          inputType: "field",
+          type: "editor",
+          model: "<h1>Some initial content</h1>",
+          isVisible: false,
+          readonly: false,
+          disabled: false,
+          maxlength: 2000,
         },
         {
           id: null,
@@ -772,7 +738,9 @@ export default {
           model: null,
           radioDirection: true,
           isVisible: false,
-          radios: []
+          radios: [],
+          readonly: false,
+          disabled: false,
         },
         {
           id: null,
@@ -784,7 +752,9 @@ export default {
           model: null,
           isVisible: false,
           multiple: false,
-          selects: []
+          selects: [],
+          readonly: false,
+          disabled: false,
         },
         {
           id: null,
@@ -796,9 +766,10 @@ export default {
           models: null,
           isVisible: false,
           multiple: true,
-          selects: []
+          selects: [],
+          readonly: false,
+          disabled: false,
         },
-
         {
           id: null,
           title: "",
@@ -808,23 +779,26 @@ export default {
           type: "files",
           model: null,
           isVisible: false,
-          multiple: false
+          multiple: false,
+          readonly: false,
+          disabled: false,
         },
-        {
-          id: null,
-          title: "",
-          icon: "photo",
-          col: "12",
-          inputType: "field",
-          type: "image",
-          model: null,
-          isVisible: false
-        }
       ],
-      selectedSession: null,
-      sessionName: "",
       dialog: false,
-      drag: false
+      templateDialog: false,
+      fieldTemplateDialog: false,
+      dragOptions: {
+        animation: 0,
+        group: "inputs",
+      },
+      availableItemOptions: {
+        group: {
+          name: "inputs",
+          pull: "clone",
+          put: false,
+        },
+        sort: false,
+      },
     };
   },
   watch: {
@@ -833,34 +807,158 @@ export default {
         this.field = {};
       }
     },
-    isDragging(newValue) {
-      if (newValue) {
-        this.delayedDragging = true;
-        return;
-      }
-      this.$nextTick(() => {
-        this.delayedDragging = false;
-      });
-    }
   },
   computed: {
     ...mapGetters(["currentTemplate"]),
-    dragOptions() {
-      return {
-        animation: 0,
-        group: "description",
-        disabled: !this.editable,
-        ghostClass: "ghost"
-      };
-    }
   },
   methods: {
-    saveSession() {
+    updateDate(index, subfieldindex, val) {
+      const template = this.currentTemplate;
+      template.fields[subfieldindex].model = val;
+      this.$store.dispatch("editTemplate", template);
+    },
+    updateTime(index, subfieldindex, val) {
+      const template = this.currentTemplate;
+      template.fields[subfieldindex].model = val;
+      this.$store.dispatch("editTemplate", template);
+    },
+    handleClone(item) {
+      let cloneMe = JSON.parse(JSON.stringify(item));
+      this.$store.commit("SET_EDITING_INPROGRESS", true, {
+        root: true,
+      });
+      this.$delete(cloneMe, "uid");
+
+      return cloneMe;
+    },
+    editVisibility(index, subfieldindex) {
+      const template = this.currentTemplate;
+      if (!subfieldindex && subfieldindex !== 0) {
+        template.isVisible = !template.isVisible;
+      } else if (subfieldindex >= 0) {
+        template.fields[subfieldindex].isVisible = !template.fields[subfieldindex]
+          .isVisible;
+      }
+      this.$store.dispatch("editTemplate", template);
+    },
+    canOnlyRead(index, subfieldindex) {
+      const template = this.currentTemplate;
+      if (!subfieldindex && subfieldindex !== 0) {
+        template.readonly = !template.readonly;
+      } else {
+        template.fields[subfieldindex].readonly = !template.fields[subfieldindex]
+          .readonly;
+      }
+      this.$store.dispatch("editTemplate", template);
+    },
+    removeRadio(index, subfieldindex, radioIndex) {
+      const template = { ...this.currentTemplate };
+      template.fields[subfieldindex].radios.splice(radioIndex, 1);
+      this.$store.dispatch("editTemplate", template);
+    },
+    editRadio(index, subfieldindex, radioIndex, radio) {
+      this.sessionIndex = index;
+      this.subfieldindex = subfieldindex;
+      this.radioIndex = radioIndex;
+      this.radioTitle = radio;
+      this.radioDialog = true;
+    },
+    saveRadio() {
+      const template = this.currentTemplate;
+      template.fields[this.subfieldindex].radios[this.radioIndex] = this.radioTitle;
+      this.$store.dispatch("editTemplate", template);
+      this.radioTitle = null;
+      this.sessionIndex = null;
+      this.subfieldindex = null;
+      this.radioDialog = false;
+      this.radioIndex = null;
+    },
+    remove(sessionIndex, fieldindex) {
+      const template = this.currentTemplate;
+      template.fields.splice(fieldindex, 1);
+      this.$store.dispatch("editTemplate", template);
+    },
+    duplicateField(index, subfieldindex, subfield) {
+      const template = this.currentTemplate;
+      const doble = {
+        ...subfield,
+      };
+      doble.id = this.uuid({});
+
+      template.fields.splice(subfieldindex + 1, 0, doble);
+      this.$store.dispatch("editTemplate", template);
+    },
+    edit(sessionIndex, field) {
+      const template = {
+        ...this.currentTemplate,
+      };
+      template.fields.findIndex((f) => f.id === field.id);
+      this.field = {
+        ...field,
+      };
+      this.dialog = !this.dialog;
+    },
+    closeDialog() {
+      this.dialog = false;
+      setTimeout(function () {
+        this.subfieldindex = null;
+        this.field = null;
+      }, 3000);
+    },
+    save(field) {
+      if (this.editingSession) {
+        this.currentSession.title = this.sessionName;
+        const template = this.currentTemplate;
+        template.title = this.sessionName;
+        this.$store.dispatch("editTemplate", template);
+        this.sessionName = null;
+        this.currentSession = null;
+        this.editingSession = false;
+        this.field = {};
+      } else {
+        if (field && field.id) {
+          const template = this.currentTemplate;
+          const fieldIndex = template.fields.findIndex((f) => f.id === this.field.id);
+          template.fields[fieldIndex] = field;
+          this.$store.dispatch("editTemplate", template);
+          this.dialog = false;
+          this.field = {};
+        } else {
+          const field = {
+            ...this.field,
+          };
+          delete field.id;
+          field.id = this.uuid(field);
+          const template = this.currentTemplate;
+          template.fields.push(field);
+          this.$store.dispatch("editTemplate", template);
+          this.dialog = false;
+          this.field = {};
+        }
+      }
+    },
+    saveTemplate() {
+      const template = this.currentTemplate;
+      template.fields.forEach((f) => {
+        delete f.model;
+        delete f.boolModel;
+        delete f.models;
+      });
+      this.$store.dispatch("editTemplate", template);
+      this.snackbar = true;
+    },
+    editSessionvisit(session) {
+      debugger;
+      this.sessionName = session.title;
+      this.currentSession = session;
+      this.editingSession = true;
+    },
+    /*saveSession() {
       const template = this.currentTemplate;
       template.title = this.sessionName;
       this.$store.commit("SET_TEMPLATE", template);
       this.$store.commit("SET_EDITING_INPROGRESS", true, {
-        root: true
+        root: true,
       });
       this.sessionName = null;
       this.editingSession = false;
@@ -874,7 +972,7 @@ export default {
       template.fields[subfieldindex].model = val;
       this.$store.commit("SET_TEMPLATE", template);
       this.$store.commit("SET_EDITING_INPROGRESS", true, {
-        root: true
+        root: true,
       });
     },
     updateTime(index, subfieldindex, val) {
@@ -882,12 +980,12 @@ export default {
       template.fields[subfieldindex].model = val;
       this.$store.commit("SET_TEMPLATE", template);
       this.$store.commit("SET_EDITING_INPROGRESS", true, {
-        root: true
+        root: true,
       });
     },
     cloneInput(item) {
       const f = {
-        ...item
+        ...item,
       };
       f.id = this.generateNewId();
       return f;
@@ -895,21 +993,19 @@ export default {
     onMove({ relatedContext, draggedContext }) {
       const relatedElement = relatedContext.element;
       const draggedElement = draggedContext.element;
-      return (
-        (!relatedElement || !relatedElement.fixed) && !draggedElement.fixed
-      );
+      return (!relatedElement || !relatedElement.fixed) && !draggedElement.fixed;
     },
     duplicateField(subfieldindex, subfield) {
       const template = this.currentTemplate;
       const duble = {
-        ...subfield
+        ...subfield,
       };
       duble.id = this.generateNewId();
 
       template.fields.splice(subfieldindex + 1, 0, duble);
       this.$store.commit("SET_TEMPLATE", template);
       this.$store.commit("SET_EDITING_INPROGRESS", true, {
-        root: true
+        root: true,
       });
     },
     editVisibility(subfieldindex) {
@@ -917,18 +1013,17 @@ export default {
       if (!subfieldindex) {
         template.isVisible = template.isVisible ? false : true;
       } else {
-        template.fields[subfieldindex].isVisible = !template.fields[
-          subfieldindex
-        ].isVisible;
+        template.fields[subfieldindex].isVisible = !template.fields[subfieldindex]
+          .isVisible;
       }
       this.$store.commit("SET_TEMPLATE", template);
       this.$store.commit("SET_EDITING_INPROGRESS", true, {
-        root: true
+        root: true,
       });
     },
     addForm() {
       const form = {
-        ...this.defaultForm
+        ...this.defaultForm,
       };
       form.id = this.generateNewId();
       const template = this.currentTemplate;
@@ -936,7 +1031,7 @@ export default {
       template.fields.push(form);
       this.$store.commit("SET_TEMPLATE", template);
       this.$store.commit("SET_EDITING_INPROGRESS", true, {
-        root: true
+        root: true,
       });
     },
     removeRadio(subfieldindex, radioIndex) {
@@ -944,7 +1039,7 @@ export default {
       template.fields[subfieldindex].radios[radioIndex];
       this.$store.commit("SET_TEMPLATE", template);
       this.$store.commit("SET_EDITING_INPROGRESS", true, {
-        root: true
+        root: true,
       });
     },
 
@@ -952,7 +1047,7 @@ export default {
       const template = this.currentTemplate;
       template.fields[subfieldindex].radios[selectIndex];
       this.$store.commit("SET_EDITING_INPROGRESS", true, {
-        root: true
+        root: true,
       });
       this.$store.commit("SET_TEMPLATE", template);
     },
@@ -981,13 +1076,13 @@ export default {
         const template = this.currentTemplate;
         this.currentRadio.title = this.radioTitle;
         const radioIndex = this.field.radios.findIndex(
-          r => r.id === this.currentRadio.id
+          (r) => r.id === this.currentRadio.id
         );
         this.field.radios[radioIndex] = this.currentRadio;
         template.fields[this.subfieldindex] = this.field;
         this.$store.commit("SET_TEMPLATE", template);
         this.$store.commit("SET_EDITING_INPROGRESS", true, {
-          root: true
+          root: true,
         });
         this.radioTitle = null;
         this.subfieldindex = null;
@@ -997,7 +1092,7 @@ export default {
       } else {
         const radio = {
           title: this.radioTitle,
-          id: this.generateNewId()
+          id: this.generateNewId(),
         };
         if (!this.field.radios) {
           this.field.radios = [radio];
@@ -1008,7 +1103,7 @@ export default {
         template.fields[this.subfieldindex] = this.field;
         this.$store.commit("SET_TEMPLATE", template);
         this.$store.commit("SET_EDITING_INPROGRESS", true, {
-          root: true
+          root: true,
         });
         this.radioTitle = null;
       }
@@ -1017,7 +1112,7 @@ export default {
     saveSelectionItem() {
       const select = {
         title: this.selectTitle,
-        id: this.generateNewId()
+        id: this.generateNewId(),
       };
       if (!this.field.selects) {
         this.field.selects = [select];
@@ -1028,7 +1123,7 @@ export default {
       template.fields[this.subfieldindex] = this.field;
       this.$store.commit("SET_TEMPLATE", template);
       this.$store.commit("SET_EDITING_INPROGRESS", true, {
-        root: true
+        root: true,
       });
       this.selectTitle = null;
     },
@@ -1041,7 +1136,7 @@ export default {
     },
     removeSelectItem(selectindex) {
       const template = {
-        ...this.currentTemplate
+        ...this.currentTemplate,
       };
       this.field.selects.splice(selectindex, 1);
       template.fields[this.subfieldindex].selects.splice(selectindex, 1);
@@ -1052,14 +1147,14 @@ export default {
       const template = this.currentTemplate;
       template.fields.splice(fieldindex, 1);
       this.$store.commit("SET_EDITING_INPROGRESS", true, {
-        root: true
+        root: true,
       });
       this.$store.commit("SET_TEMPLATE", template);
     },
     edit(subfieldindex, field) {
       this.subfieldindex = subfieldindex;
       this.field = {
-        ...field
+        ...field,
       };
       this.dialog = !this.dialog;
     },
@@ -1069,27 +1164,27 @@ export default {
         template.fields[this.subfieldindex] = this.field;
         this.$store.commit("SET_TEMPLATE", template);
         this.$store.commit("SET_EDITING_INPROGRESS", true, {
-          root: true
+          root: true,
         });
         this.subfieldindex = null;
         this.dialog = false;
       } else {
         const field = {
-          ...this.field
+          ...this.field,
         };
         field.id = this.generateNewId();
         const template = this.currentTemplate;
         template.fields.push(field);
         this.$store.commit("SET_TEMPLATE", template);
         this.$store.commit("SET_EDITING_INPROGRESS", true, {
-          root: true
+          root: true,
         });
         this.dialog = false;
       }
     },
     saveTemplate() {
       const template = this.currentTemplate;
-      template.fields.forEach(f => {
+      template.fields.forEach((f) => {
         delete f.model;
         delete f.models;
       });
@@ -1102,13 +1197,26 @@ export default {
       const id =
         timestamp +
         "xxxxxxxxxxxxxxxx"
-          .replace(/[x]/g, function() {
+          .replace(/[x]/g, function () {
             return ((Math.random() * 16) | 0).toString(16);
           })
           .toLowerCase();
       return id;
-    }
-  }
+    },*/
+    uuid(e) {
+      if (e.id) return e.id;
+      const timestamp = ((new Date().getTime() / 1000) | 0).toString(16);
+      const key =
+        timestamp +
+        "xxxxxxxxxxxxxxxx"
+          .replace(/[x]/g, function () {
+            return ((Math.random() * 16) | 0).toString(16);
+          })
+          .toLowerCase();
+      this.$set(e, "id", key);
+      return e.id;
+    },
+  },
 };
 </script>
 
