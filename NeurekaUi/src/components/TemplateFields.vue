@@ -30,14 +30,20 @@
               <v-text-field
                 outlined
                 clearable
-                :label="subfield.title ? subfield.title : 'Field' + subfieldindex"
-                :placeholder="subfield.title ? subfield.title : 'Field' + subfieldindex"
+                :label="
+                  subfield.title ? subfield.title : 'Field' + subfieldindex
+                "
+                :placeholder="
+                  subfield.title ? subfield.title : 'Field' + subfieldindex
+                "
                 v-if="['text', 'number', 'email'].includes(subfield.type)"
                 :type="subfield.type"
                 v-model="subfield.model"
                 :prepend-inner-icon="subfield.icon"
                 :maxlength="subfield.maxlength"
-                @change="$store.commit('SET_EDITING_INPROGRESS', true, { root: true })"
+                @change="
+                  $store.commit('SET_EDITING_INPROGRESS', true, { root: true })
+                "
               >
                 <template v-slot:append-outer>
                   <field-actions
@@ -59,13 +65,19 @@
               <v-text-field
                 outlined
                 clearable
-                :label="subfield.title ? subfield.title : 'Field' + subfieldindex"
-                :placeholder="subfield.title ? subfield.title : 'Field' + subfieldindex"
+                :label="
+                  subfield.title ? subfield.title : 'Field' + subfieldindex
+                "
+                :placeholder="
+                  subfield.title ? subfield.title : 'Field' + subfieldindex
+                "
                 v-else-if="subfield.type === 'decimal'"
                 :type="subfield.type"
                 v-money="subfield.option"
                 v-model.lazy="subfield.model"
-                @change="$store.commit('SET_EDITING_INPROGRESS', true, { root: true })"
+                @change="
+                  $store.commit('SET_EDITING_INPROGRESS', true, { root: true })
+                "
               >
                 <template v-slot:append-outer>
                   <field-actions
@@ -85,15 +97,21 @@
               </v-text-field>
               <v-textarea
                 outlined
-                :placeholder="subfield.title ? subfield.title : 'Field' + subfieldindex"
+                :placeholder="
+                  subfield.title ? subfield.title : 'Field' + subfieldindex
+                "
                 v-else-if="subfield.type === 'textarea'"
                 clearable
                 clear-icon="close"
-                :label="subfield.title ? subfield.title : 'Field' + subfieldindex"
+                :label="
+                  subfield.title ? subfield.title : 'Field' + subfieldindex
+                "
                 v-model="subfield.model"
                 :maxlength="subfield.maxlength"
                 :prepend-inner-icon="subfield.icon"
-                @change="$store.commit('SET_EDITING_INPROGRESS', true, { root: true })"
+                @change="
+                  $store.commit('SET_EDITING_INPROGRESS', true, { root: true })
+                "
               >
                 <template v-slot:append-outer>
                   <field-actions
@@ -114,7 +132,9 @@
               <v-row v-else-if="subfield.type === 'editor'">
                 <v-col cols="12">
                   <label class="d-flex justify-start">
-                    {{ subfield.title ? subfield.title : "Field" + subfieldindex }}
+                    {{
+                      subfield.title ? subfield.title : "Field" + subfieldindex
+                    }}
                   </label>
                   <label class="d-flex justify-end">
                     <field-actions
@@ -172,7 +192,9 @@
               >
                 <template v-slot:label>
                   <div>
-                    {{ subfield.title ? subfield.title : "Field_" + subfieldindex }}
+                    {{
+                      subfield.title ? subfield.title : "Field_" + subfieldindex
+                    }}
                     <field-actions
                       :actions="fieldActions"
                       :field="field"
@@ -196,7 +218,9 @@
               >
                 <template v-slot:label>
                   <div>
-                    {{ subfield.title ? subfield.title : "Field_" + subfieldindex }}
+                    {{
+                      subfield.title ? subfield.title : "Field_" + subfieldindex
+                    }}
                     <field-actions
                       :actions="fieldActions"
                       :field="field"
@@ -293,7 +317,9 @@
 
               <v-flex v-else-if="subfield.type === 'radiogroup'">
                 <v-col cols="12">
-                  {{ subfield.title ? subfield.title : "Field_" + subfieldindex }}
+                  {{
+                    subfield.title ? subfield.title : "Field_" + subfieldindex
+                  }}
                   <field-actions
                     :actions="fieldActions"
                     :field="field"
@@ -307,7 +333,10 @@
                     @duplicateField="duplicateField"
                     @saveAsFieldTemplate="saveAsFieldTemplate"
                   />
-                  <v-radio-group v-model="subfield.model" :row="subfield.radioDirection">
+                  <v-radio-group
+                    v-model="subfield.model"
+                    :row="subfield.radioDirection"
+                  >
                     <v-radio
                       v-for="(radio, radioIndex) in subfield.radios"
                       :key="radioIndex"
@@ -323,7 +352,13 @@
                             transition="slide-x-transition"
                           >
                             <template v-slot:activator="{ on, attrs }">
-                              <v-btn dark icon v-bind="attrs" v-on="on" color="grey">
+                              <v-btn
+                                dark
+                                icon
+                                v-bind="attrs"
+                                v-on="on"
+                                color="grey"
+                              >
                                 <v-icon>more_vert</v-icon>
                               </v-btn>
                             </template>
@@ -331,7 +366,12 @@
                             <v-list>
                               <v-list-item
                                 @click="
-                                  editRadio(index, subfieldindex, radioIndex, radio)
+                                  editRadio(
+                                    index,
+                                    subfieldindex,
+                                    radioIndex,
+                                    radio
+                                  )
                                 "
                               >
                                 <v-list-item-action>
@@ -340,7 +380,9 @@
                                 <v-list-item-title>Edit</v-list-item-title>
                               </v-list-item>
                               <v-list-item
-                                @click="removeRadio(index, subfieldindex, radioIndex)"
+                                @click="
+                                  removeRadio(index, subfieldindex, radioIndex)
+                                "
                               >
                                 <v-list-item-action>
                                   <v-icon>delete</v-icon>
@@ -360,9 +402,13 @@
                   outlined
                   v-model="subfield.model"
                   :placeholder="
-                    subfield.multiple ? 'Upload your documents' : 'Upload your document'
+                    subfield.multiple
+                      ? 'Upload your documents'
+                      : 'Upload your document'
                   "
-                  :label="subfield.title ? subfield.title : 'Field' + subfieldindex"
+                  :label="
+                    subfield.title ? subfield.title : 'Field' + subfieldindex
+                  "
                   :multiple="subfield.multiple"
                   show-size
                   counter
@@ -371,9 +417,14 @@
                   accept="application/*, image/*"
                 >
                   <template v-slot:selection="{ index, text }">
-                    <v-chip v-if="index < 2" color="blue accent-4" dark label small>{{
-                      text
-                    }}</v-chip>
+                    <v-chip
+                      v-if="index < 2"
+                      color="blue accent-4"
+                      dark
+                      label
+                      small
+                      >{{ text }}</v-chip
+                    >
 
                     <span
                       v-else-if="index === 2"
@@ -419,7 +470,9 @@
           </v-container>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn text color="primary" @click="radioDialog = false">Close</v-btn>
+            <v-btn text color="primary" @click="radioDialog = false"
+              >Close</v-btn
+            >
             <v-btn text @click="saveRadio">Save</v-btn>
           </v-card-actions>
         </v-card>
@@ -447,7 +500,9 @@
           </v-container>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn text color="primary" @click="editingSession = false">Close</v-btn>
+            <v-btn text color="primary" @click="editingSession = false"
+              >Close</v-btn
+            >
             <v-btn text @click="save">Save</v-btn>
           </v-card-actions>
         </v-card>
@@ -489,7 +544,9 @@
           </v-container>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn text color="primary" @click="fieldTemplateDialog = false">Close</v-btn>
+            <v-btn text color="primary" @click="fieldTemplateDialog = false"
+              >Close</v-btn
+            >
             <v-btn text @click="saveFieldTemplate">Save</v-btn>
           </v-card-actions>
         </v-card>
@@ -497,9 +554,15 @@
 
       <div
         class="mt-5"
-        v-if="currentTemplate && currentTemplate.fields && currentTemplate.fields.length"
+        v-if="
+          currentTemplate &&
+            currentTemplate.fields &&
+            currentTemplate.fields.length
+        "
       >
-        <v-btn class="ma-2" outlined color="blue" @click="saveTemplate">Save</v-btn>
+        <v-btn class="ma-2" outlined color="blue" @click="saveTemplate"
+          >Save</v-btn
+        >
       </div>
       <v-snackbar
         v-model="snackbar"
@@ -521,7 +584,12 @@
       </v-dialog>
     </v-flex>
     <v-flex>
-      <v-menu v-model="menu" :close-on-content-click="false" :nudge-width="200" offset-x>
+      <v-menu
+        v-model="menu"
+        :close-on-content-click="false"
+        :nudge-width="200"
+        offset-x
+      >
         <template v-slot:activator="{ on }">
           <v-btn bottom color="pink" dark fab small fixed right v-on="on">
             <v-icon>add</v-icon>
@@ -596,7 +664,7 @@ export default {
     TimePickerField,
     draggable,
     VueEditor,
-    EditFieldOptions,
+    EditFieldOptions
   },
   directives: { money: VMoney },
   data() {
@@ -604,38 +672,38 @@ export default {
       formActions: [
         {
           title: "Edit",
-          icon: "edit",
+          icon: "edit"
         },
         {
           titles: ["Show to patient", "Hide to patient"],
-          icons: ["visibility", "visibility_off"],
-        },
+          icons: ["visibility", "visibility_off"]
+        }
       ],
       fieldActions: [
         {
           title: "Edit",
-          icon: "edit",
+          icon: "edit"
         },
         {
           title: "Remove",
-          icon: "delete",
+          icon: "delete"
         },
         {
           title: "Duplicate",
-          icon: "control_point_duplicate",
+          icon: "control_point_duplicate"
         },
         {
           titles: ["Show to patient", "Hide to patient"],
-          icons: ["visibility", "visibility_off"],
+          icons: ["visibility", "visibility_off"]
         },
         {
           titles: ["Patient can edit ", "Patient can only read"],
-          icons: ["lock_open", "lock"],
+          icons: ["lock_open", "lock"]
         },
         {
           title: "Save as Template",
-          icon: "favorite",
-        },
+          icon: "favorite"
+        }
       ],
       sessionName: "",
       snackbar: false,
@@ -669,7 +737,7 @@ export default {
         title: null,
         icon: "list_alt",
         isVisible: false,
-        fields: [],
+        fields: []
       },
       inputTypes: [
         {
@@ -683,7 +751,7 @@ export default {
           isVisible: false,
           readonly: false,
           disabled: false,
-          maxlength: 1000,
+          maxlength: 1000
         },
         {
           id: null,
@@ -696,7 +764,7 @@ export default {
           isVisible: false,
           readonly: false,
           disabled: false,
-          maxlength: 15,
+          maxlength: 15
         },
         {
           id: null,
@@ -718,8 +786,8 @@ export default {
             masked: false /* doesn't work with directive */,
             min: -999999999,
             max: 999999999,
-            type: "currency",
-          },
+            type: "currency"
+          }
         },
         {
           id: null,
@@ -732,7 +800,7 @@ export default {
           isVisible: false,
           readonly: false,
           disabled: false,
-          maxlength: 300,
+          maxlength: 300
         },
         {
           id: null,
@@ -744,7 +812,7 @@ export default {
           model: null,
           isVisible: false,
           readonly: false,
-          disabled: false,
+          disabled: false
         },
         {
           id: null,
@@ -756,7 +824,7 @@ export default {
           model: null,
           isVisible: false,
           readonly: false,
-          disabled: false,
+          disabled: false
         },
         {
           id: null,
@@ -768,7 +836,7 @@ export default {
           boolModel: null,
           isVisible: false,
           readonly: false,
-          disabled: false,
+          disabled: false
         },
         {
           id: null,
@@ -780,7 +848,7 @@ export default {
           boolModel: null,
           isVisible: false,
           readonly: false,
-          disabled: false,
+          disabled: false
         },
         {
           id: null,
@@ -793,7 +861,7 @@ export default {
           isVisible: false,
           readonly: false,
           disabled: false,
-          maxlength: 2000,
+          maxlength: 2000
         },
         {
           id: null,
@@ -806,7 +874,7 @@ export default {
           isVisible: false,
           readonly: false,
           disabled: false,
-          maxlength: 2000,
+          maxlength: 2000
         },
         {
           id: null,
@@ -820,7 +888,7 @@ export default {
           isVisible: false,
           radios: [],
           readonly: false,
-          disabled: false,
+          disabled: false
         },
         {
           id: null,
@@ -834,7 +902,7 @@ export default {
           multiple: false,
           selects: [],
           readonly: false,
-          disabled: false,
+          disabled: false
         },
         {
           id: null,
@@ -848,7 +916,7 @@ export default {
           multiple: true,
           selects: [],
           readonly: false,
-          disabled: false,
+          disabled: false
         },
         {
           id: null,
@@ -861,24 +929,24 @@ export default {
           isVisible: false,
           multiple: false,
           readonly: false,
-          disabled: false,
-        },
+          disabled: false
+        }
       ],
       dialog: false,
       templateDialog: false,
       fieldTemplateDialog: false,
       dragOptions: {
         animation: 0,
-        group: "inputs",
+        group: "inputs"
       },
       availableItemOptions: {
         group: {
           name: "inputs",
           pull: "clone",
-          put: false,
+          put: false
         },
-        sort: false,
-      },
+        sort: false
+      }
     };
   },
   watch: {
@@ -886,10 +954,10 @@ export default {
       if (!val) {
         this.field = {};
       }
-    },
+    }
   },
   computed: {
-    ...mapGetters(["currentTemplate", "fieldtemplates"]),
+    ...mapGetters(["currentTemplate", "fieldtemplates"])
   },
   methods: {
     updateDate(index, subfieldindex, val) {
@@ -905,7 +973,7 @@ export default {
     handleClone(item) {
       let cloneMe = JSON.parse(JSON.stringify(item));
       this.$store.commit("SET_EDITING_INPROGRESS", true, {
-        root: true,
+        root: true
       });
       this.$delete(cloneMe, "uid");
 
@@ -916,8 +984,9 @@ export default {
       if (!subfieldindex && subfieldindex !== 0) {
         template.isVisible = !template.isVisible;
       } else if (subfieldindex >= 0) {
-        template.fields[subfieldindex].isVisible = !template.fields[subfieldindex]
-          .isVisible;
+        template.fields[subfieldindex].isVisible = !template.fields[
+          subfieldindex
+        ].isVisible;
       }
       this.$store.dispatch("editTemplate", template);
     },
@@ -926,8 +995,9 @@ export default {
       if (!subfieldindex && subfieldindex !== 0) {
         template.readonly = !template.readonly;
       } else {
-        template.fields[subfieldindex].readonly = !template.fields[subfieldindex]
-          .readonly;
+        template.fields[subfieldindex].readonly = !template.fields[
+          subfieldindex
+        ].readonly;
       }
       this.$store.dispatch("editTemplate", template);
     },
@@ -945,7 +1015,9 @@ export default {
     },
     saveRadio() {
       const template = this.currentTemplate;
-      template.fields[this.subfieldindex].radios[this.radioIndex] = this.radioTitle;
+      template.fields[this.subfieldindex].radios[
+        this.radioIndex
+      ] = this.radioTitle;
       this.$store.dispatch("editTemplate", template);
       this.radioTitle = null;
       this.sessionIndex = null;
@@ -961,7 +1033,7 @@ export default {
     duplicateField(index, subfieldindex, subfield) {
       const template = this.currentTemplate;
       const doble = {
-        ...subfield,
+        ...subfield
       };
       doble.id = this.uuid({});
 
@@ -970,17 +1042,17 @@ export default {
     },
     edit(sessionIndex, field) {
       const template = {
-        ...this.currentTemplate,
+        ...this.currentTemplate
       };
-      template.fields.findIndex((f) => f.id === field.id);
+      template.fields.findIndex(f => f.id === field.id);
       this.field = {
-        ...field,
+        ...field
       };
       this.dialog = !this.dialog;
     },
     closeDialog() {
       this.dialog = false;
-      setTimeout(function () {
+      setTimeout(function() {
         this.subfieldindex = null;
         this.field = null;
       }, 3000);
@@ -998,14 +1070,16 @@ export default {
       } else {
         if (field && field.id) {
           const template = this.currentTemplate;
-          const fieldIndex = template.fields.findIndex((f) => f.id === this.field.id);
+          const fieldIndex = template.fields.findIndex(
+            f => f.id === this.field.id
+          );
           template.fields[fieldIndex] = field;
           this.$store.dispatch("editTemplate", template);
           this.dialog = false;
           this.field = {};
         } else {
           const field = {
-            ...this.field,
+            ...this.field
           };
           delete field.id;
           field.id = this.uuid(field);
@@ -1019,7 +1093,7 @@ export default {
     },
     saveTemplate() {
       const template = this.currentTemplate;
-      template.fields.forEach((f) => {
+      template.fields.forEach(f => {
         delete f.model;
         delete f.boolModel;
         delete f.models;
@@ -1045,7 +1119,7 @@ export default {
 
     saveAsFieldTemplate(template) {
       this.fieldTemplate = {
-        ...template,
+        ...template
       };
       this.fieldTemplate.modeld = null;
       this.fieldTemplateDialog = true;
@@ -1056,14 +1130,14 @@ export default {
       const key =
         timestamp +
         "xxxxxxxxxxxxxxxx"
-          .replace(/[x]/g, function () {
+          .replace(/[x]/g, function() {
             return ((Math.random() * 16) | 0).toString(16);
           })
           .toLowerCase();
       this.$set(e, "id", key);
       return e.id;
-    },
-  },
+    }
+  }
 };
 </script>
 
