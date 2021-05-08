@@ -1183,7 +1183,6 @@ export default {
       }
     },
     snackbar(val, old) {
-      debugger;
       if (val != old && val === false) this.searchText = "";
     }
   },

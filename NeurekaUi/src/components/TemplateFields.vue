@@ -7,7 +7,7 @@
             {{ currentTemplate.title }}
             <v-spacer></v-spacer>
             <form-actions
-            :templating="true"
+              :templating="true"
               :actions="formActions"
               :field="currentTemplate"
               @editSessionvisit="editSessionvisit"
@@ -51,6 +51,7 @@
                     @editVisibility="editVisibility"
                     @canOnlyRead="canOnlyRead"
                     @duplicateField="duplicateField"
+                    @saveAsFieldTemplate="saveAsFieldTemplate"
                   />
                 </template>
               </v-text-field>
@@ -78,6 +79,7 @@
                     @editVisibility="editVisibility"
                     @canOnlyRead="canOnlyRead"
                     @duplicateField="duplicateField"
+                    @saveAsFieldTemplate="saveAsFieldTemplate"
                   />
                 </template>
               </v-text-field>
@@ -105,6 +107,7 @@
                     @editVisibility="editVisibility"
                     @canOnlyRead="canOnlyRead"
                     @duplicateField="duplicateField"
+                    @saveAsFieldTemplate="saveAsFieldTemplate"
                   />
                 </template>
               </v-textarea>
@@ -125,6 +128,7 @@
                       @editVisibility="editVisibility"
                       @canOnlyRead="canOnlyRead"
                       @duplicateField="duplicateField"
+                      @saveAsFieldTemplate="saveAsFieldTemplate"
                     />
                   </label>
                 </v-col>
@@ -143,6 +147,7 @@
                 @canOnlyRead="canOnlyRead"
                 @updateDate="updateDate"
                 @duplicateField="duplicateField"
+                @saveAsFieldTemplate="saveAsFieldTemplate"
                 :actions="fieldActions"
               />
 
@@ -157,6 +162,7 @@
                 @canOnlyRead="canOnlyRead"
                 @updateDate="updateTime"
                 @duplicateField="duplicateField"
+                @saveAsFieldTemplate="saveAsFieldTemplate"
                 :actions="fieldActions"
               />
 
@@ -178,6 +184,7 @@
                       @editVisibility="editVisibility"
                       @canOnlyRead="canOnlyRead"
                       @duplicateField="duplicateField"
+                      @saveAsFieldTemplate="saveAsFieldTemplate"
                     />
                   </div>
                 </template>
@@ -201,6 +208,7 @@
                       @editVisibility="editVisibility"
                       @canOnlyRead="canOnlyRead"
                       @duplicateField="duplicateField"
+                      @saveAsFieldTemplate="saveAsFieldTemplate"
                     />
                   </div>
                 </template>
@@ -238,6 +246,7 @@
                       @editVisibility="editVisibility"
                       @canOnlyRead="canOnlyRead"
                       @duplicateField="duplicateField"
+                      @saveAsFieldTemplate="saveAsFieldTemplate"
                     />
                   </template>
                 </v-select>
@@ -276,6 +285,7 @@
                       @editVisibility="editVisibility"
                       @canOnlyRead="canOnlyRead"
                       @duplicateField="duplicateField"
+                      @saveAsFieldTemplate="saveAsFieldTemplate"
                     />
                   </template>
                 </v-select>
@@ -295,6 +305,7 @@
                     @editVisibility="editVisibility"
                     @canOnlyRead="canOnlyRead"
                     @duplicateField="duplicateField"
+                    @saveAsFieldTemplate="saveAsFieldTemplate"
                   />
                   <v-radio-group v-model="subfield.model" :row="subfield.radioDirection">
                     <v-radio
@@ -382,6 +393,7 @@
                       @editVisibility="editVisibility"
                       @canOnlyRead="canOnlyRead"
                       @duplicateField="duplicateField"
+                      @saveAsFieldTemplate="saveAsFieldTemplate"
                     />
                   </template>
                 </v-file-input>
@@ -441,6 +453,48 @@
         </v-card>
       </v-dialog>
 
+      <v-dialog v-model="fieldTemplateDialog" width="800px">
+        <v-card class="pa-3">
+          <v-card-title class="headline"
+            >Give a name and a description to this template</v-card-title
+          >
+          <v-container>
+            <v-flex transition="slide-x-transition">
+              <v-row class="mx-2">
+                <v-col class="align-center justify-space-between" cols="12">
+                  <v-row align="center" class="mr-0">
+                    <v-text-field
+                      outlined
+                      label="Template Title"
+                      clearable
+                      v-model="fieldTemplate.title"
+                      placeholder="Template Title"
+                      :prepend-inner-icon="'title'"
+                    ></v-text-field>
+                  </v-row>
+                </v-col>
+                <v-col class="align-center justify-space-between" cols="12">
+                  <v-row align="center" class="mr-0">
+                    <v-textarea
+                      outlined
+                      label="Template Description"
+                      clearable
+                      v-model="fieldTemplate.description"
+                      placeholder="Template Description"
+                    ></v-textarea>
+                  </v-row>
+                </v-col>
+              </v-row>
+            </v-flex>
+          </v-container>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn text color="primary" @click="fieldTemplateDialog = false">Close</v-btn>
+            <v-btn text @click="saveFieldTemplate">Save</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+
       <div
         class="mt-5"
         v-if="currentTemplate && currentTemplate.fields && currentTemplate.fields.length"
@@ -491,6 +545,28 @@
                       <v-icon light>{{ element.icon }}</v-icon>
                     </v-list-item-action>
                     <v-list-item-title>{{ element.type }}</v-list-item-title>
+                  </v-list-item>
+                </transition-group>
+              </draggable>
+            </v-list>
+            <v-divider></v-divider>
+            <v-list>
+              <v-subheader>Custom inputs</v-subheader>
+              <draggable
+                v-model="fieldtemplates"
+                :options="availableItemOptions"
+                :clone="handleClone"
+              >
+                <transition-group type="transition" :name="'flip-list'">
+                  <v-list-item
+                    class="list-group-item"
+                    v-for="element in fieldtemplates"
+                    :key="uuid(element)"
+                  >
+                    <v-list-item-action>
+                      <v-icon light>{{ element.icon }}</v-icon>
+                    </v-list-item-action>
+                    <v-list-item-title>{{ element.title }}</v-list-item-title>
                   </v-list-item>
                 </transition-group>
               </draggable>
@@ -555,6 +631,10 @@ export default {
         {
           titles: ["Patient can edit ", "Patient can only read"],
           icons: ["lock_open", "lock"],
+        },
+        {
+          title: "Save as Template",
+          icon: "favorite",
         },
       ],
       sessionName: "",
@@ -809,7 +889,7 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(["currentTemplate"]),
+    ...mapGetters(["currentTemplate", "fieldtemplates"]),
   },
   methods: {
     updateDate(index, subfieldindex, val) {
@@ -948,261 +1028,28 @@ export default {
       this.snackbar = true;
     },
     editSessionvisit(session) {
-      debugger;
       this.sessionName = session.title;
       this.currentSession = session;
       this.editingSession = true;
     },
-    /*saveSession() {
-      const template = this.currentTemplate;
-      template.title = this.sessionName;
-      this.$store.commit("SET_TEMPLATE", template);
-      this.$store.commit("SET_EDITING_INPROGRESS", true, {
-        root: true,
-      });
-      this.sessionName = null;
-      this.editingSession = false;
-    },
-    editSessionTemplate() {
-      this.sessionName = this.currentTemplate.title;
-      this.editingSession = true;
-    },
-    updateDate(index, subfieldindex, val) {
-      const template = this.currentTemplate;
-      template.fields[subfieldindex].model = val;
-      this.$store.commit("SET_TEMPLATE", template);
-      this.$store.commit("SET_EDITING_INPROGRESS", true, {
-        root: true,
-      });
-    },
-    updateTime(index, subfieldindex, val) {
-      const template = this.currentTemplate;
-      template.fields[subfieldindex].model = val;
-      this.$store.commit("SET_TEMPLATE", template);
-      this.$store.commit("SET_EDITING_INPROGRESS", true, {
-        root: true,
-      });
-    },
-    cloneInput(item) {
-      const f = {
-        ...item,
-      };
-      f.id = this.generateNewId();
-      return f;
-    },
-    onMove({ relatedContext, draggedContext }) {
-      const relatedElement = relatedContext.element;
-      const draggedElement = draggedContext.element;
-      return (!relatedElement || !relatedElement.fixed) && !draggedElement.fixed;
-    },
-    duplicateField(subfieldindex, subfield) {
-      const template = this.currentTemplate;
-      const duble = {
-        ...subfield,
-      };
-      duble.id = this.generateNewId();
 
-      template.fields.splice(subfieldindex + 1, 0, duble);
-      this.$store.commit("SET_TEMPLATE", template);
-      this.$store.commit("SET_EDITING_INPROGRESS", true, {
-        root: true,
-      });
-    },
-    editVisibility(subfieldindex) {
-      const template = this.currentTemplate;
-      if (!subfieldindex) {
-        template.isVisible = template.isVisible ? false : true;
-      } else {
-        template.fields[subfieldindex].isVisible = !template.fields[subfieldindex]
-          .isVisible;
+    saveFieldTemplate() {
+      if (!this.fieldTemplate.title || !this.fieldTemplate.title) {
+        return;
       }
-      this.$store.commit("SET_TEMPLATE", template);
-      this.$store.commit("SET_EDITING_INPROGRESS", true, {
-        root: true,
-      });
+      this.fieldTemplate.id = this.uuid(this.fieldTemplate);
+      this.fieldTemplate.modeld = 0;
+      this.$store.dispatch("addFieldTemplate", this.fieldTemplate);
+      this.fieldTemplateDialog = false;
     },
-    addForm() {
-      const form = {
-        ...this.defaultForm,
+
+    saveAsFieldTemplate(template) {
+      this.fieldTemplate = {
+        ...template,
       };
-      form.id = this.generateNewId();
-      const template = this.currentTemplate;
-      if (!template.fields) template.fields = [];
-      template.fields.push(form);
-      this.$store.commit("SET_TEMPLATE", template);
-      this.$store.commit("SET_EDITING_INPROGRESS", true, {
-        root: true,
-      });
+      this.fieldTemplate.modeld = null;
+      this.fieldTemplateDialog = true;
     },
-    removeRadio(subfieldindex, radioIndex) {
-      const template = this.currentTemplate;
-      template.fields[subfieldindex].radios[radioIndex];
-      this.$store.commit("SET_TEMPLATE", template);
-      this.$store.commit("SET_EDITING_INPROGRESS", true, {
-        root: true,
-      });
-    },
-
-    removeSelection(subfieldindex, selectIndex) {
-      const template = this.currentTemplate;
-      template.fields[subfieldindex].radios[selectIndex];
-      this.$store.commit("SET_EDITING_INPROGRESS", true, {
-        root: true,
-      });
-      this.$store.commit("SET_TEMPLATE", template);
-    },
-
-    openRadioDialog(subfieldindex, subfield) {
-      this.subfieldindex = subfieldindex;
-      this.field = subfield;
-      this.radioDialog = true;
-    },
-
-    openSelectionDialog(subfieldindex, subfield) {
-      this.subfieldindex = subfieldindex;
-      this.field = subfield;
-      this.selectionDialog = true;
-    },
-
-    editRadio(subfieldindex, subfield, radio) {
-      this.subfieldindex = subfieldindex;
-      this.field = subfield;
-      this.currentRadio = radio;
-      this.radioTitle = radio.title;
-      this.radioDialog = true;
-    },
-    saveRadio() {
-      if (this.currentRadio && this.currentRadio.id) {
-        const template = this.currentTemplate;
-        this.currentRadio.title = this.radioTitle;
-        const radioIndex = this.field.radios.findIndex(
-          (r) => r.id === this.currentRadio.id
-        );
-        this.field.radios[radioIndex] = this.currentRadio;
-        template.fields[this.subfieldindex] = this.field;
-        this.$store.commit("SET_TEMPLATE", template);
-        this.$store.commit("SET_EDITING_INPROGRESS", true, {
-          root: true,
-        });
-        this.radioTitle = null;
-        this.subfieldindex = null;
-        this.currentRadio = null;
-        this.field = {};
-        this.radioDialog = false;
-      } else {
-        const radio = {
-          title: this.radioTitle,
-          id: this.generateNewId(),
-        };
-        if (!this.field.radios) {
-          this.field.radios = [radio];
-        } else {
-          this.field.radios.push(radio);
-        }
-        const template = this.currentTemplate;
-        template.fields[this.subfieldindex] = this.field;
-        this.$store.commit("SET_TEMPLATE", template);
-        this.$store.commit("SET_EDITING_INPROGRESS", true, {
-          root: true,
-        });
-        this.radioTitle = null;
-      }
-    },
-
-    saveSelectionItem() {
-      const select = {
-        title: this.selectTitle,
-        id: this.generateNewId(),
-      };
-      if (!this.field.selects) {
-        this.field.selects = [select];
-      } else {
-        this.field.selects.push(select);
-      }
-      const template = this.currentTemplate;
-      template.fields[this.subfieldindex] = this.field;
-      this.$store.commit("SET_TEMPLATE", template);
-      this.$store.commit("SET_EDITING_INPROGRESS", true, {
-        root: true,
-      });
-      this.selectTitle = null;
-    },
-
-    closeDialog() {
-      this.dialog = false;
-      this.subfieldindex = null;
-      this.field = null;
-      this.dialog = false;
-    },
-    removeSelectItem(selectindex) {
-      const template = {
-        ...this.currentTemplate,
-      };
-      this.field.selects.splice(selectindex, 1);
-      template.fields[this.subfieldindex].selects.splice(selectindex, 1);
-      this.$store.commit("SET_TEMPLATE", template);
-    },
-
-    remove(fieldindex) {
-      const template = this.currentTemplate;
-      template.fields.splice(fieldindex, 1);
-      this.$store.commit("SET_EDITING_INPROGRESS", true, {
-        root: true,
-      });
-      this.$store.commit("SET_TEMPLATE", template);
-    },
-    edit(subfieldindex, field) {
-      this.subfieldindex = subfieldindex;
-      this.field = {
-        ...field,
-      };
-      this.dialog = !this.dialog;
-    },
-    save() {
-      if (this.field && this.field.id) {
-        const template = this.currentTemplate;
-        template.fields[this.subfieldindex] = this.field;
-        this.$store.commit("SET_TEMPLATE", template);
-        this.$store.commit("SET_EDITING_INPROGRESS", true, {
-          root: true,
-        });
-        this.subfieldindex = null;
-        this.dialog = false;
-      } else {
-        const field = {
-          ...this.field,
-        };
-        field.id = this.generateNewId();
-        const template = this.currentTemplate;
-        template.fields.push(field);
-        this.$store.commit("SET_TEMPLATE", template);
-        this.$store.commit("SET_EDITING_INPROGRESS", true, {
-          root: true,
-        });
-        this.dialog = false;
-      }
-    },
-    saveTemplate() {
-      const template = this.currentTemplate;
-      template.fields.forEach((f) => {
-        delete f.model;
-        delete f.models;
-      });
-      this.$store.dispatch("editTemplate", template);
-      this.snackbar = true;
-    },
-    generateNewId() {
-      const timestamp = ((new Date().getTime() / 1000) | 0).toString(16);
-
-      const id =
-        timestamp +
-        "xxxxxxxxxxxxxxxx"
-          .replace(/[x]/g, function () {
-            return ((Math.random() * 16) | 0).toString(16);
-          })
-          .toLowerCase();
-      return id;
-    },*/
     uuid(e) {
       if (e.id) return e.id;
       const timestamp = ((new Date().getTime() / 1000) | 0).toString(16);
