@@ -268,8 +268,10 @@
         </v-container>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn text color="primary" @click="radioDialog = false">Close</v-btn>
-          <v-btn text @click="save">Save</v-btn>
+          <v-btn text color="secondary" @click="radioDialog = false"
+            >Close</v-btn
+          >
+          <v-btn text color="primary" @click="save">Save</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -399,8 +401,8 @@
         </v-container>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn text color="primary" @click="dialog = false">Close</v-btn>
-          <v-btn text @click="save">Save</v-btn>
+          <v-btn text color="secondary" @click="dialog = false">Close</v-btn>
+          <v-btn text color="primary" @click="save">Save</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>

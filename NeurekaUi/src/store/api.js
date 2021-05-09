@@ -134,6 +134,23 @@ export const getPatients = () =>
       .catch(error => reject(error));
   });
 
+export const getReportinglabels = patientId =>
+  new Promise((resolve, reject) => {
+    apiClient
+      .get(`Visit/reportinglabels?patientId=${patientId}`)
+      .then(response => resolve(response.data))
+      .catch(error => reject(error));
+  });
+
+
+  export const getReportingdata = (dto) =>
+  new Promise((resolve, reject) => {
+    apiClient
+      .post("/Visit/getreportingdata", dto)
+      .then(response => resolve(response.data))
+      .catch(error => reject(error));
+  });
+
 export const createVisit = v =>
   new Promise((resolve, reject) => {
     const visit = { ...v };

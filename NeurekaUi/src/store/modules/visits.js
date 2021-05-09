@@ -6,16 +6,22 @@ import {
   getVisit,
   deleteFile,
   uploadFile,
-  exportVisits
+  exportVisits,
+  getReportinglabels,
+  getReportingdata
 } from "../api";
 
 const VisitModule = {
   state: () => ({
     visits: [],
     currentVisit: {},
-    endEditing: false
+    endEditing: false,
+    reportingLabels: [],
+    reportingData:{}
   }),
   mutations: {
+    SET_REPORTING_DATA: (state, payload) => (state.reportingData = payload),
+    SET_REPORTING_LABELS: (state, payload) => (state.reportingLabels = payload),
     SET_END_END_EDITING: (state, payload) => (state.endEditing = payload),
     SET_VISITS: (state, payload) => (state.visits = payload),
     SET_VISIT: (state, payload) => (state.currentVisit = payload),
@@ -53,6 +59,16 @@ const VisitModule = {
       getVisit(payload)
         .then(data => commit("SET_VISIT", data))
         .catch(() => commit("SET_VISIT", {}));
+    },
+    getReportinglabels({ commit }, payload) {
+      getReportinglabels(payload)
+        .then(data => commit("SET_REPORTING_LABELS", data))
+        .catch(() => commit("SET_REPORTING_LABELS", []));
+    },
+    getReportingdata({ commit }, payload) {
+      getReportingdata(payload)
+        .then(data => commit("SET_REPORTING_DATA", data))
+        .catch(() => commit("SET_REPORTING_DATA", {}));
     },
     removeVisit({ dispatch }, payload) {
       removeVisit(payload.visitId).then(() =>
@@ -152,7 +168,9 @@ const VisitModule = {
   getters: {
     visits: state => state.visits,
     currentVisit: state => state.currentVisit,
-    endEditing: state => state.endEditing
+    endEditing: state => state.endEditing,
+    reportingLabels: state => state.reportingLabels,
+    reportingData: state => state.reportingData,
   }
 };
 

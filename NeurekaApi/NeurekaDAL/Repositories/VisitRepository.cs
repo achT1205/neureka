@@ -7,6 +7,7 @@ using MongoDB.Bson;
 using MongoDB.Driver;
 using ChoETL;
 using System.IO;
+using System.Linq;
 
 namespace NeurekaDAL.Repositories
 {
@@ -116,6 +117,71 @@ namespace NeurekaDAL.Repositories
             var bsonId = firstData.Id;
             await _gridFSBucket.DeleteAsync(bsonId);
             return true;
+        }
+
+
+        public async Task<List<string>> GetReportingLabels(string patientId)
+        {
+            var condition = Builders<Visit>.Filter.Eq(v => v.PatientId, patientId);
+            var visits = await _context.Visits.FindAsync(condition).Result.ToListAsync();
+            var result = new List<string>();
+
+            var sessions = new List<Field>();
+
+            foreach(var v in visits)
+            {
+                sessions.AddRange(v.Fields);
+            }
+
+            foreach (var session in sessions)
+            {
+                var fields = session.Fields.Where(f => f.Type == "number" || f.Type == "decimal");
+                if (fields != null)
+                {
+                    foreach (Field field in fields)
+                    {
+                        var index = result.FindIndex(l => l == field.Title);
+                        if (index < 0)
+                            result.Add(field.Title);
+                    }
+                }
+
+            }
+
+            return result;
+        }
+
+        public async Task<PatientDataSet> GetReportingData(string patientId, string label)
+        {
+            var condition = Builders<Visit>.Filter.Eq(v => v.PatientId, patientId);
+            var visits = await _context.Visits.FindAsync(condition).Result.ToListAsync();
+            var sessions = new List<Field>();
+            foreach (var v in visits)
+            {
+                sessions.AddRange(v.Fields);
+            }
+
+
+            PatientDataSet patientDataSet = new PatientDataSet();
+
+            VisitDataSet dataSet = new VisitDataSet();
+            foreach (var session in sessions)
+            {
+
+                foreach (var field in session.Fields)
+                {
+                    if (field.Title == label && field.Model != null)
+                    {
+                        patientDataSet.Labels.Add(session.Title);
+                        dataSet.Data.Add(Convert.ToDecimal(field.Model));
+                    }
+                }
+            }
+            dataSet.Label = label;
+            patientDataSet.DataSets.Add(dataSet);
+
+
+            return patientDataSet;
         }
 
     }

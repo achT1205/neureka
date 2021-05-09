@@ -21,5 +21,7 @@ namespace NeurekaDAL.Repositories
         Task Remove(string id);
         Task Update(string id, Visit visit);
         Task<FileInfomation> UploadFromStreamAsync(string fileName, Stream stream);
+        Task<List<string>> GetReportingLabels(string patientId);
+        Task<PatientDataSet> GetReportingData(string patientId, string label);
     }
 }

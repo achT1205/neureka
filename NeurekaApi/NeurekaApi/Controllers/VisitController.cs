@@ -17,7 +17,7 @@ using Syncfusion.XlsIO;
 
 namespace NeurekaApi.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [ApiController]
     [Route("[controller]")]
     public class VisitController : ControllerBase
@@ -52,6 +52,21 @@ namespace NeurekaApi.Controllers
         {
             return await _visitService.DownloadFromStream(fileName);
         }
+
+        [Route("reportinglabels")]
+        [HttpGet]
+        public async Task<IActionResult> GetReportingLabels(string patientId)
+        {
+            return Ok(await _visitService.GetReportingLabels(patientId));
+        }
+
+        [Route("getreportingdata")]
+        [HttpPost]
+        public async Task<IActionResult> GetReportingLabels(ReportingDataQueryDto dto)
+        {
+            return Ok(await _visitService.GetReportingData(dto.patientId,dto.label));
+        }
+
 
         [HttpGet]
         public async Task<IActionResult> Get() => Ok(await _visitService.Get());

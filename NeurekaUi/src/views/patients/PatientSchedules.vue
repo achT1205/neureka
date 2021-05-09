@@ -24,7 +24,9 @@
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
             <v-btn icon>
-              <v-icon v-on="on" @click.prevent="exportVisits">equalizer</v-icon>
+              <v-icon v-on="on" @click.prevent="datavizdialog = true"
+                >equalizer</v-icon
+              >
             </v-btn>
           </template>
           Data Viz
@@ -245,11 +247,39 @@
                 </v-row>
               </v-container>
               <v-card-actions>
-                <v-btn text color="primary" @click="scheduleTitledialog = false"
+                <v-btn
+                  text
+                  color="secondary"
+                  @click="scheduleTitledialog = false"
                   >Close</v-btn
                 >
                 <v-spacer></v-spacer>
-                <v-btn right text @click.prevent="addVisit">Add</v-btn>
+                <v-btn right color="primary" text @click.prevent="addVisit"
+                  >Add</v-btn
+                >
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
+
+          <v-dialog v-model="datavizdialog" persistent width="1200px">
+            <v-card>
+              <v-card-title>
+                <v-spacer></v-spacer>
+                <v-icon @click="datavizdialog = false" x-small>close</v-icon>
+              </v-card-title>
+              <v-container>
+                <v-row class="mx-2">
+                  data viz  label {{reportingLabels}} data {{reportingData}}
+                </v-row>
+              </v-container>
+              <v-card-actions>
+                <v-btn text color="secondary" @click="datavizdialog = false"
+                  >Close</v-btn
+                >
+                <v-spacer></v-spacer>
+                <v-btn right color="primary" text @click.prevent="addVisit"
+                  >Add</v-btn
+                >
               </v-card-actions>
             </v-card>
           </v-dialog>
@@ -310,7 +340,8 @@ export default {
         fields: []
       },
       scheduleName: "",
-      scheduleTitledialog: false
+      scheduleTitledialog: false,
+      datavizdialog: false
     };
   },
   computed: {
@@ -327,7 +358,9 @@ export default {
       "currentVisit",
       "authenticatedUser",
       "doctors",
-      "editingInprogress"
+      "editingInprogress",
+      "reportingLabels",
+      "reportingData"
     ]),
     patient() {
       return this.patients.find(x => x.id == this.$route.params.id);
@@ -560,6 +593,7 @@ export default {
   },
   mounted() {
     this.$store.dispatch("getVisits", this.$route.params.id);
+    this.$store.dispatch("getReportinglabels", this.$route.params.id);
   }
 };
 </script>

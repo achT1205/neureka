@@ -180,17 +180,25 @@
         </v-row>
       </v-flex>
     </v-container>
+    <v-alert
+      v-if="fieldNameExistAlreadyExist"
+      color="red"
+      class="mb-0"
+      style="color: white"
+    >
+      A field with the samme name {{ localfield.title }} already exists
+    </v-alert>
     <v-card-actions>
       <v-spacer></v-spacer>
-      <v-btn text color="primary" @click="close">Close</v-btn>
-      <v-btn text @click="saveChanges">Save</v-btn>
+      <v-btn text color="secondary" @click="close">Close</v-btn>
+      <v-btn text color="primary" @click="saveChanges">Save</v-btn>
     </v-card-actions>
   </v-card>
 </template>
 
 <script>
 export default {
-  props: ["field", "save", "closeDialog"],
+  props: ["field", "save", "closeDialog", "fieldNameExistAlreadyExist"],
   data() {
     return {
       selectTitle: "",

@@ -518,8 +518,10 @@
         </v-container>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn text color="primary" @click="radioDialog = false">Close</v-btn>
-          <v-btn text @click="saveRadio">Save</v-btn>
+          <v-btn text color="secondary" @click="radioDialog = false"
+            >Close</v-btn
+          >
+          <v-btn text color="primary" @click="saveRadio">Save</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -564,10 +566,10 @@
         </v-container>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn text color="primary" @click="editingSession = false"
+          <v-btn text color="secondary" @click="editingSession = false"
             >Close</v-btn
           >
-          <v-btn text @click="save">Save</v-btn>
+          <v-btn text color="primary" @click="save">Save</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -608,10 +610,10 @@
         </v-container>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn text color="primary" @click="templateDialog = false"
+          <v-btn text color="secondary" @click="templateDialog = false"
             >Close</v-btn
           >
-          <v-btn text @click="saveTemplate">Save</v-btn>
+          <v-btn text color="primary" @click="saveTemplate">Save</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -652,10 +654,10 @@
         </v-container>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn text color="primary" @click="fieldTemplateDialog = false"
+          <v-btn text color="secondary" @click="fieldTemplateDialog = false"
             >Close</v-btn
           >
-          <v-btn text @click="saveFieldTemplate">Save</v-btn>
+          <v-btn text color="primary" @click="saveFieldTemplate">Save</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -666,6 +668,7 @@
         @closeDialog="closeDialog"
         @save="save"
         @close="closeDialog"
+        :fieldNameExistAlreadyExist="fieldNameExistAlreadyExist"
       />
     </v-dialog>
 
@@ -716,8 +719,10 @@
         </v-container>
         <v-card-actions v-if="active === 2">
           <v-spacer></v-spacer>
-          <v-btn text color="primary" @click="fromDialog = false">Close</v-btn>
-          <v-btn text @click="addForm">Add</v-btn>
+          <v-btn text color="secondary" @click="fromDialog = false"
+            >Close</v-btn
+          >
+          <v-btn text color="primary" @click="addForm">Add</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -943,6 +948,7 @@ export default {
       removingDialog: false,
       col: null,
       inputType: null,
+      fieldNameExistAlreadyExist: false,
       defaultForm: {
         id: null,
         inputType: "session",
@@ -1494,13 +1500,31 @@ export default {
       this.dialog = !this.dialog;
     },
     closeDialog() {
+      this.fieldNameExistAlreadyExist = false;
       this.dialog = false;
       setTimeout(function() {
         this.subfieldindex = null;
         this.field = null;
       }, 3000);
     },
+    fieldNameExist(field) {
+      const sessions = this.currentVisit.fields;
+      let result = false;
+      sessions.forEach(s => {
+        const fields = s.fields;
+        const exist = fields.filter(
+          f =>
+            f.title.toLowerCase() === field.title.toLowerCase() &&
+            f.id !== field.id
+        );
+        if (exist && exist.length > 0) {
+          result = true;
+        }
+      });
+      return result;
+    },
     save(field) {
+      this.fieldNameExistAlreadyExist = false;
       if (this.editingSession) {
         this.currentSession.title = this.sessionName;
         const visit = this.currentVisit;
@@ -1522,6 +1546,10 @@ export default {
         this.field = {};
       } else {
         if (field && field.id) {
+          if (this.fieldNameExist(field)) {
+            this.fieldNameExistAlreadyExist = true;
+            return;
+          }
           const visit = this.currentVisit;
           const fieldIndex = visit.fields[this.sessionIndex].fields.findIndex(
             f => f.id === this.field.id

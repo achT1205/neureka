@@ -82,8 +82,8 @@
       </v-container>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn text color="primary" @click="$emit('close')">Cancel</v-btn>
-        <v-btn text @click="createPatient">Save</v-btn>
+        <v-btn text color="secondary" @click="$emit('close')">Cancel</v-btn>
+        <v-btn text color="primary" @click="createPatient">Save</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>

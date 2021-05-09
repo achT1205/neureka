@@ -30,5 +30,8 @@ namespace NeurekaService.Services
         public async Task<bool> DeleteFile(string fileName) => await _visitRepository.DeleteFile(fileName);
         public async Task<IEnumerable<Visit>> GetEventsByDate(string date = null, string doctorId = null, string type = null) => await _visitRepository.GetEventsByDate(date, doctorId, type);
 
+        public async Task<List<string>> GetReportingLabels(string patientId) => await _visitRepository.GetReportingLabels(patientId);
+
+        public async Task<PatientDataSet> GetReportingData(string patientId, string label) => await _visitRepository.GetReportingData(patientId, label);
     }
 }
