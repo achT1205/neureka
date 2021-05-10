@@ -6,10 +6,10 @@
           <v-col class="align-center justify-space-between" cols="6">
             <v-text-field
               outlined
-              v-model="localfield.title"
-              label="Field Name"
+              v-model.trim="localfield.title"
+              label="Field name"
               clearable
-              placeholder="Field Name"
+              placeholder="Field name"
             ></v-text-field>
           </v-col>
           <v-col class="align-center justify-space-between" cols="6">
@@ -197,7 +197,10 @@
 </template>
 
 <script>
+import uuidMixin from '@/mixins/uuidMixin'
+
 export default {
+  mixins:[uuidMixin],
   props: ["field", "save", "closeDialog", "fieldNameExistAlreadyExist"],
   data() {
     return {
@@ -264,21 +267,6 @@ export default {
       this.$emit("closeDialog", this.localfield);
     },
     saveRadio() {},
-
-    uuid(e) {
-      if (e.id) return e.id;
-      const timestamp = ((new Date().getTime() / 1000) | 0).toString(16);
-      const key =
-        timestamp +
-        "xxxxxxxxxxxxxxxx"
-          .replace(/[x]/g, function() {
-            return ((Math.random() * 16) | 0).toString(16);
-          })
-          .toLowerCase();
-      this.$set(e, "id", key);
-      return e.id;
-    },
-
     removeSelectItem(item) {
       this.localfield.selects.splice(this.localfield.selects.indexOf(item), 1);
     },

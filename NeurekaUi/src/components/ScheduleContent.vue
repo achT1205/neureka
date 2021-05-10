@@ -553,7 +553,7 @@
                 <v-row align="center" class="mr-0">
                   <v-text-field
                     outlined
-                    v-model="sessionName"
+                    v-model.trim="sessionName"
                     clearable
                     placeholder="Form name"
                     label="Give a name to this form"
@@ -810,7 +810,7 @@
                     <v-list-item
                       class="list-group-item"
                       v-for="element in inputTypes"
-                      :key="element.type"
+                      :key="uuid(element)"
                     >
                       <v-list-item-action>
                         <v-icon light>{{ element.icon }}</v-icon>
@@ -858,11 +858,13 @@ import FormActions from "@/components/FormActions.vue";
 import FieldActions from "@/components/FieldActions.vue";
 import EditFieldOptions from "@/components/EditFieldOptions.vue";
 import { VueEditor } from "vue2-editor";
+import uuidMixin from '@/mixins/uuidMixin'
 import { VMoney } from "v-money";
 //import { uploadFile } from "@/store/api";
 import { mapGetters } from "vuex";
 export default {
   order: 3,
+  mixins:[uuidMixin],
   props: ["id", "isEditingVisit"],
   components: {
     FormActions,
@@ -1279,11 +1281,9 @@ export default {
       this.$store.commit("SET_EDITING_INPROGRESS", true, {
         root: true
       });
-      this.$delete(cloneMe, "uid");
-
+      this.$delete(cloneMe, "id");
       return cloneMe;
     },
-
     editVisibility(index, subfieldindex) {
       const visit = this.currentVisit;
       if (!subfieldindex && subfieldindex !== 0) {
@@ -1358,7 +1358,6 @@ export default {
         root: true
       });
     },
-
     editRadio(index, subfieldindex, radioIndex, radio) {
       this.sessionIndex = index;
       this.subfieldindex = subfieldindex;
@@ -1385,7 +1384,6 @@ export default {
       this.radioDialog = false;
       this.radioIndex = null;
     },
-
     remove(sessionIndex, fieldindex) {
       const visit = this.currentVisit;
       visit.fields[sessionIndex].fields.splice(fieldindex, 1);
@@ -1399,7 +1397,6 @@ export default {
         root: true
       });
     },
-
     duplicateForm(index, form) {
       const visit = this.currentVisit;
       const doble = {
@@ -1416,7 +1413,6 @@ export default {
         root: true
       });
     },
-
     duplicateField(index, subfieldindex, subfield) {
       const visit = this.currentVisit;
       const doble = {
@@ -1434,7 +1430,6 @@ export default {
         root: true
       });
     },
-
     saveAsFieldTemplate(template) {
       this.fieldTemplate = {
         ...template
@@ -1442,7 +1437,6 @@ export default {
       this.fieldTemplate.modeld = null;
       this.fieldTemplateDialog = true;
     },
-
     removeSessionvisit(index) {
       const visit = this.currentVisit;
       if (
@@ -1464,7 +1458,6 @@ export default {
         this.removingDialog = !this.removingDialog;
       }
     },
-
     confirRemovingVisit() {
       const visit = this.currentVisit;
       visit.fields.splice(this.sessionIndex, 1);
@@ -1480,7 +1473,6 @@ export default {
       this.sessionIndex = null;
       this.removingDialog = false;
     },
-
     editSessionvisit(session) {
       this.sessionName = session.title;
       this.currentSession = session;
@@ -1588,7 +1580,8 @@ export default {
     },
     saveVisitData() {
       const visit = { ...this.currentVisit };
-      visit.published = true;
+      visit.published = false;
+      debugger
       this.$store.dispatch("editVisit", {
         visit: visit,
         filesData: this.filesData
@@ -1599,7 +1592,6 @@ export default {
       this.snackText = "The data has been saved successfully !";
       this.editingVisit = true;
     },
-
     publish() {
       const visit = { ...this.currentVisit };
       visit.published = true;
@@ -1613,15 +1605,14 @@ export default {
       this.snackText = "The data has been published successfully !";
       this.editingVisit = true;
     },
-
     saveAsTemplate(template) {
+      delete template.id;
+      delete template.patientId;
       this.template = {
         ...template
       };
       this.template.fields.forEach(f => {
-        f.model = null;
         f.fileInfos = null;
-        f.models = null;
       });
       this.templateDialog = true;
     },
@@ -1629,7 +1620,6 @@ export default {
       if (!this.template.title || !this.template.title) {
         return;
       }
-      delete this.template.patientId;
       this.template.id = this.uuid(this.template);
       this.$store.dispatch("addTemplate", this.template);
       this.templateDialog = false;
@@ -1642,19 +1632,6 @@ export default {
       this.fieldTemplate.modeld = 0;
       this.$store.dispatch("addFieldTemplate", this.fieldTemplate);
       this.fieldTemplateDialog = false;
-    },
-    uuid(e) {
-      if (e.id) return e.id;
-      const timestamp = ((new Date().getTime() / 1000) | 0).toString(16);
-      const key =
-        timestamp +
-        "xxxxxxxxxxxxxxxx"
-          .replace(/[x]/g, function() {
-            return ((Math.random() * 16) | 0).toString(16);
-          })
-          .toLowerCase();
-      this.$set(e, "id", key);
-      return e.id;
     }
   }
 };

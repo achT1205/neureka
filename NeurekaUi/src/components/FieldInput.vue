@@ -333,10 +333,10 @@
               <v-col class="align-center justify-space-between" cols="6">
                 <v-text-field
                   outlined
-                  v-model="field.title"
-                  label="Field Name"
+                  v-model.trim="field.title"
+                  label="Field name"
                   clearable
-                  placeholder="Field Name"
+                  placeholder="Field name"
                 ></v-text-field>
               </v-col>
               <v-col class="align-center justify-space-between" cols="6">

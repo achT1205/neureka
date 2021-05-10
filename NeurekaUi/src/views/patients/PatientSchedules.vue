@@ -14,9 +14,7 @@
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
             <v-btn icon>
-              <v-icon v-on="on" @click.prevent="exportVisits"
-                >import_export</v-icon
-              >
+              <v-icon v-on="on" @click.prevent="exportVisits">import_export</v-icon>
             </v-btn>
           </template>
           Export visits to excel
@@ -24,9 +22,7 @@
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
             <v-btn icon>
-              <v-icon v-on="on" @click.prevent="datavizdialog = true"
-                >equalizer</v-icon
-              >
+              <v-icon v-on="on" @click.prevent="reportingdialog = true">equalizer</v-icon>
             </v-btn>
           </template>
           Data Viz
@@ -38,11 +34,7 @@
         <v-progress-circular indeterminate size="64"></v-progress-circular>
       </v-overlay>
       <div class="d-flex flex-wrap full-flex-width">
-        <v-card
-          class="elevation-0"
-          width="100%"
-          v-if="visits && visits.length > 0"
-        >
+        <v-card class="elevation-0" width="100%" v-if="visits && visits.length > 0">
           <v-card-text>
             <v-tabs
               v-model="tab"
@@ -105,42 +97,31 @@
               <v-tab-item v-for="visit in visits" :key="visit.id">
                 <v-card flat>
                   <v-card-text>
-                    <schedule-content
-                      :id="visit.id"
-                      @isEditingVisit="isEditingVisit"
-                    />
+                    <schedule-content :id="visit.id" @isEditingVisit="isEditingVisit" />
                   </v-card-text>
                 </v-card>
               </v-tab-item>
             </v-tabs-items>
           </template>
           <template v-else>
-            <v-alert
-              color="primary text-center"
-              class="mb-0"
-              style="color: white"
-            >
+            <v-alert color="primary text-center" class="mb-0" style="color: white">
               There is currently no visit for
               <strong v-if="patient"
                 >{{ patient.firstName }} {{ patient.lastName }}
               </strong>
-              please click on the <strong class="ml-2 mr-2">+</strong> button to
-              create one
+              please click on the <strong class="ml-2 mr-2">+</strong> button to create
+              one
             </v-alert>
           </template>
           <v-dialog v-model="removingDialog" persistent max-width="290">
             <v-card>
               <v-card-title class="headline">Removing Alert !</v-card-title>
               <v-card-text
-                >Are you sure you want to remove this appointment completly
-                ?</v-card-text
+                >Are you sure you want to remove this appointment completly ?</v-card-text
               >
               <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn
-                  color="green darken-1"
-                  text
-                  @click="removingDialog = false"
+                <v-btn color="green darken-1" text @click="removingDialog = false"
                   >Disagree</v-btn
                 >
                 <v-btn color="red darken-1" text @click="confirRemovingVisit()"
@@ -154,9 +135,7 @@
             <v-card>
               <v-card-title>
                 <v-spacer></v-spacer>
-                <v-icon @click="scheduleTitledialog = false" x-small
-                  >close</v-icon
-                >
+                <v-icon @click="scheduleTitledialog = false" x-small>close</v-icon>
               </v-card-title>
               <v-container>
                 <v-row class="mx-2">
@@ -238,8 +217,7 @@
                           colored-border
                           type="warning"
                           elevation="2"
-                          >You have to feel all this fields before you
-                          continue</v-alert
+                          >You have to feel all this fields before you continue</v-alert
                         >
                       </v-row>
                     </v-flex>
@@ -247,42 +225,15 @@
                 </v-row>
               </v-container>
               <v-card-actions>
-                <v-btn
-                  text
-                  color="secondary"
-                  @click="scheduleTitledialog = false"
+                <v-btn text color="secondary" @click="scheduleTitledialog = false"
                   >Close</v-btn
                 >
                 <v-spacer></v-spacer>
-                <v-btn right color="primary" text @click.prevent="addVisit"
-                  >Add</v-btn
-                >
+                <v-btn right color="primary" text @click.prevent="addVisit">Add</v-btn>
               </v-card-actions>
             </v-card>
           </v-dialog>
-
-          <v-dialog v-model="datavizdialog" persistent width="1200px">
-            <v-card>
-              <v-card-title>
-                <v-spacer></v-spacer>
-                <v-icon @click="datavizdialog = false" x-small>close</v-icon>
-              </v-card-title>
-              <v-container>
-                <v-row class="mx-2">
-                  data viz  label {{reportingLabels}} data {{reportingData}}
-                </v-row>
-              </v-container>
-              <v-card-actions>
-                <v-btn text color="secondary" @click="datavizdialog = false"
-                  >Close</v-btn
-                >
-                <v-spacer></v-spacer>
-                <v-btn right color="primary" text @click.prevent="addVisit"
-                  >Add</v-btn
-                >
-              </v-card-actions>
-            </v-card>
-          </v-dialog>
+          <reporting :dialog="reportingdialog" @close="reportingdialog = false" />
         </div>
       </div>
     </div>
@@ -295,6 +246,7 @@ import DatePicker from "@/components/DatePicker.vue";
 import TimePicker from "@/components/TimePicker.vue";
 import ColorPicker from "@/components/ColorPicker.vue";
 import ScheduleContent from "@/components/ScheduleContent.vue";
+import Reporting from "@/components/Reporting.vue";
 import { mapGetters } from "vuex";
 
 export default {
@@ -303,7 +255,8 @@ export default {
     DatePicker,
     TimePicker,
     ColorPicker,
-    ScheduleContent
+    ScheduleContent,
+    Reporting,
   },
   data() {
     return {
@@ -327,7 +280,7 @@ export default {
         endDate: null,
         endTime: null,
         color: null,
-        fields: []
+        fields: [],
       },
       defaultEvent: {
         id: null,
@@ -337,16 +290,16 @@ export default {
         endDate: null,
         endTime: null,
         color: null,
-        fields: []
+        fields: [],
       },
       scheduleName: "",
       scheduleTitledialog: false,
-      datavizdialog: false
+      reportingdialog: false,
     };
   },
   computed: {
     canCreateNewVisit() {
-      if (this.visits && this.visits.some(v => v.closed === false)) {
+      if (this.visits && this.visits.some((v) => v.closed === false)) {
         return false;
       } else {
         return true;
@@ -359,11 +312,9 @@ export default {
       "authenticatedUser",
       "doctors",
       "editingInprogress",
-      "reportingLabels",
-      "reportingData"
     ]),
     patient() {
-      return this.patients.find(x => x.id == this.$route.params.id);
+      return this.patients.find((x) => x.id == this.$route.params.id);
     },
     today() {
       let today = new Date();
@@ -372,7 +323,7 @@ export default {
       const yyyy = today.getFullYear();
       today = yyyy + "-" + mm + "-" + dd;
       return today;
-    }
+    },
   },
   watch: {
     patient(val, old) {
@@ -396,7 +347,11 @@ export default {
       if (val !== old) {
         this.$store.commit("SET_VISIT", this.visits[val]);
       }
-    }
+    },
+    reportingdialog(val, old) {
+      if (val !== old && val === true)
+        this.$store.dispatch("getReportinglabels", this.$route.params.id);
+    },
   },
   methods: {
     addNewEvent() {
@@ -405,16 +360,16 @@ export default {
           message: `Changes that you made may not be saved. Are your sure you want to continue ?`,
           button: {
             no: "No",
-            yes: "Yes"
+            yes: "Yes",
           },
-          callback: confirm => {
+          callback: (confirm) => {
             if (confirm) {
               this.scheduleTitledialog = !this.scheduleTitledialog;
               this.valid = true;
             } else {
               return;
             }
-          }
+          },
         });
       } else {
         this.scheduleTitledialog = !this.scheduleTitledialog;
@@ -464,15 +419,15 @@ export default {
           message: `Changes that you made may not be saved. Are your sure you want to continue ?`,
           button: {
             no: "No",
-            yes: "Yes"
+            yes: "Yes",
           },
-          callback: confirm => {
+          callback: (confirm) => {
             if (confirm) {
               this.edit(index);
             } else {
               return;
             }
-          }
+          },
         });
       } else {
         this.edit(index);
@@ -484,7 +439,7 @@ export default {
       visit.published = false;
       this.$store.dispatch("editVisit", {
         visit: visit,
-        filesData: null
+        filesData: null,
       });
     },
 
@@ -495,7 +450,7 @@ export default {
       const that = this;
       setTimeout(() => {
         that.event = {
-          ...that.currentVisit
+          ...that.currentVisit,
         };
         that.valid = true;
         that.scheduleTitledialog = !that.scheduleTitledialog;
@@ -510,7 +465,7 @@ export default {
     confirRemovingVisit() {
       this.$store.dispatch("removeVisit", {
         visitId: this.currentVisit.id,
-        patientId: this.$route.params.id
+        patientId: this.$route.params.id,
       });
       this.removingDialog = false;
     },
@@ -532,7 +487,7 @@ export default {
           visit: this.event,
           filesData: this.filesData,
           all: true,
-          patientId: this.$route.params.id
+          patientId: this.$route.params.id,
         });
         this.scheduleTitledialog = false;
         this.event = this.defaultEvent;
@@ -544,7 +499,7 @@ export default {
         this.event.patientId = this.$route.params.id;
         this.$store.dispatch("createVisit", {
           visit: this.event,
-          patientId: this.$route.params.id
+          patientId: this.$route.params.id,
         });
         this.forceOverlay = true;
         this.scheduleTitledialog = false;
@@ -561,7 +516,7 @@ export default {
       const id =
         timestamp +
         "xxxxxxxxxxxxxxxx"
-          .replace(/[x]/g, function() {
+          .replace(/[x]/g, function () {
             return ((Math.random() * 16) | 0).toString(16);
           })
           .toLowerCase();
@@ -576,24 +531,23 @@ export default {
           message: `Changes that you made may not be saved. Are your sure you want to continue ?`,
           button: {
             no: "No",
-            yes: "Yes"
+            yes: "Yes",
           },
-          callback: confirm => {
+          callback: (confirm) => {
             if (confirm) {
               this.$store.dispatch("exportVisits", this.patient);
             } else {
               return;
             }
-          }
+          },
         });
       } else {
         this.$store.dispatch("exportVisits", this.patient);
       }
-    }
+    },
   },
   mounted() {
     this.$store.dispatch("getVisits", this.$route.params.id);
-    this.$store.dispatch("getReportinglabels", this.$route.params.id);
-  }
+  },
 };
 </script>

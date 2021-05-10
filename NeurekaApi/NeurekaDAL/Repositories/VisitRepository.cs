@@ -128,7 +128,7 @@ namespace NeurekaDAL.Repositories
 
             var sessions = new List<Field>();
 
-            foreach(var v in visits)
+            foreach (var v in visits)
             {
                 sessions.AddRange(v.Fields);
             }
@@ -155,32 +155,26 @@ namespace NeurekaDAL.Repositories
         {
             var condition = Builders<Visit>.Filter.Eq(v => v.PatientId, patientId);
             var visits = await _context.Visits.FindAsync(condition).Result.ToListAsync();
-            var sessions = new List<Field>();
-            foreach (var v in visits)
-            {
-                sessions.AddRange(v.Fields);
-            }
-
-
             PatientDataSet patientDataSet = new PatientDataSet();
 
             VisitDataSet dataSet = new VisitDataSet();
-            foreach (var session in sessions)
-            {
 
-                foreach (var field in session.Fields)
+            foreach (var visit in visits)
+            {
+                foreach (var session in visit.Fields)
                 {
-                    if (field.Title == label && field.Model != null)
+                    foreach (var field in session.Fields)
                     {
-                        patientDataSet.Labels.Add(session.Title);
-                        dataSet.Data.Add(Convert.ToDecimal(field.Model));
+                        if (field.Title == label && field.Model != null)
+                        {
+                            patientDataSet.Labels.Add(visit.Title);
+                            dataSet.Data.Add(Convert.ToDecimal(field.Model));
+                        }
                     }
                 }
             }
             dataSet.Label = label;
             patientDataSet.DataSets.Add(dataSet);
-
-
             return patientDataSet;
         }
 

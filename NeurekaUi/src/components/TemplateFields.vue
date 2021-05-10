@@ -487,7 +487,7 @@
                   <v-row align="center" class="mr-0">
                     <v-text-field
                       outlined
-                      v-model="sessionName"
+                      v-model.trim="sessionName"
                       clearable
                       placeholder="Form name"
                       label="Give a name to this form"
@@ -657,6 +657,8 @@ import EditFieldOptions from "@/components/EditFieldOptions.vue";
 import { VueEditor } from "vue2-editor";
 import { VMoney } from "v-money";
 import { mapGetters } from "vuex";
+import uuidMixin from '@/mixins/uuidMixin'
+
 export default {
   components: {
     FormActions,
@@ -667,6 +669,7 @@ export default {
     VueEditor,
     EditFieldOptions
   },
+  mixins:[uuidMixin],
   directives: { money: VMoney },
   data() {
     return {
@@ -977,8 +980,7 @@ export default {
       this.$store.commit("SET_EDITING_INPROGRESS", true, {
         root: true
       });
-      this.$delete(cloneMe, "uid");
-
+      this.$delete(cloneMe, "id");
       return cloneMe;
     },
     editVisibility(index, subfieldindex) {
@@ -1149,19 +1151,6 @@ export default {
       };
       this.fieldTemplate.modeld = null;
       this.fieldTemplateDialog = true;
-    },
-    uuid(e) {
-      if (e.id) return e.id;
-      const timestamp = ((new Date().getTime() / 1000) | 0).toString(16);
-      const key =
-        timestamp +
-        "xxxxxxxxxxxxxxxx"
-          .replace(/[x]/g, function() {
-            return ((Math.random() * 16) | 0).toString(16);
-          })
-          .toLowerCase();
-      this.$set(e, "id", key);
-      return e.id;
     }
   }
 };
