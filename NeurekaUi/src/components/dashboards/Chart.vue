@@ -101,10 +101,10 @@ import { getReportingdata } from "@/store/api";
 export default {
   components: {
     ColorPicker,
-    BaseChart
+    BaseChart,
   },
   computed: {
-    ...mapGetters(["reportingLabels"])
+    ...mapGetters(["reportingLabels"]),
   },
   data() {
     return {
@@ -117,51 +117,75 @@ export default {
         "areaspline",
         "bar",
         "pie",
-        "scatter"
+        "scatter",
       ],
       label: "",
       selected: [],
       options: {
         title: {
-          text: ""
+          text: "",
         },
         subtitle: {
-          text: ""
+          text: "",
+        },
+        legend: {
+          align: "right",
+          verticalAlign: "middle",
+          layout: "vertical",
+        },
+        yAxis: {
+          title: {
+            text: "Amount",
+          },
         },
         xAxis: {
-          categories: []
+          categories: [],
         },
         tooltip: {
           crosshairs: true,
-          shared: true
+          shared: true,
         },
         credits: {
-          enabled: false
+          enabled: false,
         },
         plotOptions: {
           spline: {
             marker: {
               radius: 4,
               lineColor: "#666666",
-              lineWidth: 1
-            }
+              lineWidth: 1,
+            },
           },
           line: {
             dataLabels: {
-              enabled: true
+              enabled: true,
             },
-            enableMouseTracking: true
-          }
+            enableMouseTracking: true,
+          },
         },
-        series: []
-      }
+        series: [],
+        responsive: {
+          rules: [
+            {
+              condition: {
+                maxWidth: 500,
+              },
+              chartOptions: {
+                legend: {
+                  align: "center",
+                  verticalAlign: "bottom",
+                  layout: "horizontal",
+                },
+              },
+            },
+          ],
+        },
+      },
     };
   },
   methods: {
     onChartTypeChange(type) {
-      const index = this.options.series.findIndex(
-        s => s.name === this.selectedItem
-      );
+      const index = this.options.series.findIndex((s) => s.name === this.selectedItem);
       this.options.series[index].type = type;
       const color = this.options.series[index].color;
       this.options.series[index].color = "#fff";
@@ -173,21 +197,19 @@ export default {
       this.selectedItem = item;
     },
     updateItemColor(color) {
-      const index = this.options.series.findIndex(
-        s => s.name === this.selectedItem
-      );
+      const index = this.options.series.findIndex((s) => s.name === this.selectedItem);
       this.options.series[index].color = color;
     },
     handleOnchange(e) {
-      const index = this.selected.findIndex(s => s.name === e);
+      const index = this.selected.findIndex((s) => s.name === e);
       if (index === -1) {
         this.selected.push(e);
 
         const dto = {
           patientId: this.$route.params.id,
-          label: e
+          label: e,
         };
-        getReportingdata(dto).then(data => {
+        getReportingdata(dto).then((data) => {
           const sery = data;
           if (
             data.categories &&
@@ -199,10 +221,10 @@ export default {
           this.options.series.push(sery);
         });
       }
-    }
+    },
   },
   mounted() {
     this.handleOnchange(this.reportingLabels[1]);
-  }
+  },
 };
 </script>
