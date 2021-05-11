@@ -52,7 +52,8 @@
           </v-card>
         </div>
         <div class="col">
-          <v-card outlined>
+          <calendar />
+          <!--<v-card outlined>
             <v-card-text class="pb-0 title-visit">today's visits</v-card-text>
             <v-card-text class="pa-0">
               <v-data-table
@@ -79,16 +80,11 @@
                 </template>
               </v-data-table>
             </v-card-text>
-          </v-card>
+          </v-card>-->
         </div>
         <div class="col">
           <v-card outlined class="pa-2">
             <BarChart />
-          </v-card>
-        </div>
-        <div class="col">
-          <v-card outlined class="pa-2">
-            <LineChart />
           </v-card>
         </div>
       </div>
@@ -98,13 +94,13 @@
 
 <script>
 import BarChart from "@/components/dashboards/BarChart.vue";
-import LineChart from "@/components/dashboards/LineChart.vue";
+import Calendar from "@/components/Calendar.vue";
 import { mapGetters } from "vuex";
 export default {
   name: "DashboardDashboard",
   components: {
     BarChart,
-    LineChart
+    Calendar
   },
   computed: {
     ...mapGetters(["patients", "users", "templates", "events"])

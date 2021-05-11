@@ -592,7 +592,7 @@
         offset-x
       >
         <template v-slot:activator="{ on }">
-          <v-btn bottom color="pink" dark fab small fixed right v-on="on">
+          <v-btn bottom color="primary" dark fab small fixed right v-on="on">
             <v-icon>add</v-icon>
           </v-btn>
         </template>

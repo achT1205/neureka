@@ -27,7 +27,7 @@
               :cols="chart.col"
               :key="uuid(chart)"
             >
-              <line-chart v-if="chart.type === 'line'" />
+              <chart v-if="chart.type === 'line'" />
             </v-col>
           </draggable>
         </v-flex>
@@ -90,14 +90,14 @@
 import draggable from "vuedraggable";
 import uuidMixin from "@/mixins/uuidMixin";
 import cloneMixin from "@/mixins/cloneMixin";
-import LineChart from "@/components/dashboards/LineChart.vue";
+import Chart from "@/components/dashboards/Chart.vue";
 
 export default {
   mixins: [uuidMixin, cloneMixin],
   props: ["dialog", "close"],
   components: {
     draggable,
-    LineChart
+    Chart
   },
   data() {
     return {
@@ -106,7 +106,7 @@ export default {
         {
           id: null,
           name: "Line chart",
-          icon: "show_chart",
+          icon: "equalizer",
           type: "line",
           col: "4"
         }

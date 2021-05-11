@@ -409,7 +409,7 @@
 
     <v-btn
       bottom
-      color="pink"
+      color="primary"
       dark
       fab
       small

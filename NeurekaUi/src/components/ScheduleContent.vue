@@ -533,13 +533,32 @@
           >Are you sure you want to remove this Session ?</v-card-text
         >
         <v-card-actions>
-          <v-spacer></v-spacer>
           <v-btn color="green darken-1" text @click="removingDialog = false"
             >Disagree</v-btn
           >
+          <v-spacer></v-spacer>
           <v-btn color="red darken-1" text @click="confirRemovingVisit()"
             >Agree</v-btn
           >
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <v-dialog v-model="publishingDialog" persistent max-width="290">
+      <v-card class="pa-3">
+        <v-card-title class="headline">Removing Alert !</v-card-title>
+        <v-card-text
+          >Are you sure you want publish the form to
+          <strong
+            >{{ patient.firstName }} {{ patient.lastName }}
+          </strong></v-card-text
+        >
+        <v-card-actions>
+          <v-btn color="green darken-1" text @click="publishingDialog = false"
+            >Disagree</v-btn
+          >
+          <v-spacer></v-spacer>
+          <v-btn color="red darken-1" text @click="publish">Agree</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -732,7 +751,12 @@
       v-if="currentVisit && currentVisit.fields && currentVisit.fields.length"
     >
       <v-btn class="ma-2" color="secondary" @click="saveVisitData">Save</v-btn>
-      <v-btn class="ma-2" color="primary" @click="publish">Publish</v-btn>
+      <v-btn
+        class="ma-2"
+        color="primary"
+        @click="publishingDialog = !publishingDialog"
+        >Publish</v-btn
+      >
     </div>
 
     <v-snackbar
@@ -865,7 +889,7 @@ import { mapGetters } from "vuex";
 export default {
   order: 3,
   mixins: [uuidMixin],
-  props: ["id", "isEditingVisit"],
+  props: ["id", "isEditingVisit", "patient"],
   components: {
     FormActions,
     FieldActions,
@@ -878,6 +902,7 @@ export default {
   directives: { money: VMoney },
   data() {
     return {
+      publishingDialog: false,
       formActions: [
         {
           title: "Save as Template",
@@ -1603,6 +1628,7 @@ export default {
       });
       this.snackText = "The data has been published successfully !";
       this.editingVisit = true;
+      this.publishingDialog = false;
     },
     saveAsTemplate(template) {
       delete template.id;
