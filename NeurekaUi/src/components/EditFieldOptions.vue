@@ -197,10 +197,10 @@
 </template>
 
 <script>
-import uuidMixin from '@/mixins/uuidMixin'
+import uuidMixin from "@/mixins/uuidMixin";
 
 export default {
-  mixins:[uuidMixin],
+  mixins: [uuidMixin],
   props: ["field", "save", "closeDialog", "fieldNameExistAlreadyExist"],
   data() {
     return {
@@ -268,10 +268,13 @@ export default {
     },
     saveRadio() {},
     removeSelectItem(item) {
-      this.localfield.selects.splice(this.localfield.selects.indexOf(item), 1);
+      this.localfield.selects.splice(
+        this.localfield.selects.findIndex(item),
+        1
+      );
     },
     removeRadioItem(item) {
-      this.localfield.selects.splice(this.localfield.radios.indexOf(item), 1);
+      this.localfield.selects.splice(this.localfield.radios.findIndex(item), 1);
     }
   }
 };

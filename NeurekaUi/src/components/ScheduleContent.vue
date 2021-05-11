@@ -858,13 +858,13 @@ import FormActions from "@/components/FormActions.vue";
 import FieldActions from "@/components/FieldActions.vue";
 import EditFieldOptions from "@/components/EditFieldOptions.vue";
 import { VueEditor } from "vue2-editor";
-import uuidMixin from '@/mixins/uuidMixin'
+import uuidMixin from "@/mixins/uuidMixin";
 import { VMoney } from "v-money";
 //import { uploadFile } from "@/store/api";
 import { mapGetters } from "vuex";
 export default {
   order: 3,
-  mixins:[uuidMixin],
+  mixins: [uuidMixin],
   props: ["id", "isEditingVisit"],
   components: {
     FormActions,
@@ -1581,7 +1581,6 @@ export default {
     saveVisitData() {
       const visit = { ...this.currentVisit };
       visit.published = false;
-      debugger
       this.$store.dispatch("editVisit", {
         visit: visit,
         filesData: this.filesData

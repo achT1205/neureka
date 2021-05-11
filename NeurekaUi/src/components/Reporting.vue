@@ -13,10 +13,6 @@
             <v-icon>close</v-icon>
           </v-btn>
           <v-toolbar-title>Reporting</v-toolbar-title>
-          <v-spacer></v-spacer>
-          <v-toolbar-items>
-            <v-btn dark text @click.prevent=""> Save </v-btn>
-          </v-toolbar-items>
         </v-toolbar>
         <v-flex>
           <draggable
@@ -26,13 +22,12 @@
             :options="dragOptions"
           >
             <v-col
-              class="align-center justify-space-between list-group-item"
+              class="align-center justify-space-between list-group-item chart-item"
               v-for="chart in charts"
               :cols="chart.col"
               :key="uuid(chart)"
             >
-              <chart :chart="chart" />
-              <v-icon light>{{ chart.icon }}</v-icon> {{ chart.name }}
+              <line-chart v-if="chart.type === 'line'" />
             </v-col>
           </draggable>
         </v-flex>
@@ -45,7 +40,16 @@
             offset-x
           >
             <template v-slot:activator="{ on }">
-              <v-btn bottom color="primary" dark fab small fixed right v-on="on">
+              <v-btn
+                bottom
+                color="primary"
+                dark
+                fab
+                small
+                fixed
+                right
+                v-on="on"
+              >
                 <v-icon>add</v-icon>
               </v-btn>
             </template>
@@ -66,7 +70,9 @@
                         <v-list-item-action>
                           <v-icon light>{{ element.icon }}</v-icon>
                         </v-list-item-action>
-                        <v-list-item-title>{{ element.name }}</v-list-item-title>
+                        <v-list-item-title>{{
+                          element.name
+                        }}</v-list-item-title>
                       </v-list-item>
                     </transition-group>
                   </draggable>
@@ -84,14 +90,14 @@
 import draggable from "vuedraggable";
 import uuidMixin from "@/mixins/uuidMixin";
 import cloneMixin from "@/mixins/cloneMixin";
-import Chart from "@/components/dashboards/Chart.vue";
+import LineChart from "@/components/dashboards/LineChart.vue";
 
 export default {
   mixins: [uuidMixin, cloneMixin],
   props: ["dialog", "close"],
   components: {
     draggable,
-    Chart,
+    LineChart
   },
   data() {
     return {
@@ -101,30 +107,31 @@ export default {
           id: null,
           name: "Line chart",
           icon: "show_chart",
-          col: "6",
-        },
+          type: "line",
+          col: "4"
+        }
       ],
       charts: [],
       menu: false,
       dragOptions: {
         animation: 0,
-        group: "charts",
+        group: "charts"
       },
       availableItemOptions: {
         group: {
           name: "charts",
           pull: "clone",
-          put: false,
+          put: false
         },
-        sort: false,
-      },
+        sort: false
+      }
     };
   },
   watch: {
     dialog(val) {
       this.localdialog = val;
-    },
-  },
+    }
+  }
 };
 </script>
 
@@ -132,5 +139,9 @@ export default {
 .reporting-container {
   height: 100vh;
   margin-top: 10px;
+}
+
+.chart-item {
+  max-height: 400px;
 }
 </style>

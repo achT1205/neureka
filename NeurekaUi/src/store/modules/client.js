@@ -6,7 +6,6 @@ const ClientModule = {
   }),
   mutations: {
     SET_CLIENT_VISIT: (state, payload) => {
-      console.log(payload);
       state.clientVisit = payload;
     }
   },

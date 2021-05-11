@@ -142,8 +142,7 @@ export const getReportinglabels = patientId =>
       .catch(error => reject(error));
   });
 
-
-  export const getReportingdata = (dto) =>
+export const getReportingdata = dto =>
   new Promise((resolve, reject) => {
     apiClient
       .post("/Visit/getreportingdata", dto)

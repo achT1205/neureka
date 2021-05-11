@@ -32,6 +32,6 @@ namespace NeurekaService.Services
 
         public async Task<List<string>> GetReportingLabels(string patientId) => await _visitRepository.GetReportingLabels(patientId);
 
-        public async Task<PatientDataSet> GetReportingData(string patientId, string label) => await _visitRepository.GetReportingData(patientId, label);
+        public async Task<LineSery> GetReportingData(string patientId, string label) => await _visitRepository.GetReportingData(patientId, label);
     }
 }

@@ -8,7 +8,9 @@ import VueConfirmDialog from "vue-confirm-dialog";
 import "./plugins/chartist";
 import "./plugins/vee-validate";
 import money from "v-money";
+import HighchartsVue from "highcharts-vue";
 
+Vue.use(HighchartsVue);
 Vue.use(VueConfirmDialog);
 Vue.component("vue-confirm-dialog", VueConfirmDialog.default);
 const VueScrollTo = require("vue-scrollto");

@@ -151,14 +151,13 @@ namespace NeurekaDAL.Repositories
             return result;
         }
 
-        public async Task<PatientDataSet> GetReportingData(string patientId, string label)
+        public async Task<LineSery> GetReportingData(string patientId, string label)
         {
             var condition = Builders<Visit>.Filter.Eq(v => v.PatientId, patientId);
             var visits = await _context.Visits.FindAsync(condition).Result.ToListAsync();
-            PatientDataSet patientDataSet = new PatientDataSet();
 
-            VisitDataSet dataSet = new VisitDataSet();
-
+            var sery = new LineSery();
+            sery.name = label;
             foreach (var visit in visits)
             {
                 foreach (var session in visit.Fields)
@@ -167,15 +166,14 @@ namespace NeurekaDAL.Repositories
                     {
                         if (field.Title == label && field.Model != null)
                         {
-                            patientDataSet.Labels.Add(visit.Title);
-                            dataSet.Data.Add(Convert.ToDecimal(field.Model));
+                            sery.Categories.Add(visit.Title);
+                            sery.Data.Add(Convert.ToDecimal(field.Model));
                         }
                     }
                 }
             }
-            dataSet.Label = label;
-            patientDataSet.DataSets.Add(dataSet);
-            return patientDataSet;
+            
+            return sery;
         }
 
     }

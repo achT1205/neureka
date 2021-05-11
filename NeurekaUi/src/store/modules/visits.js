@@ -17,7 +17,7 @@ const VisitModule = {
     currentVisit: {},
     endEditing: false,
     reportingLabels: [],
-    reportingData:{}
+    reportingData: {}
   }),
   mutations: {
     SET_REPORTING_DATA: (state, payload) => (state.reportingData = payload),
@@ -170,7 +170,7 @@ const VisitModule = {
     currentVisit: state => state.currentVisit,
     endEditing: state => state.endEditing,
     reportingLabels: state => state.reportingLabels,
-    reportingData: state => state.reportingData,
+    reportingData: state => state.reportingData
   }
 };
 

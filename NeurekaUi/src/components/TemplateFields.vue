@@ -657,7 +657,7 @@ import EditFieldOptions from "@/components/EditFieldOptions.vue";
 import { VueEditor } from "vue2-editor";
 import { VMoney } from "v-money";
 import { mapGetters } from "vuex";
-import uuidMixin from '@/mixins/uuidMixin'
+import uuidMixin from "@/mixins/uuidMixin";
 
 export default {
   components: {
@@ -669,7 +669,7 @@ export default {
     VueEditor,
     EditFieldOptions
   },
-  mixins:[uuidMixin],
+  mixins: [uuidMixin],
   directives: { money: VMoney },
   data() {
     return {
