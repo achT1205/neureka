@@ -90,7 +90,7 @@
 import draggable from "vuedraggable";
 import uuidMixin from "@/mixins/uuidMixin";
 import cloneMixin from "@/mixins/cloneMixin";
-import Chart from "@/components/dashboards/Chart.vue";
+import Chart from "@/components/Chart.vue";
 
 export default {
   mixins: [uuidMixin, cloneMixin],
