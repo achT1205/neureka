@@ -246,7 +246,7 @@
         <template v-slot:[`item.actions`]="{ item }">
           <v-btn class="mr-1" small color="primary">
             <v-icon @click="editItem(item)">
-              mdi-pencil
+              edit
             </v-icon>
           </v-btn>
           <v-btn small color="error">

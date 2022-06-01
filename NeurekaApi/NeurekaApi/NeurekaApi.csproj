@@ -7,17 +7,14 @@
 
 
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Production|AnyCPU' ">
-    <IntermediateOutputPath>obj\Production</IntermediateOutputPath>
+    <IntermediateOutputPath>obj\Production\netcoreapp3.1</IntermediateOutputPath>
     <DebugSymbols>false</DebugSymbols>
     <DebugType></DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Production</OutputPath>
+    <OutputPath>bin\Production\netcoreapp3.1</OutputPath>
     <DefineConstants></DefineConstants>
     <NoWarn></NoWarn>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(RunConfiguration)' == 'Production' " />
-  <PropertyGroup Condition=" '$(RunConfiguration)' == 'Azure' " />
-  <PropertyGroup Condition=" '$(RunConfiguration)' == 'Atlas' " />
   <ItemGroup>
     <Folder Include="Controllers\" />
     <Folder Include="Dtos\" />

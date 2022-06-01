@@ -129,7 +129,7 @@
             <v-icon small @click="editItemFields(item.id)">list</v-icon>
           </v-btn>-->
           <v-btn class="mr-1" small color="primary">
-            <v-icon small @click="editItem(item)">mdi-pencil</v-icon>
+            <v-icon small @click="editItem(item)">edit</v-icon>
           </v-btn>
           <v-btn small color="error">
             <v-icon small @click="deleteItem(item)">delete</v-icon>
@@ -194,6 +194,7 @@ export default {
       this.$router.push("/admin/fields/" + id);
     },
     editItem(item) {
+      debugger
       this.editedItem = Object.assign({}, item);
       this.dialog = true;
     },
